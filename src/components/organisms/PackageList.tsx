@@ -72,32 +72,41 @@ function PackageList({ packages }: PackageListProps) {
             className=''
           >
             <CarouselContent className='-ml-1'>
-              {packages.map((pkg, index) => (
-                <CarouselItem
-                  key={index}
-                  className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
-                >
-                  <div className='p-1'>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>{pkg.pkgName}</CardTitle>
-                        <CardDescription>{pkg.pkgDesc}</CardDescription>
-                      </CardHeader>
-                      <CardContent className='flex aspect-square items-center justify-center p-6'>
-                        <img
-                          src='https://placehold.co/600x400'
-                          alt={pkg.pkgName}
-                          className='h-full w-full object-cover'
-                        />
-                      </CardContent>
-                      <CardFooter className='flex justify-between'>
-                        <p>${pkg.pkgBasePrice + pkg.pkgAgencyCommission}</p>
-                        <Button>Book</Button>
-                      </CardFooter>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
+              {packages
+                .filter(
+                  (pkg) =>
+                    selectedFilter === 'All' ||
+                    pkg.tags.some(
+                      (tag) =>
+                        tag.toLowerCase() === selectedFilter.toLowerCase(),
+                    ),
+                )
+                .map((pkg, index) => (
+                  <CarouselItem
+                    key={index}
+                    className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
+                  >
+                    <div className='p-1'>
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>{pkg.pkgName}</CardTitle>
+                          <CardDescription>{pkg.pkgDesc}</CardDescription>
+                        </CardHeader>
+                        <CardContent className='flex aspect-square items-center justify-center p-6'>
+                          <img
+                            src='https://placehold.co/600x400'
+                            alt={pkg.pkgName}
+                            className='h-full w-full object-cover'
+                          />
+                        </CardContent>
+                        <CardFooter className='flex justify-between'>
+                          <p>${pkg.pkgBasePrice + pkg.pkgAgencyCommission}</p>
+                          <Button>Book</Button>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
             </CarouselContent>
             <CarouselPrevious className='hidden xl:flex' />
             <CarouselNext className='hidden xl:flex' />
