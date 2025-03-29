@@ -30,7 +30,9 @@ function Navbar() {
   return (
     <header className='border-b p-4'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-lg font-semibold'>Travel Experts</h1>
+        <NavLink to='/' className='text-lg font-semibold'>
+          Travel Experts
+        </NavLink>
         <div className='flex items-center justify-between'>
           <NavigationMenu className='px-2'>
             <NavigationMenuList>
