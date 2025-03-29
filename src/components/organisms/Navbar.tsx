@@ -29,7 +29,7 @@ function Navbar() {
           </NavigationMenu>
 
           {user ? (
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-2 px-2'>
               <Avatar>
                 <AvatarImage src={user.image} />
                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
