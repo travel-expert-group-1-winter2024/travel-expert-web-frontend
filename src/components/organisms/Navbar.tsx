@@ -16,6 +16,13 @@ import {
 } from '@/components/ui/navigation-menu'
 import { useAuth } from '@/hooks/useAuth'
 import { Book, History, LogOut, User } from 'lucide-react'
+import { NavLink } from 'react-router-dom'
+
+const navLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'Packages', to: '/#packages' },
+  { label: 'Contact', to: '/contact' },
+]
 
 function Navbar() {
   const { user, signIn, signOut } = useAuth()
@@ -24,22 +31,27 @@ function Navbar() {
       <div className='flex items-center justify-between'>
         <h1 className='text-lg font-semibold'>Travel Experts</h1>
         <div className='flex items-center justify-between'>
-          <NavigationMenu>
+          <NavigationMenu className='px-2'>
             <NavigationMenuList>
-              <NavigationMenuItem>
-                <Button variant='ghost'>Home</Button>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Button variant='ghost'>Packages</Button>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Button variant='ghost'>Contact</Button>
-              </NavigationMenuItem>
+              {navLinks.map(({ label, to }) => (
+                <NavigationMenuItem key={to}>
+                  <NavLink
+                    to={to}
+                    className={({ isActive }) => (isActive ? 'bg-muted' : '')}
+                  >
+                    {({ isActive }) => (
+                      <Button variant={isActive ? 'secondary' : 'ghost'}>
+                        {label}
+                      </Button>
+                    )}
+                  </NavLink>
+                </NavigationMenuItem>
+              ))}
             </NavigationMenuList>
           </NavigationMenu>
 
           {user ? (
-            <div className='flex items-center gap-2 px-2'>
+            <div className='flex items-center gap-2'>
               <AvatarWithDropDownMenu
                 name={user.name}
                 image={user.image}
