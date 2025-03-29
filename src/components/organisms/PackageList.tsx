@@ -66,7 +66,7 @@ function PackageList({ packages }: PackageListProps) {
             ))}
           </div>
         </div>
-        <div className='w-full max-w-sm md:max-w-2xl lg:max-w-5xl'>
+        <div className='w-full max-w-sm px-2 md:max-w-2xl lg:max-w-5xl'>
           {/* search bar*/}
           <Command className='mb-5 justify-self-end rounded-lg border bg-gray-50 md:w-1/3'>
             <CommandInput
@@ -78,7 +78,6 @@ function PackageList({ packages }: PackageListProps) {
             opts={{
               align: 'start',
             }}
-            className=''
           >
             <CarouselContent className='-ml-1'>
               {packages
