@@ -6,4 +6,5 @@ export interface Package {
   pkgDesc: string
   pkgBasePrice: number
   pkgAgencyCommission: number
+  tags: string[]
 }

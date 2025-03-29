@@ -13,6 +13,7 @@ const Home = () => {
       pkgEndDate: new Date(),
       pkgBasePrice: 1000,
       pkgAgencyCommission: 100,
+      tags: ['adventure'],
     },
     {
       id: 2,
@@ -22,6 +23,7 @@ const Home = () => {
       pkgEndDate: new Date(),
       pkgBasePrice: 2000,
       pkgAgencyCommission: 200,
+      tags: ['cultural', 'adventure'],
     },
     {
       id: 3,
@@ -31,6 +33,7 @@ const Home = () => {
       pkgEndDate: new Date(),
       pkgBasePrice: 3000,
       pkgAgencyCommission: 300,
+      tags: ['family', 'nature', 'relaxation'],
     },
   ]
 
