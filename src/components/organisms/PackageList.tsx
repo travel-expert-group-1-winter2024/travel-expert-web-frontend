@@ -24,6 +24,7 @@ interface PackageListProps {
 
 function PackageList({ packages }: PackageListProps) {
   const [selectedFilter, setSelectedFilter] = useState('All')
+  const [searchTerm, setSearchTerm] = useState('')
   const filters = [
     'All',
     'Adventure',
@@ -32,6 +33,10 @@ function PackageList({ packages }: PackageListProps) {
     'Nature',
     'Family',
   ]
+
+  const onSearchChanged = (value: string) => {
+    setSearchTerm(value)
+  }
 
   return (
     <section className='bg-secondary py-12'>
@@ -64,7 +69,10 @@ function PackageList({ packages }: PackageListProps) {
         <div className='w-full max-w-sm md:max-w-2xl lg:max-w-5xl'>
           {/* search bar*/}
           <Command className='mb-5 justify-self-end rounded-lg border bg-gray-50 md:w-1/3'>
-            <CommandInput placeholder='Type a search...' />
+            <CommandInput
+              placeholder='Type a search...'
+              onValueChange={onSearchChanged}
+            />
           </Command>
           <Carousel
             opts={{
@@ -76,11 +84,17 @@ function PackageList({ packages }: PackageListProps) {
               {packages
                 .filter(
                   (pkg) =>
-                    selectedFilter === 'All' ||
-                    pkg.tags.some(
-                      (tag) =>
-                        tag.toLowerCase() === selectedFilter.toLowerCase(),
-                    ),
+                    (selectedFilter === 'All' ||
+                      pkg.tags.some(
+                        (tag) =>
+                          tag.toLowerCase() === selectedFilter.toLowerCase(),
+                      )) &&
+                    (pkg.pkgName
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()) ||
+                      pkg.pkgDesc
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase())),
                 )
                 .map((pkg, index) => (
                   <CarouselItem
