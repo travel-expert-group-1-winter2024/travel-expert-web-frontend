@@ -24,6 +24,14 @@ interface PackageListProps {
 
 function PackageList({ packages }: PackageListProps) {
   const [selectedFilter, setSelectedFilter] = useState('All')
+  const filters = [
+    'All',
+    'Adventure',
+    'Relaxation',
+    'Cultural',
+    'Nature',
+    'Family',
+  ]
 
   return (
     <section className='bg-secondary py-12'>
@@ -42,14 +50,7 @@ function PackageList({ packages }: PackageListProps) {
             </p>
           </div>
           <div className='mt-6 flex flex-wrap justify-center gap-3'>
-            {[
-              'All',
-              'Adventure',
-              'Relaxation',
-              'Cultural',
-              'Nature',
-              'Family',
-            ].map((filter) => (
+            {filters.map((filter) => (
               <Button
                 key={filter}
                 variant={selectedFilter === filter ? 'default' : 'outline'}
