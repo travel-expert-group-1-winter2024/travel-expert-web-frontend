@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
-import { Card, CardContent, CardHeader } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardFooter } from '@/components/ui/card.tsx'
 
 type Testimonial = {
   quote: string
@@ -30,7 +30,7 @@ function Testimonial({ testimonials }: TestimonialProps) {
                 “{t.quote}”
               </p>
             </CardContent>
-            <CardHeader className='flex flex-row items-center gap-4 pt-0'>
+            <CardFooter className='flex flex-row items-center gap-4 pt-0'>
               <Avatar>
                 <AvatarImage src={t.avatar} alt={t.name} />
                 <AvatarFallback>{t.name[0]}</AvatarFallback>
@@ -39,7 +39,7 @@ function Testimonial({ testimonials }: TestimonialProps) {
                 <p className='text-sm font-medium'>{t.name}</p>
                 <p className='text-muted-foreground text-xs'>{t.username}</p>
               </div>
-            </CardHeader>
+            </CardFooter>
           </Card>
         ))}
       </div>
