@@ -39,7 +39,7 @@ function PackageList({ packages }: PackageListProps) {
   }
 
   return (
-    <section className='bg-secondary py-12'>
+    <section id='packages' className='bg-secondary py-12'>
       <div className='flex items-center justify-center gap-4 xl:gap-20'>
         <div className='flex flex-col'>
           <div className='text-center'>
