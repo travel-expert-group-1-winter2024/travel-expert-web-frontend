@@ -1,5 +1,5 @@
 import Contact from '@/pages/Contact.tsx'
-import Profile from '@/pages/Profile.tsx'
+import Profile from '@/pages/account/Profile.tsx'
 import { Route, Routes } from 'react-router-dom'
 import AccountLayout from '../layouts/AccountLayout.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
