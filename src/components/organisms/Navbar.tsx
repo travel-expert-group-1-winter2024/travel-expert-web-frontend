@@ -108,18 +108,24 @@ function AvatarWithDropDownMenu({
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User />
-            <span>Profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Book />
-            <span>Booking Detail</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <History />
-            <span>Travel History</span>
-          </DropdownMenuItem>
+          <NavLink to='/account/profile'>
+            <DropdownMenuItem>
+              <User />
+              <span>Account</span>
+            </DropdownMenuItem>
+          </NavLink>
+          <NavLink to='/account/booking'>
+            <DropdownMenuItem>
+              <Book />
+              <span>Booking Detail</span>
+            </DropdownMenuItem>
+          </NavLink>
+          <NavLink to='/account/travel-history'>
+            <DropdownMenuItem>
+              <History />
+              <span>Travel History</span>
+            </DropdownMenuItem>
+          </NavLink>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
