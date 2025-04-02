@@ -14,29 +14,36 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel.tsx'
-import { Command, CommandInput } from '@/components/ui/command.tsx'
-import { Package } from '@/types/package.ts'
+import { usePackages } from '@/hooks/usePackages.ts'
 import { useState } from 'react'
 
-interface PackageListProps {
-  packages: Package[]
-}
+const filters = [
+  'All',
+  'Adventure',
+  'Relaxation',
+  'Cultural',
+  'Nature',
+  'Family',
+]
 
-function PackageList({ packages }: PackageListProps) {
+function PackageList() {
   const [selectedFilter, setSelectedFilter] = useState('All')
-  const [searchTerm, setSearchTerm] = useState('')
-  const filters = [
-    'All',
-    'Adventure',
-    'Relaxation',
-    'Cultural',
-    'Nature',
-    'Family',
-  ]
+  const { data, isLoading, error } = usePackages()
 
-  const onSearchChanged = (value: string) => {
-    setSearchTerm(value)
-  }
+  if (isLoading) return <p>Loading...</p>
+  if (error) return <p>Error loading packages. Please try again later.</p>
+
+  const packages =
+    data?.map((pkg) => ({
+      id: pkg.packageid,
+      pkgName: pkg.pkgname,
+      pkgDesc: pkg.pkgdesc,
+      pkgStartDate: new Date(pkg.pkgstartdate),
+      pkgEndDate: new Date(pkg.pkgenddate),
+      pkgBasePrice: pkg.pkgbaseprice,
+      pkgAgencyCommission: pkg.pkgagencycommission,
+      destination: pkg.destination,
+    })) || []
 
   return (
     <section id='packages' className='bg-secondary py-12'>
@@ -67,60 +74,38 @@ function PackageList({ packages }: PackageListProps) {
           </div>
         </div>
         <div className='w-full max-w-sm px-2 md:max-w-2xl lg:max-w-5xl'>
-          {/* search bar*/}
-          <Command className='mb-5 justify-self-end rounded-lg border bg-gray-50 md:w-1/3'>
-            <CommandInput
-              placeholder='Type a search...'
-              onValueChange={onSearchChanged}
-            />
-          </Command>
           <Carousel
             opts={{
               align: 'start',
             }}
           >
             <CarouselContent className='-ml-1'>
-              {packages
-                .filter(
-                  (pkg) =>
-                    (selectedFilter === 'All' ||
-                      pkg.tags.some(
-                        (tag) =>
-                          tag.toLowerCase() === selectedFilter.toLowerCase(),
-                      )) &&
-                    (pkg.pkgName
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase()) ||
-                      pkg.pkgDesc
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())),
-                )
-                .map((pkg, index) => (
-                  <CarouselItem
-                    key={index}
-                    className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
-                  >
-                    <div className='p-1'>
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>{pkg.pkgName}</CardTitle>
-                          <CardDescription>{pkg.pkgDesc}</CardDescription>
-                        </CardHeader>
-                        <CardContent className='flex aspect-square items-center justify-center p-6'>
-                          <img
-                            src='https://placehold.co/600x400'
-                            alt={pkg.pkgName}
-                            className='h-full w-full object-cover'
-                          />
-                        </CardContent>
-                        <CardFooter className='flex justify-between'>
-                          <p>${pkg.pkgBasePrice + pkg.pkgAgencyCommission}</p>
-                          <Button>Book</Button>
-                        </CardFooter>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))}
+              {packages.map((pkg, index) => (
+                <CarouselItem
+                  key={index}
+                  className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
+                >
+                  <div className='p-1'>
+                    <Card>
+                      <CardHeader className='min-h-15'>
+                        <CardTitle>{pkg.pkgName}</CardTitle>
+                        <CardDescription>{pkg.pkgDesc}</CardDescription>
+                      </CardHeader>
+                      <CardContent className='flex aspect-square items-center justify-center p-6'>
+                        <img
+                          src='https://placehold.co/600x400'
+                          alt={pkg.pkgName}
+                          className='h-full w-full object-cover'
+                        />
+                      </CardContent>
+                      <CardFooter className='flex justify-between'>
+                        <p>${pkg.pkgBasePrice + pkg.pkgAgencyCommission}</p>
+                        <Button>Book</Button>
+                      </CardFooter>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))}
             </CarouselContent>
             <CarouselPrevious className='hidden xl:flex' />
             <CarouselNext className='hidden xl:flex' />
