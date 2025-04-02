@@ -1,10 +1,10 @@
 export interface Package {
-  id: number
-  pkgName: string
-  pkgStartDate: Date
-  pkgEndDate: Date
-  pkgDesc: string
-  pkgBasePrice: number
-  pkgAgencyCommission: number
-  tags: string[]
+  packageid: number
+  pkgname: string
+  pkgdesc: string
+  pkgstartdate: string
+  pkgenddate: string
+  pkgbaseprice: number
+  pkgagencycommission: number
+  destination: string
 }
