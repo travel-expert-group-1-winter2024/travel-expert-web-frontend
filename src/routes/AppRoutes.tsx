@@ -1,4 +1,5 @@
 import Contact from '@/pages/Contact.tsx'
+import LoginPage from '@/pages/Login.tsx'
 import Booking from '@/pages/account/Booking.tsx'
 import Profile from '@/pages/account/Profile.tsx'
 import TravelHistory from '@/pages/account/TravelHistory.tsx'
@@ -12,6 +13,7 @@ function AppRoutes() {
     <Routes>
       <Route path='/' element={<MainLayout />}>
         <Route index element={<Home />} />
+        <Route path='/login' element={<LoginPage />} />
         <Route path='/contact' element={<Contact />} />
         <Route path='/account' element={<AccountLayout />}>
           <Route path='profile' element={<Profile />} />
