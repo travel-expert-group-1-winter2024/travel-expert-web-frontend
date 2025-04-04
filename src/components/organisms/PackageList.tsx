@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/carousel.tsx'
 import { usePackages } from '@/hooks/usePackages.ts'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const filters = [
   'All',
@@ -27,6 +28,7 @@ const filters = [
 ]
 
 function PackageList() {
+  const navigate = useNavigate()
   const [selectedFilter, setSelectedFilter] = useState('All')
   const { data, isLoading, error } = usePackages()
 
@@ -44,6 +46,10 @@ function PackageList() {
       pkgAgencyCommission: pkg.pkgagencycommission,
       destination: pkg.destination,
     })) || []
+
+  const redirectToPackageDetails = (id: Number) => {
+    navigate(`/packages/${id}`)
+  }
 
   return (
     <section id='packages' className='bg-secondary py-12'>
@@ -100,7 +106,11 @@ function PackageList() {
                       </CardContent>
                       <CardFooter className='flex justify-between'>
                         <p>${pkg.pkgBasePrice + pkg.pkgAgencyCommission}</p>
-                        <Button>Book</Button>
+                        <Button
+                          onClick={() => redirectToPackageDetails(pkg.id)}
+                        >
+                          Book
+                        </Button>
                       </CardFooter>
                     </Card>
                   </div>
