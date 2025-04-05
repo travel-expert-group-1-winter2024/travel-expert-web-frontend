@@ -53,7 +53,7 @@ export function WeatherForecast({
   }
 
   return (
-    <Card className="w-full mb-6">
+    <Card className="w-full mb-6 flex">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Thermometer className="h-5 w-5 text-orange-400" />
