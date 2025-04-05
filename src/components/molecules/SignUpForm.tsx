@@ -18,7 +18,24 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+
 import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import React from 'react'
 
 const provinces = [
   'Alberta',
@@ -31,6 +48,64 @@ const provinces = [
   'Prince Edward Island',
   'Quebec',
   'Saskatchewan',
+  'Yukon',
+  'Northwest Territories',
+  'Nunavut',
+]
+
+const dropDownProvinces = [
+  {
+    value: 'British Columbia',
+    label: 'BC',
+  },
+  {
+    value: 'Alberta',
+    label: 'AB',
+  },
+  {
+    value: 'Saskatchewan',
+    label: 'SK',
+  },
+  {
+    value: 'Manitoba',
+    label: 'MB',
+  },
+  {
+    value: 'Ontario',
+    label: 'ON',
+  },
+  {
+    value: 'Quebec',
+    label: 'QC',
+  },
+  {
+    value: 'Newfoundland and Labrador',
+    label: 'NL',
+  },
+  {
+    value: 'New Brunswick',
+    label: 'NB',
+  },
+  {
+    value: 'Prince Edward Island',
+    label: 'PE',
+  },
+  {
+    value: 'Nova Scotia',
+    label: 'NS',
+  },
+  {
+    value: 'Yukon',
+    label: 'YT',
+  },
+  {
+    value: 'Northwest Territories',
+    label: 'NT',
+  },
+  {
+    value: 'Nunavut',
+    label: 'NU',
+  },
 ]
 
 //Using Zod to declare a schema for the LoginForm
@@ -183,6 +258,13 @@ export function SignUpForm() {
     console.log(values)
   }
 
+  const [open, setOpen] = React.useState(false)
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [value, setValue] = React.useState('')
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
@@ -202,7 +284,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='firstName'
+          name='lastName'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -247,6 +329,64 @@ export function SignUpForm() {
         />
 
         {/*Province goes here*/}
+        <FormField
+          control={form.control}
+          name='province'
+          render={({ field }) => (
+            <FormItem className='flex flex-col'>
+              <FormLabel>Province</FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant='outline'
+                    role='combobox'
+                    aria-expanded={open}
+                    className='w-[200px] justify-between'
+                  >
+                    {field.value
+                      ? dropDownProvinces.find((p) => p.value === field.value)
+                          ?.label
+                      : 'Select province...'}
+                    <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className='w-[200px] p-0'>
+                  <Command>
+                    <CommandInput placeholder='Search province...' />
+                    <CommandList>
+                      <CommandEmpty>No provinces found.</CommandEmpty>
+                      <CommandGroup>
+                        {dropDownProvinces.map((p) => (
+                          <CommandItem
+                            key={p.value}
+                            value={p.value}
+                            onSelect={(currentValue) => {
+                              field.onChange(currentValue)
+                              setValue(currentValue)
+                              setOpen(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                'mr-2 h-4 w-4',
+                                field.value === p.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0',
+                              )}
+                            />
+                            {p.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormDescription>Please select your province.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           name='postalCode'
