@@ -1,23 +1,4 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-
-// Todo: Build out formSchema and validations
-// TOdo: Import PopOver to make Combobox component
-// Todo: Build Sign up form Component.
-
 import { Button } from '@/components/ui/button'
-
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-
 import {
   Command,
   CommandEmpty,
@@ -27,15 +8,34 @@ import {
   CommandList,
 } from '@/components/ui/command'
 import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-
-import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import React from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import {
+  buildAddressSchema,
+  buildCityCountrySchema,
+  buildEmailAddressSchema,
+  buildNameSchema,
+  buildPhoneNumberSchema,
+  buildPostalCodeSchema,
+} from '../../utils/validations/signUpValidation.tsx'
 
 const provinces = [
   'Alberta',
@@ -55,111 +55,65 @@ const provinces = [
 
 const dropDownProvinces = [
   {
-    value: 'British Columbia',
-    label: 'BC',
-  },
-  {
     value: 'Alberta',
     label: 'AB',
   },
   {
-    value: 'Saskatchewan',
-    label: 'SK',
+    value: 'British Columbia',
+    label: 'BC',
   },
   {
     value: 'Manitoba',
     label: 'MB',
   },
   {
-    value: 'Ontario',
-    label: 'ON',
-  },
-  {
-    value: 'Quebec',
-    label: 'QC',
+    value: 'New Brunswick',
+    label: 'NB',
   },
   {
     value: 'Newfoundland and Labrador',
     label: 'NL',
   },
   {
-    value: 'New Brunswick',
-    label: 'NB',
-  },
-  {
-    value: 'Prince Edward Island',
-    label: 'PE',
+    value: 'Northwest Territories',
+    label: 'NT',
   },
   {
     value: 'Nova Scotia',
     label: 'NS',
   },
   {
-    value: 'Yukon',
-    label: 'YT',
-  },
-  {
-    value: 'Northwest Territories',
-    label: 'NT',
-  },
-  {
     value: 'Nunavut',
     label: 'NU',
+  },
+  {
+    value: 'Ontario',
+    label: 'ON',
+  },
+  {
+    value: 'Prince Edward Island',
+    label: 'PE',
+  },
+  {
+    value: 'Quebec',
+    label: 'QC',
+  },
+  {
+    value: 'Saskatchewan',
+    label: 'SK',
+  },
+  {
+    value: 'Yukon',
+    label: 'YT',
   },
 ]
 
 //Using Zod to declare a schema for the LoginForm
 const formSchema = z.object({
-  firstName: z
-    .string({
-      required_error: 'Please provide your first name.',
-      invalid_type_error:
-        'The first name entry is not in a valid format. Please ensure you use only letters',
-    })
-    .regex(/^[A-Za-z]+$/, {
-      message:
-        'First name can only contain letters (no numbers or special characters)',
-    })
-    .trim(),
-
-  lastName: z
-    .string({
-      required_error: 'Please provide your last name',
-      invalid_type_error:
-        'The last name entry is not in a valid format. Please ensure you use only letters',
-    })
-    .regex(/^[A-Za-z]+$/, {
-      message:
-        'Last name can only contain letters (no numbers or special characters)',
-    })
-    .trim(),
-
-  address: z
-    .string({
-      required_error: 'Please provide a valid address',
-      invalid_type_error:
-        'The address format is incorrect. Ensure it includes the street number and valid street type',
-    })
-    .regex(
-      /^\d+\s[A-Za-z0-9\s]+(?:St|Ave|Rd|Blvd|Dr|Pl|Cres|Ln|Way|Terr|Trail|Court|Hwy)\.?$/,
-      {
-        message:
-          'The address must include a street number and type, like this: 1301 16 Ave NW',
-      },
-    )
-    .trim(),
-
-  city: z
-    .string({
-      required_error: 'Please provide a valid city',
-      invalid_type_error:
-        'The city format is incorrect. Ensure you use only letters',
-    })
-    .regex(/^[A-Za-z]+$/, {
-      message:
-        'City can only contain letters (no numbers or special characters)',
-    })
-    .trim(),
+  firstName: buildNameSchema('first name'),
+  lastName: buildNameSchema('last name'),
+  address: buildAddressSchema,
+  city: buildCityCountrySchema('city'),
 
   province: z
     .string({
@@ -170,69 +124,11 @@ const formSchema = z.object({
       message: 'Please select a valid province from the list',
     }),
 
-  postalCode: z
-    .string({
-      required_error: 'Please provide a valid postal code',
-      invalid_type_error:
-        'The postal code format is incorrect, please ensure you use the Canadian format: A1A 1A1',
-    })
-    .regex(/^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/, {
-      message: 'Postal code must follow this format: A1A 1A1',
-    })
-    .trim(),
-
-  country: z
-    .string({
-      required_error: 'Please provide a valid country',
-    })
-    .regex(/^[A-Za-z\s]+$/, {
-      message:
-        'Country can only contain letters and spaces (no numbers or special characters)',
-    })
-    .trim(),
-
-  homePhone: z
-    .string({
-      required_error: 'Please provide a valid home phone number',
-    })
-    .trim()
-    .regex(/^\d{3}[-\s]?\d{3}[-\s]?\d{4}$/, {
-      message:
-        'Phone number must follow the format: XXX-XXX-XXXX or XXX XXX XXXX',
-    })
-    .regex(/^\d{10}$/, {
-      message:
-        'Phone number must have exactly 10 digits (without spaces or dashes)',
-    })
-    .transform((value) => {
-      // Remove non-digit characters (dashes, spaces, etc.)
-      return value.replace(/\D/g, '') // Remove anything that's not a digit
-    }),
-
-  businessPhone: z
-    .string({
-      required_error: 'Please provide a valid business phone number',
-    })
-    .trim()
-    .regex(/^\d{3}[-\s]?\d{3}[-\s]?\d{4}$/, {
-      message:
-        'Phone number must follow the format: XXX-XXX-XXXX or XXX XXX XXXX',
-    })
-    .regex(/^\d{10}$/, {
-      message:
-        'Phone number must have exactly 10 digits (without spaces or dashes)',
-    })
-    .transform((value) => {
-      // Remove non-digit characters (dashes, spaces, etc.)
-      return value.replace(/\D/g, '') // Remove anything that's not a digit
-    }),
-
-  emailAddress: z
-    .string()
-    .email({
-      message: 'Please provide a valid email address',
-    })
-    .trim(),
+  postalCode: buildPostalCodeSchema,
+  country: buildCityCountrySchema('country'),
+  homePhone: buildPhoneNumberSchema('home phone'),
+  businessPhone: buildPhoneNumberSchema('business phone'),
+  emailAddress: buildEmailAddressSchema,
 })
 
 //Defining the form
@@ -259,7 +155,6 @@ export function SignUpForm() {
   }
 
   const [open, setOpen] = React.useState(false)
-
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
