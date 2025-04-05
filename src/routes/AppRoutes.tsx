@@ -1,4 +1,6 @@
 import Contact from '@/pages/Contact.tsx'
+import LoginPage from '@/pages/Login.tsx'
+import SignUpPage from '@/pages/SignUp.tsx'
 import Booking from '@/pages/account/Booking.tsx'
 import PackageDetails from '@/pages/PackageDetails.tsx'
 import Profile from '@/pages/account/Profile.tsx'
@@ -13,6 +15,8 @@ function AppRoutes() {
     <Routes>
       <Route path='/' element={<MainLayout />}>
         <Route index element={<Home />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/sign-up' element={<SignUpPage />} />
         <Route path='/contact' element={<Contact />} />
         <Route path='/packages/:packageId' element={<PackageDetails />} />
         <Route path='/account' element={<AccountLayout />}>
