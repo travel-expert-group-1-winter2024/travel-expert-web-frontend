@@ -4,15 +4,20 @@ import { SignUpForm } from '@/components/molecules/SignUpForm.tsx'
 
 const SignUpPage: React.FC = () => {
   return (
-    <div className='login-page flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
-      <div className='w-full max-w-sm'>
-        <h1 className='text-2xl'>Sign up here</h1>
+    <div className='flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
+      <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
+        <img
+          alt='Your Company'
+          src='https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600'
+          className='mx-auto h-10 w-auto'
+        />
+        <h2 className='mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900'>
+          Register for your new account
+        </h2>
+      </div>
+
+      <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-2xl'>
         <SignUpForm />
-        <div className={'additional-links'}>
-          <p>
-            Already have an account? <a href={'/login'}>Log in instead</a>
-          </p>
-        </div>
       </div>
     </div>
   )
