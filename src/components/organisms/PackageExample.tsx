@@ -27,7 +27,7 @@ const filters = [
   'Family',
 ]
 
-function PackageList() {
+function PackageExample() {
   const navigate = useNavigate()
   const [selectedFilter, setSelectedFilter] = useState('All')
   const { data, isLoading, error } = usePackages()
@@ -126,4 +126,4 @@ function PackageList() {
   )
 }
 
-export default PackageList
+export default PackageExample
