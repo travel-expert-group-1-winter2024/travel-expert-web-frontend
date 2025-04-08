@@ -1,4 +1,3 @@
-// import { SignUpFormValues } from '@/types/signUp.ts'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { toast } from 'sonner'
