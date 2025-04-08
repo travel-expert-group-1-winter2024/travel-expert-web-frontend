@@ -25,7 +25,7 @@ const navLinks = [
 ]
 
 function Navbar() {
-  const { user, signIn, signOut } = useAuth()
+  const { user, signOut } = useAuth()
   return (
     <header className='border-b p-4'>
       <div className='flex items-center justify-between'>
@@ -61,16 +61,9 @@ function Navbar() {
               />
             </div>
           ) : (
-            <Button
-              onClick={() =>
-                signIn({
-                  name: 'Guest',
-                  image: 'https://via.placeholder.com/40',
-                })
-              }
-            >
-              Sign In
-            </Button>
+            <NavLink to={'/login'}>
+              <Button>Sign In</Button>
+            </NavLink>
           )}
         </div>
       </div>
