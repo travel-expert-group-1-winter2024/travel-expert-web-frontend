@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card.tsx'
 import { Package } from '@/types/package.ts'
+import { useNavigate } from 'react-router-dom'
 
 type Props = {
   pkg: Package
@@ -18,6 +19,8 @@ export function PackageCard({
   pkg,
   imageUrl = 'https://placehold.co/600x400',
 }: Props) {
+  const navigate = useNavigate()
+
   return (
     <Card>
       <CardHeader className='min-h-15'>
@@ -41,7 +44,9 @@ export function PackageCard({
             },
           )}
         </p>
-        <Button>Book</Button>
+        <Button onClick={() => navigate(`/packages/${pkg.packageid}`)}>
+          Book
+        </Button>
       </CardFooter>
     </Card>
   )
