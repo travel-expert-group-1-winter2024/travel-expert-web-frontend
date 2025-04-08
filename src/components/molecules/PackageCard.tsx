@@ -14,7 +14,10 @@ type Props = {
   imageUrl?: string
 }
 
-export function PackageCard({ pkg, imageUrl }: Props) {
+export function PackageCard({
+  pkg,
+  imageUrl = 'https://placehold.co/600x400',
+}: Props) {
   return (
     <Card>
       <CardHeader className='min-h-15'>
@@ -23,7 +26,7 @@ export function PackageCard({ pkg, imageUrl }: Props) {
       </CardHeader>
       <CardContent className='flex aspect-square items-center justify-center p-6'>
         <img
-          src={imageUrl || 'https://placehold.co/600x400'}
+          src={imageUrl}
           alt={pkg.pkgname}
           className='h-full w-full object-cover'
         />
