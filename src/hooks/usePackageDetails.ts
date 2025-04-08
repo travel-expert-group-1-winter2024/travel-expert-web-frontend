@@ -6,7 +6,6 @@ export const usePackageDetails = (packageId: string) => {
     queryKey: ['package', packageId],
     queryFn: async () => {
       const response = await getPackageDetails(packageId)
-      console.log('Response from hook: ', response)
       return response.data
     },
   })
