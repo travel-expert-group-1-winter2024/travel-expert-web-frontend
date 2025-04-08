@@ -1,3 +1,4 @@
+import api from '@/api/axios'
 import { LocationMap } from '@/components/molecules/LocationMap'
 import { ReviewCard } from '@/components/molecules/ReviewCard'
 import { WeatherForecast } from '@/components/molecules/WeatherForecast'
@@ -22,15 +23,52 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { usePackageDetails } from '@/hooks/usePackageDetails'
+import { useRatings } from '@/hooks/useRatings'
+import { useSubmitRating } from '@/hooks/useSubmitRating'
+import { ratingsView } from '@/types/ratings'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Calendar, MapPin, Star } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 export default function PackageDetails() {
   const { packageId } = useParams()
-  const { data: pkg, isLoading, error } = usePackageDetails(packageId!)
+  
+  const parsedPackageID : any = packageId ? parseInt(packageId) : null
+  const { data: pkg, isLoading: isPackageLoading, error: packageError } = usePackageDetails(packageId!)
+  const { data: ratingData } = useRatings(parsedPackageID!)
+  const filteredRatings = ratingData || [];
 
-  if (isLoading) return <div className='py-12 text-center'>Loading...</div>
-  if (error)
+  const customerId = 130; //CustomerID to set According to the logged in customer
+  const { mutate: submitRating } = useSubmitRating()
+  const [rating, setRating] = useState('5')
+  const [comments, setComments] = useState('')
+  const [submitting,setSubmitting] = useState(false);
+
+
+  //Submit function of Ratings
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    setSubmitting(true);
+    submitRating({
+      packageId,
+      customerId,
+      rating: parseInt(rating),
+      comments
+    }, {
+      onSuccess: (newRating) => {
+        setRating('5');
+        setComments('');
+        setSubmitting(false); // Reset submitting state
+      },
+      onError: () => {
+        setSubmitting(false); // Reset submitting state on error
+      }
+    })
+  }
+
+  if (isPackageLoading) return <div className='py-12 text-center'>Loading...</div>
+  if (packageError)
     return (
       <div className='py-12 text-center text-red-500'>
         Error loading package details
@@ -179,11 +217,11 @@ export default function PackageDetails() {
         <Card>
           <CardHeader>
             <CardTitle>Customer Reviews</CardTitle>
-            <CardDescription>4.8 average from 24 reviews</CardDescription>
+            <CardDescription>{getAvarageRating()} average from {filteredRatings.length} reviews</CardDescription>
           </CardHeader>
           <CardContent>
             {/* Rating Breakdown */}
-            <div className='mb-6 space-y-3'>
+            {/* <div className='mb-6 space-y-3'>
               {[5, 4, 3, 2, 1].map((stars) => (
                 <div key={stars} className='flex items-center gap-3'>
                   <span className='w-12 text-sm'>{stars} star</span>
@@ -200,58 +238,70 @@ export default function PackageDetails() {
                   </span>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {/* Review List */}
             <div className='space-y-6'>
-              <ReviewCard
-                name='Sarah Johnson'
-                rating={5}
-                date='2 weeks ago'
-                avatar='https://randomuser.me/api/portraits/women/44.jpg'
-                comment='The tour guides were incredibly knowledgeable and the itinerary was perfectly paced. Worth every penny!'
-              />
-              <ReviewCard
-                name='Michael Chen'
-                rating={4}
-                date='1 month ago'
-                avatar='https://randomuser.me/api/portraits/men/32.jpg'
-                comment='Great experience overall, though the hotel selection could be better. Food was amazing!'
-              />
+              {filteredRatings.map((r: ratingsView) => (
+                <ReviewCard
+                  name={r.custfirstname + " " + r.custlastname}
+                  rating={r.rating}
+                  // date='2 weeks ago'
+                  // avatar='https://randomuser.me/api/portraits/women/44.jpg'
+                  comment={r.comments} date={''}              />
+              ))}
             </div>
           </CardContent>
         </Card>
 
         {/* Review Form */}
         <Card className='mt-6'>
-          <CardHeader>
-            <CardTitle>Share Your Experience</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className='space-y-4'>
-              <RadioGroup defaultValue='5' className='flex gap-1'>
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <div key={value} className='flex items-center space-x-2'>
-                    <RadioGroupItem value={value.toString()} id={`r${value}`} />
-                    <Label
-                      htmlFor={`r${value}`}
-                      className='flex items-center gap-1'
-                    >
-                      <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
-                      {value}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-              <Textarea
-                placeholder='Share your thoughts...'
-                className='min-h-[120px]'
-              />
-              <Button type='submit'>Submit Review</Button>
-            </form>
-          </CardContent>
-        </Card>
+      <CardHeader>
+        <CardTitle>Share Your Experience</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form className='space-y-4' onSubmit={handleSubmit}>
+          <RadioGroup
+            value={rating}
+            onValueChange={setRating}
+            className='flex gap-1'
+          >
+            {[1, 2, 3, 4, 5].map((value) => (
+              <div key={value} className='flex items-center space-x-2'>
+                <RadioGroupItem value={value.toString()} id={`r${value}`} />
+                <Label htmlFor={`r${value}`} className='flex items-center gap-1'>
+                  <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
+                  {value}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+          <Textarea
+            placeholder='Share your thoughts...'
+            className='min-h-[120px]'
+            value={comments}
+            onChange={(e) => setComments(e.target.value)}
+          />
+          <Button type='submit' disabled={ submitting || !comments.trim()}>
+            {submitting ? 'Submitting...' : 'Submit Review'}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
       </div>
     </section>
   )
+
+  function getAvarageRating(){
+    let getOnlyRating:any = filteredRatings.map(r=>r.rating);
+    let sum = 0;
+    let avgRating=0;
+    getOnlyRating.forEach((r:any) => {
+      sum+=r;
+      avgRating = sum/getOnlyRating.length;
+    });
+    return avgRating.toFixed(2);
+  }
 }
+
+
