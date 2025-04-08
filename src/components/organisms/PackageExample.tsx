@@ -1,12 +1,5 @@
+import { PackageCard } from '@/components/molecules/PackageCard.tsx'
 import { Button } from '@/components/ui/button.tsx'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card.tsx'
 import {
   Carousel,
   CarouselContent,
@@ -16,7 +9,6 @@ import {
 } from '@/components/ui/carousel.tsx'
 import { usePackages } from '@/hooks/usePackages.ts'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const filters = [
   'All',
@@ -28,28 +20,13 @@ const filters = [
 ]
 
 function PackageExample() {
-  const navigate = useNavigate()
   const [selectedFilter, setSelectedFilter] = useState('All')
   const { data, isLoading, error } = usePackages()
 
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error loading packages. Please try again later.</p>
 
-  const packages =
-    data?.map((pkg) => ({
-      id: pkg.packageid,
-      pkgName: pkg.pkgname,
-      pkgDesc: pkg.pkgdesc,
-      pkgStartDate: new Date(pkg.pkgstartdate),
-      pkgEndDate: new Date(pkg.pkgenddate),
-      pkgBasePrice: pkg.pkgbaseprice,
-      pkgAgencyCommission: pkg.pkgagencycommission,
-      destination: pkg.destination,
-    })) || []
-
-  const redirectToPackageDetails = (id: Number) => {
-    navigate(`/packages/${id}`)
-  }
+  const packages = data || []
 
   return (
     <section id='packages' className='bg-secondary py-12'>
@@ -92,27 +69,7 @@ function PackageExample() {
                   className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
                 >
                   <div className='p-1'>
-                    <Card>
-                      <CardHeader className='min-h-15'>
-                        <CardTitle>{pkg.pkgName}</CardTitle>
-                        <CardDescription>{pkg.pkgDesc}</CardDescription>
-                      </CardHeader>
-                      <CardContent className='flex aspect-square items-center justify-center p-6'>
-                        <img
-                          src='https://placehold.co/600x400'
-                          alt={pkg.pkgName}
-                          className='h-full w-full object-cover'
-                        />
-                      </CardContent>
-                      <CardFooter className='flex justify-between'>
-                        <p>${pkg.pkgBasePrice + pkg.pkgAgencyCommission}</p>
-                        <Button
-                          onClick={() => redirectToPackageDetails(pkg.id)}
-                        >
-                          Book
-                        </Button>
-                      </CardFooter>
-                    </Card>
+                    <PackageCard pkg={pkg} />
                   </div>
                 </CarouselItem>
               ))}
