@@ -16,17 +16,16 @@ import {
 } from '@/components/ui/navigation-menu'
 import { useAuth } from '@/hooks/useAuth'
 import { Book, History, LogOut, User } from 'lucide-react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 const navLinks = [
   { label: 'Home', to: '/' },
-  { label: 'Packages', to: '/#packages' },
+  { label: 'Packages', to: '/packages' },
   { label: 'Contact', to: '/contact' },
 ]
 
 function Navbar() {
   const { user, signIn, signOut } = useAuth()
-  const location = useLocation()
   return (
     <header className='border-b p-4'>
       <div className='flex items-center justify-between'>
@@ -40,19 +39,13 @@ function Navbar() {
                 <NavigationMenuItem key={to}>
                   <NavLink
                     to={to}
-                    className={() =>
-                      to === location.pathname + location.hash ? 'bg-muted' : ''
-                    }
+                    className={({ isActive }) => (isActive ? 'bg-muted' : '')}
                   >
-                    <Button
-                      variant={
-                        to === location.pathname + location.hash
-                          ? 'secondary'
-                          : 'ghost'
-                      }
-                    >
-                      {label}
-                    </Button>
+                    {({ isActive }) => (
+                      <Button variant={isActive ? 'secondary' : 'ghost'}>
+                        {label}
+                      </Button>
+                    )}
                   </NavLink>
                 </NavigationMenuItem>
               ))}

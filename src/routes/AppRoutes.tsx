@@ -1,8 +1,9 @@
 import Contact from '@/pages/Contact.tsx'
 import LoginPage from '@/pages/Login.tsx'
+import PackageDetails from '@/pages/PackageDetails.tsx'
+import { PackageList } from '@/pages/PackageList.tsx'
 import SignUpPage from '@/pages/SignUp.tsx'
 import Booking from '@/pages/account/Booking.tsx'
-import PackageDetails from '@/pages/PackageDetails.tsx'
 import Profile from '@/pages/account/Profile.tsx'
 import TravelHistory from '@/pages/account/TravelHistory.tsx'
 import { Route, Routes } from 'react-router-dom'
@@ -18,6 +19,7 @@ function AppRoutes() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/sign-up' element={<SignUpPage />} />
         <Route path='/contact' element={<Contact />} />
+        <Route path='/packages' element={<PackageList />} />
         <Route path='/packages/:packageId' element={<PackageDetails />} />
         <Route path='/account' element={<AccountLayout />}>
           <Route path='profile' element={<Profile />} />
