@@ -22,6 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useSignUp } from '@/hooks/useSignUp.ts'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, ChevronsUpDown } from 'lucide-react'
@@ -33,6 +34,7 @@ import {
   buildCityCountrySchema,
   buildEmailAddressSchema,
   buildNameSchema,
+  buildPasswordSchema,
   buildPhoneNumberSchema,
   buildPostalCodeSchema,
 } from '../../utils/validations/signUpValidation.tsx'
@@ -55,103 +57,113 @@ const provinces = [
 
 const dropDownProvinces = [
   {
-    value: 'Alberta',
-    label: 'AB',
+    value: 'AB',
+    label: 'Alberta',
   },
   {
-    value: 'British Columbia',
-    label: 'BC',
+    value: 'BC',
+    label: 'British Columbia',
   },
   {
-    value: 'Manitoba',
-    label: 'MB',
+    value: 'MB',
+    label: 'Manitoba',
   },
   {
-    value: 'New Brunswick',
-    label: 'NB',
+    value: 'NB',
+    label: 'New Brunswick',
   },
   {
-    value: 'Newfoundland and Labrador',
-    label: 'NL',
+    value: 'NL',
+    label: 'Newfoundland and Labrador',
   },
   {
-    value: 'Northwest Territories',
-    label: 'NT',
+    value: 'NT',
+    label: 'Northwest Territories',
   },
   {
-    value: 'Nova Scotia',
-    label: 'NS',
+    value: 'NS',
+    label: 'Nova Scotia',
   },
   {
-    value: 'Nunavut',
-    label: 'NU',
+    value: 'NU',
+    label: 'Nunavut',
   },
   {
-    value: 'Ontario',
-    label: 'ON',
+    value: 'ON',
+    label: 'Ontario',
   },
   {
-    value: 'Prince Edward Island',
-    label: 'PE',
+    value: 'PE',
+    label: 'Prince Edward Island',
   },
   {
-    value: 'Quebec',
-    label: 'QC',
+    value: 'QC',
+    label: 'Quebec',
   },
   {
-    value: 'Saskatchewan',
-    label: 'SK',
+    value: 'SK',
+    label: 'Saskatchewan',
   },
   {
-    value: 'Yukon',
-    label: 'YT',
+    value: 'YT',
+    label: 'Yukon',
   },
 ]
 
 //Using Zod to declare a schema for the LoginForm
-const formSchema = z.object({
-  firstName: buildNameSchema('first name'),
-  lastName: buildNameSchema('last name'),
-  address: buildAddressSchema,
-  city: buildCityCountrySchema('city'),
+const formSchema = z
+  .object({
+    custfirstname: buildNameSchema('first name'),
+    custlastname: buildNameSchema('last name'),
+    custaddress: buildAddressSchema,
+    custcity: buildCityCountrySchema('city'),
 
-  province: z
-    .string({
-      required_error: 'Please provide a valid province',
-    })
-    .trim()
-    .refine((value) => provinces.includes(value), {
-      message: 'Please select a valid province from the list',
-    }),
+    custprov: z
+      .string({
+        required_error: 'Please provide a valid province',
+      })
+      .trim(),
 
-  postalCode: buildPostalCodeSchema,
-  country: buildCityCountrySchema('country'),
-  homePhone: buildPhoneNumberSchema('home phone'),
-  businessPhone: buildPhoneNumberSchema('business phone'),
-  emailAddress: buildEmailAddressSchema,
-})
+    custpostal: buildPostalCodeSchema,
+    custcountry: buildCityCountrySchema('country'),
+    custhomephone: buildPhoneNumberSchema('home phone'),
+    custbusphone: buildPhoneNumberSchema('business phone'),
+    custemail: buildEmailAddressSchema,
+    password: buildPasswordSchema,
+    confirmPassword: z.string().trim(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
 
 //Defining the form
 export function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      address: '',
-      city: '',
-      province: '',
-      postalCode: '',
-      country: '',
-      homePhone: '',
-      businessPhone: '',
-      emailAddress: '',
+      custfirstname: '',
+      custlastname: '',
+      custaddress: '',
+      custcity: '',
+      custprov: '',
+      custpostal: '',
+      custcountry: '',
+      custhomephone: '',
+      custbusphone: '',
+      custemail: '',
+      password: '',
+      confirmPassword: '',
     },
   })
 
+  const { mutate: signUp, isLoading, error } = useSignUp()
+
   // Defining a submit handler
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    const { confirmPassword, ...submitData } = values
+    console.log(submitData)
+    signUp(submitData)
   }
 
   const [open, setOpen] = React.useState(false)
@@ -164,7 +176,7 @@ export function SignUpForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
-          name='firstName'
+          name='custfirstname'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -179,7 +191,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='lastName'
+          name='custlastname'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -194,7 +206,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='address'
+          name='custaddress'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -209,7 +221,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='city'
+          name='custcity'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -226,7 +238,7 @@ export function SignUpForm() {
         {/*Province goes here*/}
         <FormField
           control={form.control}
-          name='province'
+          name='custprov'
           render={({ field }) => (
             <FormItem className='flex flex-col'>
               <FormLabel>Province</FormLabel>
@@ -284,7 +296,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='postalCode'
+          name='custpostal'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -301,7 +313,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='country'
+          name='custcountry'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -316,7 +328,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='homePhone'
+          name='custhomephone'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -333,7 +345,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='businessPhone'
+          name='custbusphone'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -350,7 +362,7 @@ export function SignUpForm() {
         />
 
         <FormField
-          name='emailAddress'
+          name='custemail'
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -364,6 +376,36 @@ export function SignUpForm() {
               <FormDescription>
                 Please provide your email address.
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name='password'
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type='password' placeholder={'secret'} {...field} />
+              </FormControl>
+              <FormDescription>Please provide your password</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name='confirmPassword'
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type='password' placeholder={'secret'} {...field} />
+              </FormControl>
+              <FormDescription>Please confirm your password</FormDescription>
               <FormMessage />
             </FormItem>
           )}
