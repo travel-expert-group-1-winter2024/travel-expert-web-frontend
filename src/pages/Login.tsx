@@ -1,5 +1,5 @@
+import { LoginForm } from '@/components/molecules/LoginForm'
 import React from 'react'
-import { LoginForm } from '../components/molecules/LoginForm.tsx'
 
 const LoginPage: React.FC = () => {
   return (
