@@ -24,7 +24,7 @@ export function PackageList() {
     sortBy,
     order,
   })
-  const packages = isLoading || error ? [] : data ?? []
+  const packages = isLoading || error ? [] : (data ?? [])
 
   const sortOptions = [
     { value: 'destination-asc', label: 'Destination (A-Z)' },
