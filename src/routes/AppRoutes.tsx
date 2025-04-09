@@ -6,6 +6,7 @@ import SignUpPage from '@/pages/SignUp.tsx'
 import Booking from '@/pages/account/Booking.tsx'
 import Profile from '@/pages/account/Profile.tsx'
 import TravelHistory from '@/pages/account/TravelHistory.tsx'
+import PrivateRoute from '@/routes/PrivateRoute.tsx'
 import { Route, Routes } from 'react-router-dom'
 import AccountLayout from '../layouts/AccountLayout.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
@@ -21,11 +22,14 @@ function AppRoutes() {
         <Route path='/contact' element={<Contact />} />
         <Route path='/packages' element={<PackageList />} />
         <Route path='/packages/:packageId' element={<PackageDetails />} />
-        <Route path='/account' element={<AccountLayout />}>
-          <Route path='profile' element={<Profile />} />
-          <Route path='booking' element={<Booking />} />
-          <Route path='travel-history' element={<TravelHistory />} />
+        <Route element={<PrivateRoute />}>
+          <Route path='/account' element={<AccountLayout />}>
+            <Route path='profile' element={<Profile />} />
+            <Route path='booking' element={<Booking />} />
+            <Route path='travel-history' element={<TravelHistory />} />
+          </Route>
         </Route>
+        {/* Other routes */}
       </Route>
     </Routes>
   )
