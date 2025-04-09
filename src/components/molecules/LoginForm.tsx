@@ -14,7 +14,15 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input'
+import { NavLink } from 'react-router-dom'
 
 //Using Zod to declare a schema for the LoginForm
 const formSchema = z.object({
@@ -34,7 +42,7 @@ const formSchema = z.object({
 
 //Defining the form
 export function LoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.infer>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
@@ -43,46 +51,65 @@ export function LoginForm() {
   })
 
   // Defining a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer) {
     console.log(values)
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={'space-y-8'}>
-        <FormField
-          name={'email'}
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder={'Email Address'} {...field} />
-              </FormControl>
-              <FormDescription>
-                Please login with your email address.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          name={'password'}
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder={'Password'} {...field} />
-              </FormControl>
-              <FormDescription>Please enter your password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type='submit'>Login</Button>
-      </form>
-    </Form>
+    <Card>
+      <CardHeader>
+        <CardTitle className='text-2xl'>Login to your account</CardTitle>
+        <CardDescription>
+          Enter your email below to login to your account
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className={'space-y-8'}>
+            <FormField
+              name={'email'}
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder={'Email Address'} {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Please login with your email address.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name={'password'}
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input placeholder={'Password'} {...field} />
+                  </FormControl>
+                  <FormDescription>Please enter your password.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className='flex flex-col gap-3'>
+              <Button type='submit' className='w-full'>
+                Login
+              </Button>
+            </div>
+            <div className='mt-4 text-center text-sm'>
+              Don&apos;t have an account?{' '}
+              <NavLink to={'/sign-up'} className='underline underline-offset-4'>
+                Sign up
+              </NavLink>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   )
 }
