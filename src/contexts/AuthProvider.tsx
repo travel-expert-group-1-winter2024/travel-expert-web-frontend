@@ -44,7 +44,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data)
         setToken(token)
         localStorage.setItem('site', token)
-        navigate('/account/profile')
+        navigate('/')
         callbacks?.onSuccess?.()
       },
       onError: (err) => {
