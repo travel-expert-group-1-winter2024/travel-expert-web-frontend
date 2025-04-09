@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 interface AuthContextType {
   user: User | null
   token: string
+  isLoggedIn: boolean
   loginAction: (
     data: LoginRequest,
     callbacks?: {
@@ -30,6 +31,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const mutation = useMutation({
     mutationFn: userLogin,
   })
+
+  const isLoggedIn = !!token
 
   const loginAction = (
     data: LoginRequest,
@@ -61,7 +64,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ token, user, loginAction, logOut }}>
+    <AuthContext.Provider
+      value={{ token, user, isLoggedIn, loginAction, logOut }}
+    >
       {children}
     </AuthContext.Provider>
   )

@@ -25,7 +25,7 @@ const navLinks = [
 ]
 
 function Navbar() {
-  const { user, logOut } = useAuth()
+  const { isLoggedIn, user, logOut } = useAuth()
   return (
     <header className='border-b p-4'>
       <div className='flex items-center justify-between'>
@@ -52,9 +52,12 @@ function Navbar() {
             </NavigationMenuList>
           </NavigationMenu>
 
-          {user ? (
+          {isLoggedIn ? (
             <div className='flex items-center gap-2'>
-              <AvatarWithDropDownMenu name={user.name} signOut={logOut} />
+              <AvatarWithDropDownMenu
+                name={user?.name ?? 'User'}
+                signOut={logOut}
+              />
             </div>
           ) : (
             <NavLink to={'/login'}>
