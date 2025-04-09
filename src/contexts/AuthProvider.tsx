@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 interface AuthContextType {
   user: User | null
   token: string
-  loginAction: (data: LoginRequest) => Promise<void>
+  loginAction: (data: LoginRequest) => void
   logOut: () => void
 }
 
@@ -35,14 +35,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   })
 
-  const loginAction = async (data: LoginRequest): Promise<void> => {
-    try {
-      // use mutation to login
-      await mutation.mutateAsync(data)
-    } catch (err) {
-      console.error(err)
-    }
-  }
+  const loginAction = (data: LoginRequest): void => mutation.mutate(data)
 
   const logOut = () => {
     setUser(null)
