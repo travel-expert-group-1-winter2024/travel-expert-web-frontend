@@ -24,6 +24,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from "@/hooks/useAuth.ts";
+import { toast } from "sonner";
 
 //Using Zod to declare a schema for the LoginForm
 const formSchema = z.object({
@@ -43,7 +44,7 @@ const formSchema = z.object({
 
 //Defining the form
 export function LoginForm() {
-  const auth = useAuth();
+  const { loginAction } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,10 +54,15 @@ export function LoginForm() {
   })
   // Defining a submit handler
   function onSubmit(values: z.infer<typeof formSchema>) {
-    auth.loginAction({
+    loginAction({
       username: values.email,
       password: values.password,
-    })
+    }, {onSuccess: () => {
+        toast.success('Logged in successfully!')
+      },
+      onError: (err) => {
+        toast.error(`Login failed: ${err.message}`)
+      }})
   }
 
   return (

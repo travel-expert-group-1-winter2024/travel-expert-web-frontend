@@ -9,7 +9,13 @@ import { useNavigate } from 'react-router-dom'
 interface AuthContextType {
   user: User | null
   token: string
-  loginAction: (data: LoginRequest) => void
+  loginAction: (
+    data: LoginRequest,
+    callbacks?: {
+      onSuccess?: () => void
+      onError?: (err: Error) => void
+    },
+  ) => void
   logOut: () => void
 }
 
@@ -23,19 +29,29 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   // create mutation for login
   const mutation = useMutation({
     mutationFn: userLogin,
-    onSuccess: (response) => {
-      const { data, token } = response.data
-      setUser(data)
-      setToken(token)
-      localStorage.setItem('site', token)
-      navigate('/account/profile')
-    },
-    onError: (error) => {
-      console.error('Login failed:', error)
-    },
   })
 
-  const loginAction = (data: LoginRequest): void => mutation.mutate(data)
+  const loginAction = (
+    data: LoginRequest,
+    callbacks?: {
+      onSuccess?: () => void
+      onError?: (err: Error) => void
+    },
+  ): void => {
+    mutation.mutate(data, {
+      onSuccess: (response) => {
+        const { data, token } = response.data
+        setUser(data)
+        setToken(token)
+        localStorage.setItem('site', token)
+        navigate('/account/profile')
+        callbacks?.onSuccess?.()
+      },
+      onError: (err) => {
+        callbacks?.onError?.(err)
+      },
+    })
+  }
 
   const logOut = () => {
     setUser(null)
