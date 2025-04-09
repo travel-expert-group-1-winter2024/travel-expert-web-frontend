@@ -2,3 +2,4 @@
 build
 coverage
 src/components/molecules/LoginForm.tsx
+src/components/molecules/SignUpForm.tsx
