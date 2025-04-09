@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Cloud, CloudRain, CloudSun, Sun, Thermometer } from 'lucide-react'
+import { useWeatherForecast } from '@/hooks/useWeatherForecast'
 
 interface WeatherDay {
   date: string
@@ -15,27 +16,7 @@ export function WeatherForecast({
   startDate: string
   destination: string
 }) {
-  // Mock data - replace with real API data later
-  const forecast: WeatherDay[] = [
-    {
-      date: startDate,
-      high: 28,
-      low: 18,
-      condition: 'sunny'
-    },
-    {
-      date: new Date(new Date(startDate).setDate(new Date(startDate).getDate() + 1)).toISOString(),
-      high: 25,
-      low: 17,
-      condition: 'partly-cloudy'
-    },
-    {
-      date: new Date(new Date(startDate).setDate(new Date(startDate).getDate() + 2)).toISOString(),
-      high: 22,
-      low: 16,
-      condition: 'rainy'
-    }
-  ]
+  const { forecast, loading, error } = useWeatherForecast(destination, startDate)
 
   const getWeatherIcon = (condition: string) => {
     switch (condition) {
@@ -50,6 +31,49 @@ export function WeatherForecast({
       default:
         return <Sun className="h-6 w-6" />
     }
+  }
+
+  if (loading) {
+    return (
+      <Card className="w-full mb-6 flex">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Thermometer className="h-5 w-5 text-orange-400" />
+            Loading {destination} Weather...
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="rounded-lg border p-4 animate-pulse">
+                <div className="h-6 w-3/4 bg-gray-200 rounded"></div>
+                <div className="mt-4 h-8 w-8 bg-gray-200 rounded-full"></div>
+                <div className="mt-4 flex justify-between">
+                  <div className="h-6 w-1/4 bg-gray-200 rounded"></div>
+                  <div className="h-6 w-1/4 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card className="w-full mb-6 flex">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Thermometer className="h-5 w-5 text-orange-400" />
+            Weather Forecast
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-red-500">{error}</div>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
@@ -75,8 +99,8 @@ export function WeatherForecast({
                 {getWeatherIcon(day.condition)}
               </div>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-2xl font-bold">{day.high}°</span>
-                <span className="text-muted-foreground">{day.low}°</span>
+                <span className="text-2xl font-bold">{Math.round(day.high)}°</span>
+                <span className="text-muted-foreground">{Math.round(day.low)}°</span>
               </div>
               <div className="mt-2 text-sm capitalize text-muted-foreground">
                 {day.condition.replace('-', ' ')}
