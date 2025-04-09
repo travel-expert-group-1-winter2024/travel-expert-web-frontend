@@ -4,7 +4,7 @@ import { LoginForm } from '../components/molecules/LoginForm.tsx'
 const LoginPage: React.FC = () => {
   return (
     // login
-    <div className='flex h-full w-full items-center justify-center p-6 md:p-10'>
+    <div className='flex h-screen w-full items-center justify-center p-6'>
       <div className='w-full max-w-sm'>
         <LoginForm />
       </div>
