@@ -343,7 +343,7 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type='password' placeholder={'secret'} {...field} />
+                  <Input type='password' placeholder={'Password'} {...field} />
                 </FormControl>
                 <FormDescription>Please provide your password</FormDescription>
                 <FormMessage />
@@ -358,7 +358,11 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input type='password' placeholder={'secret'} {...field} />
+                  <Input
+                    type='password'
+                    placeholder={'Confirm Password'}
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>Please confirm your password</FormDescription>
                 <FormMessage />

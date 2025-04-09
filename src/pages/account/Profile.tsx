@@ -1,8 +1,9 @@
-import { /*useEffect,*/ useRef, useState } from 'react'
-import defaultProfile from '/public/images/user-default-avatar.png'
+import defaultProfile from '@/assets/user-default-avatar.png'
 import { Customer } from '@/types/customer'
+import { /*useEffect,*/ useRef, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 // import { useCustomer } from '@/hooks/useCustomer.ts'
+import { EditIcon } from 'lucide-react'
 import 'react-toastify/dist/ReactToastify.css'
 import { z } from 'zod'
 
@@ -58,7 +59,9 @@ const Profile = () => {
   const [customer, setCustomer] = useState<Customer>(data)
   const [editMode, setEditMode] = useState(false)
   const [editedCustomer, setEditedCustomer] = useState<Customer>(data)
-  const [imagePreview, setImagePreview] = useState<string>(data.custProfilePic || defaultProfile)
+  const [imagePreview, setImagePreview] = useState<string>(
+    data.custProfilePic || defaultProfile,
+  )
   const [errors, setErrors] = useState<Partial<Record<CustomerKey, string>>>({})
 
   // useEffect(() => {
@@ -66,7 +69,6 @@ const Profile = () => {
   //   setEditedCustomer(data)
   //   setImagePreview(data.custProfilePic || defaultProfile )
   // }, [data])
-
 
   // if (isLoading) return <p>Loading...</p>
   // if (error) return <p>Error loading customer. Please try again later.</p>
@@ -82,7 +84,10 @@ const Profile = () => {
       const reader = new FileReader()
       reader.onloadend = () => {
         setImagePreview(reader.result as string)
-        setEditedCustomer(prev => ({ ...prev, custProfilePic: reader.result as string }))
+        setEditedCustomer((prev) => ({
+          ...prev,
+          custProfilePic: reader.result as string,
+        }))
       }
       reader.readAsDataURL(file)
     }
@@ -93,7 +98,7 @@ const Profile = () => {
       fileInputRef.current.value = ''
     }
     setImagePreview(defaultProfile)
-    setEditedCustomer(prev => ({ ...prev, custProfilePic: '' }))
+    setEditedCustomer((prev) => ({ ...prev, custProfilePic: '' }))
   }
 
   const handleSave = () => {
@@ -101,7 +106,7 @@ const Profile = () => {
     if (!validation.success) {
       const fieldErrors = validation.error.flatten().fieldErrors
       const formattedErrors = Object.fromEntries(
-        Object.entries(fieldErrors).map(([key, val]) => [key, val?.[0]])
+        Object.entries(fieldErrors).map(([key, val]) => [key, val?.[0]]),
       ) as Partial<Record<CustomerKey, string>>
       setErrors(formattedErrors)
       toast.error('Please fix the validation errors.')
@@ -120,11 +125,11 @@ const Profile = () => {
     setErrors({})
     setEditMode(false)
   }
-  
+
   const renderItem = (name: string, value: number | string | undefined) => (
     <div className='flex items-center'>
       <p className='w-[120px] text-sm text-gray-500'>{name}</p>
-      <p className='flex-1 bg-gray-50 py-1 px-3 text-lg font-semibold'>
+      <p className='flex-1 bg-gray-50 px-3 py-1 text-lg font-semibold'>
         {value}
       </p>
     </div>
@@ -206,7 +211,7 @@ const Profile = () => {
         {/* Action Buttons */}
         <div className='mt-8 flex justify-end gap-4'>
           {editMode ? (
-            <div className='border-t-1 flex-1 pt-4 flex justify-end gap-4'>
+            <div className='flex flex-1 justify-end gap-4 border-t-1 pt-4'>
               <button
                 onClick={handleCancel}
                 className='rounded-lg bg-gray-400 px-6 py-2 font-medium text-white hover:bg-gray-500'
@@ -225,7 +230,7 @@ const Profile = () => {
               onClick={() => setEditMode(true)}
               className='absolute top-2 right-2 w-10 cursor-pointer rounded-lg font-medium text-white'
             >
-              <img alt='edit' src='/public/images/edit.png' />
+              <EditIcon />
             </button>
           )}
         </div>

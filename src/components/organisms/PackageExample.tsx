@@ -23,10 +23,7 @@ function PackageExample() {
   const [selectedFilter, setSelectedFilter] = useState('All')
   const { data, isLoading, error } = usePackages()
 
-  if (isLoading) return <p>Loading...</p>
-  if (error) return <p>Error loading packages. Please try again later.</p>
-
-  const packages = data || []
+  const packages = isLoading || error ? [] : (data ?? [])
 
   return (
     <section id='packages' className='bg-secondary py-12'>
