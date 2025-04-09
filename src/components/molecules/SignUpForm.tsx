@@ -358,7 +358,11 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input type='password' placeholder={'Confirm Password'} {...field} />
+                  <Input
+                    type='password'
+                    placeholder={'Confirm Password'}
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>Please confirm your password</FormDescription>
                 <FormMessage />

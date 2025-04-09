@@ -22,9 +22,9 @@ import {
   CardTitle,
 } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/hooks/useAuth.ts'
 import { NavLink } from 'react-router-dom'
-import { useAuth } from "@/hooks/useAuth.ts";
-import { toast } from "sonner";
+import { toast } from 'sonner'
 
 //Using Zod to declare a schema for the LoginForm
 const formSchema = z.object({
@@ -44,7 +44,7 @@ const formSchema = z.object({
 
 //Defining the form
 export function LoginForm() {
-  const { loginAction } = useAuth();
+  const { loginAction } = useAuth()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,17 +52,23 @@ export function LoginForm() {
       password: '',
     },
   })
+
   // Defining a submit handler
   function onSubmit(values: z.infer<typeof formSchema>) {
-    loginAction({
-      username: values.email,
-      password: values.password,
-    }, {onSuccess: () => {
-        toast.success('Logged in successfully!')
+    loginAction(
+      {
+        username: values.email,
+        password: values.password,
       },
-      onError: (err) => {
-        toast.error(`Login failed: ${err.message}`)
-      }})
+      {
+        onSuccess: () => {
+          toast.success('Logged in successfully!')
+        },
+        onError: (err) => {
+          toast.error(`Login failed: ${err.message}`)
+        },
+      },
+    )
   }
 
   return (
