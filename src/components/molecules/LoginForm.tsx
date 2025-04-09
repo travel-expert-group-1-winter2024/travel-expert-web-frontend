@@ -23,25 +23,27 @@ import {
 } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from "@/hooks/useAuth.ts";
 
 //Using Zod to declare a schema for the LoginForm
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid Email Address' }).trim(),
   password: z
     .string()
-    .min(8, { message: 'Password must be at least 8 characters long' })
-    .regex(/[A-Z]/, {
-      message: 'Password must contain at least one uppercase letter',
-    })
-    .regex(/[0-9]/, { message: 'Password must contain at least one number' })
-    .regex(/[@$!%*?&]/, {
-      message: 'Password must contain at least one special character',
-    })
+    // .min(8, { message: 'Password must be at least 8 characters long' })
+    // .regex(/[A-Z]/, {
+    //   message: 'Password must contain at least one uppercase letter',
+    // })
+    // .regex(/[0-9]/, { message: 'Password must contain at least one number' })
+    // .regex(/[@$!%*?&]/, {
+    //   message: 'Password must contain at least one special character',
+    // })
     .trim(),
 })
 
 //Defining the form
 export function LoginForm() {
+  const auth = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,10 +51,12 @@ export function LoginForm() {
       password: '',
     },
   })
-
   // Defining a submit handler
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    auth.loginAction({
+      username: values.email,
+      password: values.password,
+    })
   }
 
   return (
@@ -89,7 +93,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder={'Password'} {...field} />
+                    <Input type='password' placeholder='Password' {...field} />
                   </FormControl>
                   <FormDescription>Please enter your password.</FormDescription>
                   <FormMessage />
