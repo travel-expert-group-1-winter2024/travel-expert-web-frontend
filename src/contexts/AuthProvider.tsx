@@ -1,19 +1,15 @@
 import { userLogin } from '@/api/authApi.ts'
+import { LoginRequest } from '@/types/auth.ts'
 import { User } from '@/types/loginResponse.ts'
 import { useMutation } from '@tanstack/react-query'
 import * as React from 'react'
 import { createContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-interface LoginData {
-  username: string
-  password: string
-}
-
 interface AuthContextType {
   user: User | null
   token: string
-  loginAction: (data: LoginData) => Promise<void>
+  loginAction: (data: LoginRequest) => Promise<void>
   logOut: () => void
 }
 
@@ -39,10 +35,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   })
 
-  const loginAction = async (data: LoginData): Promise<void> => {
+  const loginAction = async (data: LoginRequest): Promise<void> => {
     try {
       // use mutation to login
-      console.log(data)
       await mutation.mutateAsync(data)
     } catch (err) {
       console.error(err)
