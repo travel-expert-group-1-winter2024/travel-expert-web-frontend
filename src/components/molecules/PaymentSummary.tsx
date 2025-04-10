@@ -20,62 +20,75 @@ const PaymentSummary = ({ tripType, travellers }) => {
   }
 
   return (
-    <section className='container mx-auto max-w-7xl px-4 py-6 sm:px-6'>
-      <div className='flex flex-col gap-8'>
-        {/* Package Header */}
-        <div className='mb-6 xl:mb-8'>
-          <Badge variant='secondary' className='xl:text-sm'>
-            {packageDetails.destination}
-          </Badge>
-          <h1 className='mt-3 text-3xl font-bold tracking-tight xl:text-4xl'>
-            {packageDetails.pkgname}
-          </h1>
-        </div>
-
-        {/* Trip Details */}
-        <Card className='mb-6 xl:mb-8 xl:p-6'>
+    <section className='container mx-auto max-w-5xl px-4 py-8 sm:px-6'>
+    <div className='flex flex-col gap-10'>
+  
+      {/* Page Header */}
+      <div className='text-center'>
+        <h1 className='text-3xl font-bold tracking-tight sm:text-4xl'>Review Your Trip</h1>
+        <p className='mt-2 text-muted-foreground text-sm'>Please confirm the details below before proceeding to payment.</p>
+      </div>
+  
+      {/* Summary Cards */}
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+  
+        {/* Package Summary */}
+        <Card className='p-6'>
           <CardHeader>
-            <CardTitle className='xl:text-xl'>Trip Details</CardTitle>
+            <Badge variant='secondary' className='mb-2 text-sm'>{packageDetails.destination}</Badge>
+            <CardTitle className='text-xl font-semibold'>{packageDetails.pkgname}</CardTitle>
           </CardHeader>
-          <CardContent className='space-y-4 xl:space-y-6'>
-            <div className='flex items-center gap-4'>
-              <MapPin className='text-muted-foreground h-5 w-5' />
+          <CardContent className='space-y-4 mt-4'>
+            <div className='flex items-start gap-4'>
+              <MapPin className='h-5 w-5 text-muted-foreground mt-1' />
               <div>
-                <p className='text-muted-foreground text-sm'>Destination</p>
-                <p>{packageDetails.destination}</p>
+                <p className='text-sm text-muted-foreground'>Destination</p>
+                <p className='text-base'>{packageDetails.destination}</p>
               </div>
             </div>
-            <div className='flex items-center gap-4'>
-              <Calendar className='text-muted-foreground h-5 w-5' />
+            <div className='flex items-start gap-4'>
+              <Calendar className='h-5 w-5 text-muted-foreground mt-1' />
               <div>
-                <p className='text-muted-foreground text-sm'>Date</p>
-                <p>
+                <p className='text-sm text-muted-foreground'>Dates</p>
+                <p className='text-base'>
                   {new Date(packageDetails.pkgstartdate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}{' '}
-                  -{' '}
-                  {new Date(packageDetails.pkgenddate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
+                    month: 'short', day: 'numeric', year: 'numeric',
+                  })} - {new Date(packageDetails.pkgenddate).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric',
                   })}
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        {/* Customer and Trip Info */}
-        <div className='mb-6'>
-          <h3 className='text-xl font-bold'>Customer Info</h3>
-          <p className='text-sm text-muted-foreground'>Name: {customerDetails?.name}</p>
-          <p className='text-sm text-muted-foreground'>Trip Type: {typeOfTrip}</p>
-          <p className='text-sm text-muted-foreground'>Travellers: {travellers}</p>
-        </div>
+  
+        {/* Customer Summary */}
+        <Card className='p-6'>
+          <CardHeader>
+            <CardTitle className='text-xl font-semibold'>Customer Information</CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-4 mt-4'>
+            <div>
+              <p className='text-sm text-muted-foreground'>Name</p>
+              <p className='text-base'>{customerDetails?.name}</p>
+            </div>
+            <div>
+              <p className='text-sm text-muted-foreground'>Email</p>
+              <p className='text-base'>{customerDetails?.email}</p>
+            </div>
+            <div>
+              <p className='text-sm text-muted-foreground'>Trip Type</p>
+              <p className='text-base'>{typeOfTrip}</p>
+            </div>
+            <div>
+              <p className='text-sm text-muted-foreground'>Number of Travellers</p>
+              <p className='text-base'>{travellers}</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </section>
+    </div>
+  </section>  
   );
 };
 
