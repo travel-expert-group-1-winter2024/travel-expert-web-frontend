@@ -1,9 +1,10 @@
 import { useBookingDetails } from "@/hooks/useBookingDetail"
 import { bookingDetail } from "@/types/bookingDetail"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { useAuth } from "@/hooks/useAuth";
 
 function Booking() {
-  const customerId = 135;
+  const customerId:number = useAuth().user?.customerId || 0;
   const { data, isLoading, error } = useBookingDetails(customerId);
 
   if (isLoading) return <div>Loading booking details...</div>;

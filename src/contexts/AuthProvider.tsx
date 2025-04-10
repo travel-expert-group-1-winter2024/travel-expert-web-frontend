@@ -4,7 +4,7 @@ import { User } from '@/types/userInfo.ts'
 import { useMutation } from '@tanstack/react-query'
 import * as React from 'react'
 import { createContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
   user: User | null
@@ -26,6 +26,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState(localStorage.getItem('site') || '')
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const from = location.state?.from || '/' 
 
   // create mutation for login
   const mutation = useMutation({
@@ -45,7 +48,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data)
         setToken(token)
         localStorage.setItem('site', token)
-        navigate('/')
+        navigate(from, { replace: true })
         callbacks?.onSuccess?.()
       },
       onError: (err) => {
