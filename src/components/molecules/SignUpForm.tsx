@@ -329,7 +329,7 @@ export function SignUpForm() {
                   />
                 </FormControl>
                 <FormDescription>
-                  Please provide your email address.
+                  Keep in mind, this will also be your Username to log in
                 </FormDescription>
                 <FormMessage />
               </FormItem>

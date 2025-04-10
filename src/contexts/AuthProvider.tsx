@@ -73,8 +73,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     // if token is present, set it to state by
     const restoreUser = async () => {
       try {
-        const res = await authUser(token)
-        setToken(token)
+        const res = await authUser(storedToken)
+        setToken(storedToken)
         setUser(res.data.data)
       } catch (err) {
         console.error('Session restore failed:', err)

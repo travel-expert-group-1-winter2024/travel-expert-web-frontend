@@ -51,13 +51,10 @@ export const buildAddressSchema = z
     required_error: `Please provide a valid address.`,
     invalid_type_error: `The address format is incorrect. Ensure it includes the street number and valid street type`,
   })
-  .regex(
-    /^\d+\s[A-Za-z0-9\s]+(?:St|Ave|Rd|Blvd|Dr|Pl|Cres|Ln|Way|Terr|Trail|Court|Hwy)\.?$/,
-    {
-      message:
-        'The address must include a street number and type, like this: 1301 16 Ave NW',
-    },
-  )
+  .regex(/^\d+\s[A-Za-z0-9\s.,'-]+$/, {
+    message:
+      'The address must include a street number and type, like this: 1301 16 Ave NW',
+  })
   .trim()
 
 export const buildPostalCodeSchema = z
