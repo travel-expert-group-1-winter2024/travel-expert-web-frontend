@@ -10,7 +10,6 @@ interface BookingData {
 export const useCreateBooking = () => {
   return useMutation({
     mutationFn: async (bookingData: BookingData) => {
-      debugger
       const token = localStorage.getItem('site')?.toString();
       const response = await api.post('/api/bookings', bookingData, {
         headers: {
