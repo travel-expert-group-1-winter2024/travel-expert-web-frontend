@@ -1,4 +1,4 @@
-import api from '@/api/axios'
+import BookingFormCard from '@/components/molecules/BookingFormCard'
 import { LocationMap } from '@/components/molecules/LocationMap'
 import { ReviewCard } from '@/components/molecules/ReviewCard'
 import { WeatherForecast } from '@/components/molecules/WeatherForecast'
@@ -22,14 +22,14 @@ import {
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
+import { useAuth } from '@/hooks/useAuth'
 import { usePackageDetails } from '@/hooks/usePackageDetails'
 import { useRatings } from '@/hooks/useRatings'
 import { useSubmitRating } from '@/hooks/useSubmitRating'
 import { ratingsView } from '@/types/ratings'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Calendar, MapPin, Star } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function PackageDetails() {
   const { packageId } = useParams()
@@ -39,13 +39,22 @@ export default function PackageDetails() {
   const { data: ratingData } = useRatings(parsedPackageID!)
   const filteredRatings = ratingData || [];
 
-  const customerId = 130; //CustomerID to set According to the logged in customer
+  const customerId:number = useAuth().user?.customerId || 0;
   const { mutate: submitRating } = useSubmitRating()
   const [rating, setRating] = useState('5')
   const [comments, setComments] = useState('')
   const [submitting,setSubmitting] = useState(false);
+  const [showForm, setShowForm] = useState(false)
+  const navigate = useNavigate()
+  const { isLoggedIn } = useAuth();        
 
-
+  const handleBookNowClick = () => {
+    if (isLoggedIn == true) {
+      setShowForm(true)
+    } else {
+      navigate('/login', { state: { from: location.pathname } }) 
+    }
+  }
   //Submit function of Ratings
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -119,8 +128,8 @@ export default function PackageDetails() {
             <div className='mt-2 flex items-center gap-4'>
               <div className='flex items-center gap-1'>
                 <Star className='h-5 w-5 fill-yellow-400 text-yellow-400' />
-                <span className='font-medium'>4.8</span>
-                <span className='text-muted-foreground'>(24 reviews)</span>
+                <span className='font-medium'>{getAvarageRating()}</span>
+                <span className='text-muted-foreground'>({filteredRatings.length} reviews)</span>
               </div>
             </div>
           </div>
@@ -198,12 +207,19 @@ export default function PackageDetails() {
               </div>
             </CardContent>
             <CardFooter className='flex gap-3'>
-              <Button className='flex-1'>Book Now</Button>
+            <Button className='flex-1' onClick={() => handleBookNowClick()}>
+              Book Now
+              </Button>
               <Button variant='outline' className='flex-1'>
                 Reserve Now (Hold for 24 Hours){' '}
               </Button>
             </CardFooter>
+
+            
           </Card>
+          {useAuth().isLoggedIn && showForm && (
+        <BookingFormCard onCancel={() => setShowForm(false) } />
+        )}
         </div>
       </div>
 
@@ -290,6 +306,7 @@ export default function PackageDetails() {
     </Card>
       </div>
     </section>
+    
   )
 
   function getAvarageRating(){
@@ -300,7 +317,7 @@ export default function PackageDetails() {
       sum+=r;
       avgRating = sum/getOnlyRating.length;
     });
-    return avgRating.toFixed(2);
+    return avgRating.toFixed(1);
   }
 }
 

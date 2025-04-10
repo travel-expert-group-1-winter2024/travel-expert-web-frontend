@@ -11,6 +11,7 @@ import { Route, Routes } from 'react-router-dom'
 import AccountLayout from '../layouts/AccountLayout.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
 import Home from '../pages/Home.tsx'
+import PaymentsPage from '@/pages/Payments.tsx'
 
 function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ function AppRoutes() {
             <Route path='booking' element={<Booking />} />
             <Route path='travel-history' element={<TravelHistory />} />
           </Route>
+          <Route path='/payment/:packageId' element={<PaymentsPage />} />
         </Route>
         {/* Other routes */}
       </Route>
