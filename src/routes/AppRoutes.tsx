@@ -12,6 +12,7 @@ import AccountLayout from '../layouts/AccountLayout.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
 import Home from '../pages/Home.tsx'
 import PaymentsPage from '@/pages/Payments.tsx'
+import BookingConfirmationPage from '@/pages/BookingConfirmation.tsx'
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
             <Route path='travel-history' element={<TravelHistory />} />
           </Route>
           <Route path='/payment/:packageId' element={<PaymentsPage />} />
+          <Route path='/bookingconfirmation' element={<BookingConfirmationPage />} />
         </Route>
         {/* Other routes */}
       </Route>

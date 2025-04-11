@@ -15,17 +15,15 @@ const PaymentsPage = () => {
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const stripePromise = loadStripe(stripeKeys.publishable)
   const { mutate: costBreakdown, data: costSummaryData } = useCostSummary()
-  // const hasRun = useRef(false)
-  // const [costSummary, setCostSummary] = useState<costSummary | null>(null);
 
   useEffect(() => {
-    // Trigger the cost summary calculation using mutate
     if (tripType && travellers && validPackageId) {
       const paymentData = {
         tripTypeId: tripType || 'B',
         travelerCount: travellers || 1,
         packageId: validPackageId,
-      }
+        paymentMethod: "STRIPE"
+      };
 
       costBreakdown(paymentData)
     }
@@ -35,7 +33,7 @@ const PaymentsPage = () => {
     if (costSummaryData && costSummaryData.data) {
       // Create payment intent after cost summary is available
       const costData = costSummaryData.data
-      const total = Math.round(costData.total) // Stripe expects amount in cents
+      const total = Math.round(costData.total);
 
       const createPaymentIntent = async () => {
         try {
