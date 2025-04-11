@@ -1,14 +1,25 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { useCustomerById } from '@/hooks/useCustomer.ts'
+import { useEmail } from '@/hooks/useEmail.ts'
 import { useStompClient } from '@/hooks/useStompClient.ts'
 import { useUserIdByReference } from '@/hooks/useUserIdByReference.ts'
 import { MessageCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 const ChatWidget = () => {
   const { user, isLoggedIn } = useAuth()
-
   const customerId = user?.customerId ?? -1
   const senderUserId = user?.id ?? ''
 
@@ -22,9 +33,18 @@ const ChatWidget = () => {
   const { messages, sendMessage } = useStompClient(senderUserId)
 
   const [isOpen, setIsOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const [newMessage, setNewMessage] = useState('')
 
-  if (!isLoggedIn) return null
+  const { mutate: sendEmail, isSuccess, isError } = useEmail()
+
+  useEffect(() => {
+    // Handle success and error toasts for email sending
+    if (isSuccess) toast.success('Email sent successfully.')
+    if (isError) toast.error('Failed to send email.')
+  }, [isSuccess, isError])
+
+  if (!isLoggedIn || !user) return null
 
   if (customerError) {
     console.error('Error fetching customer data:', customerError)
@@ -48,7 +68,33 @@ const ChatWidget = () => {
     setNewMessage('')
   }
 
-  const handleEndConversation = () => {}
+  const handleEndConversation = () => {
+    if (!user.email) {
+      console.error('User email is undefined')
+      return
+    }
+
+    sendMessage(
+      receiverId,
+      '[Conversation ended. User requested email summary]',
+    )
+
+    const formattedMessage = messages
+      .map(
+        (msg) =>
+          `${msg.senderId === senderUserId ? 'You' : 'Agent'}: ${msg.content}`,
+      )
+      .join('<br/>')
+
+    sendEmail({
+      to: user.email,
+      subject: 'Your chat transcript',
+      body: formattedMessage,
+    })
+
+    setDialogOpen(false)
+    setIsOpen(false)
+  }
 
   return (
     <div className='fixed right-6 bottom-6 z-50 text-right'>
@@ -88,7 +134,7 @@ const ChatWidget = () => {
             </Button>
           </div>
           <Button
-            onClick={handleEndConversation}
+            onClick={() => setDialogOpen(true)}
             disabled={messages.length === 0}
             className='mt-2 rounded-lg border border-red-500 bg-white px-4 py-2 text-sm text-red-500 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50'
           >
@@ -96,7 +142,6 @@ const ChatWidget = () => {
           </Button>
         </div>
       )}
-
       {/* Chat Toggle Button */}
       <Button
         onClick={handleToggle}
@@ -105,6 +150,23 @@ const ChatWidget = () => {
       >
         <MessageCircle size={24} />
       </Button>
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>End this conversation?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Do you want to receive the chat history via email before ending
+              this session?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleEndConversation}>
+              End Chat
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
