@@ -1,4 +1,4 @@
-import { getUserIdByReference } from '@/api/customerApi.ts'
+import { getUserIdByReference } from '@/api/userApi.ts'
 import { useQuery } from '@tanstack/react-query'
 
 export const useUserIdByReference = (customerId?: number, agentId?: number) => {
