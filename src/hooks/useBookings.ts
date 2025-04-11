@@ -26,11 +26,12 @@ export const useCreateBooking = () => {
       return response.data
     },
     onSuccess: (data) => {
-      navigate(`/bookingconfirmation`,
-        {
-          state: { bookingdata:data  }
-        })
-      console.log('Booking successful:', data)
+      if(bookingdata){
+        navigate(`/bookingconfirmation`,
+          {
+            state: { bookingdata:data  }
+          })
+      }
     },
     onError: (error) => {
       console.error('Booking failed:', error)
