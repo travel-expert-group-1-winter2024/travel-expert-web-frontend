@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button.tsx'
 import { MessageCircle } from 'lucide-react'
 import { useState } from 'react'
 
@@ -50,24 +51,24 @@ const ChatWidget = () => {
               className='flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm'
               placeholder='Type a message...'
             />
-            <button
+            <Button
               onClick={handleSend}
-              className='rounded-lg bg-blue-500 px-4 py-2 text-sm text-white'
+              className='rounded-lg bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-400'
             >
               Send
-            </button>
+            </Button>
           </div>
         </div>
       )}
 
       {/* Chat Toggle Button */}
-      <button
+      <Button
         onClick={handleToggle}
         className='cursor-pointer rounded-full bg-blue-500 p-3 text-white shadow-lg hover:bg-blue-600'
         aria-label='Toggle chat'
       >
         <MessageCircle size={24} />
-      </button>
+      </Button>
     </div>
   )
 }
