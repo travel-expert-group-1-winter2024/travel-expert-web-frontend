@@ -8,23 +8,23 @@ import { useState } from 'react'
 
 const ChatWidget = () => {
   const { user, isLoggedIn } = useAuth()
+
   const customerId = user?.customerId ?? -1
   const senderUserId = user?.id ?? ''
 
   const { data: customerData, error: customerError } =
     useCustomerById(customerId)
-
   const agentId = customerData?.agentId ?? -1
-
   const { data: receiverUser, error: receiverError } = useUserIdByReference(
     undefined,
     agentId,
   )
-
   const { messages, sendMessage } = useStompClient(senderUserId)
 
   const [isOpen, setIsOpen] = useState(false)
   const [newMessage, setNewMessage] = useState('')
+
+  if (!isLoggedIn) return null
 
   if (customerError) {
     console.error('Error fetching customer data:', customerError)
@@ -37,8 +37,6 @@ const ChatWidget = () => {
   }
 
   const receiverId = receiverUser?.data.userId ?? ''
-
-  if (!isLoggedIn) return null
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev)
