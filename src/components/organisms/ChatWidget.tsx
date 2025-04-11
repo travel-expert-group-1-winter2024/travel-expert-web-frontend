@@ -1,13 +1,28 @@
 import { Button } from '@/components/ui/button.tsx'
+import { useAuth } from '@/hooks/useAuth.ts'
+import { useCustomerById } from '@/hooks/useCustomer.ts'
+import { useStompClient } from '@/hooks/useStompClient.ts'
 import { MessageCircle } from 'lucide-react'
 import { useState } from 'react'
 
 const ChatWidget = () => {
+  const { user, isLoggedIn } = useAuth()
+  const customerId = user?.customerId ?? -1
+
+  const { data: customerData, error } = useCustomerById(customerId)
+  const { messages, sendMessage } = useStompClient(customerId)
+
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState([
-    { sender: 'agent', text: 'Hi! How can I help you today?' },
-  ])
   const [newMessage, setNewMessage] = useState('')
+
+  if (error) {
+    console.error('Error fetching customer data:', error)
+    return null
+  }
+
+  if (!isLoggedIn) return null
+
+  const receiverId = customerData?.agentId ?? -1
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev)
@@ -15,9 +30,7 @@ const ChatWidget = () => {
 
   const handleSend = () => {
     if (!newMessage.trim()) return
-
-    const userMessage = { sender: 'user', text: newMessage.trim() }
-    setMessages((prev) => [...prev, userMessage])
+    sendMessage(receiverId, newMessage.trim())
     setNewMessage('')
   }
 
@@ -33,12 +46,12 @@ const ChatWidget = () => {
               <div
                 key={i}
                 className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
-                  msg.sender === 'user'
+                  msg.senderId === customerId
                     ? 'ml-auto self-end bg-blue-100 text-right'
                     : 'self-start bg-gray-100 text-left'
                 }`}
               >
-                {msg.text}
+                {msg.content}
               </div>
             ))}
           </div>
