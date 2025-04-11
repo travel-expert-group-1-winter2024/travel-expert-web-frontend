@@ -7,6 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { useAuth } from '@/hooks/useAuth'
+import { usePackageDetails } from '@/hooks/usePackageDetails'
 import {
   BadgeCheck,
   CalendarDays,
@@ -14,23 +16,28 @@ import {
   MapPin,
   UserRound,
 } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
 
 // Dummy data - replace with your actual booking data and payment summary
-const dummyBooking = {
-  id: 'BK-2025-05678',
-  customerName: 'Alex Johnson',
-  customerEmail: 'TEST_WITH_YOUR_EMAIL',
-  bookingDate: new Date().toISOString(),
-  startDate: '2025-05-14T00:00:00',
-  endDate: '2025-05-28T00:00:00',
-  totalAmount: 2800,
-  paymentMethod: 'Credit Card (•••• 4242)',
-  tourName: 'Asian Expedition',
-  departureLocation: 'New York, USA',
-  referenceNumber: 'PAY-789456123',
-}
+
 
 export default function BookingConfirmationPage() {
+  const { bookingdata } = useLocation().state || {};
+  const { data: pkg } = usePackageDetails(bookingdata.data.packageId!)
+  debugger
+  const dummyBooking = {
+    id: (bookingdata.data.bookingId).toString(),
+    customerName: useAuth().user?.name || "",
+    customerEmail: useAuth().user?.email || "",
+    bookingDate: new Date().toISOString(),
+    startDate: pkg?.pkgstartdate,
+    endDate: pkg?.pkgenddate,
+    totalAmount: bookingdata.data.finalPrice,
+    paymentMethod: 'Credit Card (•••• 4242)', // Hard coded for now
+    tourName: pkg?.pkgname,
+    departureLocation: 'Calgary,Alberta', // Hard coded for now
+    referenceNumber: 'PAY-789456123',  // Hard coded for now
+  }
   return (
     <div className='container mx-auto px-4 py-8 sm:px-6 lg:px-8'>
       <div className='mx-auto max-w-4xl space-y-6'>

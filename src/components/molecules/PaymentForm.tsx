@@ -58,6 +58,8 @@ const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
             tripTypeId: tripType || 'B',
             travelerCount: travellers || 1,
             packageId: validPackageId,
+            paymentMethod:"STRIPE",
+            paymentId:result.paymentIntent.id
           })
         }
       }
