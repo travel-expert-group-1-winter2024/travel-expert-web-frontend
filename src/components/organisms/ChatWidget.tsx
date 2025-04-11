@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { MessageCircle } from 'lucide-react'
+import { useState } from 'react'
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -9,60 +9,50 @@ const ChatWidget = () => {
   const [newMessage, setNewMessage] = useState('')
 
   const handleToggle = () => {
-    setIsOpen(prev => !prev)
+    setIsOpen((prev) => !prev)
   }
 
   const handleSend = () => {
     if (!newMessage.trim()) return
 
     const userMessage = { sender: 'user', text: newMessage.trim() }
-    setMessages(prev => [...prev, userMessage])
+    setMessages((prev) => [...prev, userMessage])
     setNewMessage('')
-
-    // 👇 Mock auto-response from agent after delay
-    setTimeout(() => {
-      const agentReplies = [
-        "Thanks for your message!",
-        "Let me check that for you.",
-        "One moment please...",
-        "Can you provide more details?",
-      ]
-      const randomReply = agentReplies[Math.floor(Math.random() * agentReplies.length)]
-      setMessages(prev => [...prev, { sender: 'agent', text: randomReply }])
-    }, 1500)
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 text-right">
+    <div className='fixed right-6 bottom-6 z-50 text-right'>
       {isOpen && (
-        <div className="bg-white w-80 rounded-lg shadow-lg p-4 mb-2 flex flex-col justify-between h-96">
-          <h4 className="font-semibold text-blue-600 mb-2 text-left">Chat with Agent</h4>
-          <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+        <div className='mb-2 flex h-96 w-80 flex-col justify-between rounded-lg bg-white p-4 shadow-lg'>
+          <h4 className='mb-2 text-left font-semibold text-blue-600'>
+            Chat with Agent
+          </h4>
+          <div className='flex-1 space-y-2 overflow-y-auto pr-1'>
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`max-w-[75%] px-3 py-2 rounded-lg text-sm ${
+                className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
                   msg.sender === 'user'
-                    ? 'bg-blue-100 self-end ml-auto text-right'
-                    : 'bg-gray-100 self-start text-left'
+                    ? 'ml-auto self-end bg-blue-100 text-right'
+                    : 'self-start bg-gray-100 text-left'
                 }`}
               >
                 {msg.text}
               </div>
             ))}
           </div>
-          <div className="mt-2 flex gap-2 items-center">
+          <div className='mt-2 flex items-center gap-2'>
             <input
-              type="text"
+              type='text'
               value={newMessage}
-              onChange={e => setNewMessage(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSend()}
-              className="flex-1 border border-gray-300 px-3 py-2 rounded-lg text-sm"
-              placeholder="Type a message..."
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              className='flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm'
+              placeholder='Type a message...'
             />
             <button
               onClick={handleSend}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm"
+              className='rounded-lg bg-blue-500 px-4 py-2 text-sm text-white'
             >
               Send
             </button>
@@ -73,8 +63,8 @@ const ChatWidget = () => {
       {/* Chat Toggle Button */}
       <button
         onClick={handleToggle}
-        className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 shadow-lg cursor-pointer"
-        aria-label="Toggle chat"
+        className='cursor-pointer rounded-full bg-blue-500 p-3 text-white shadow-lg hover:bg-blue-600'
+        aria-label='Toggle chat'
       >
         <MessageCircle size={24} />
       </button>
