@@ -19,6 +19,7 @@ const data: Customer = {
   custProv: 'AB',
   custPostal: 'T2X 1A4',
   custCountry: 'Canada',
+  agentId: 1,
   points: 300,
   balance: 125.75,
   custProfilePic: '',
