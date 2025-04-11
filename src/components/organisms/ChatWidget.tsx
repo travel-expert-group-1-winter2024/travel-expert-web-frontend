@@ -63,7 +63,7 @@ const ChatWidget = () => {
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+                className={`w-fit max-w-[75%] rounded-lg px-3 py-2 text-sm ${
                   msg.senderId === senderUserId
                     ? 'ml-auto self-end bg-blue-100 text-right'
                     : 'self-start bg-gray-100 text-left'
