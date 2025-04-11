@@ -3,11 +3,11 @@ import { Client } from '@stomp/stompjs'
 import { useEffect, useRef, useState } from 'react'
 
 type ChatMessage = {
-  senderId: number
+  senderId: string
   content: string
 }
 
-export const useStompClient = (customerId: number) => {
+export const useStompClient = (customerId: string) => {
   const [connected, setConnected] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const clientRef = useRef<Client>(null)
@@ -40,7 +40,7 @@ export const useStompClient = (customerId: number) => {
     }
   }, [customerId])
 
-  const sendMessage = (receiverId: number, content: string) => {
+  const sendMessage = (receiverId: string, content: string) => {
     const stompClient = clientRef.current
     if (stompClient && stompClient.connected) {
       stompClient.publish({

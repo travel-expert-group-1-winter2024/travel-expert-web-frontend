@@ -2,27 +2,43 @@ import { Button } from '@/components/ui/button.tsx'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { useCustomerById } from '@/hooks/useCustomer.ts'
 import { useStompClient } from '@/hooks/useStompClient.ts'
+import { useUserIdByReference } from '@/hooks/useUserIdByReference.ts'
 import { MessageCircle } from 'lucide-react'
 import { useState } from 'react'
 
 const ChatWidget = () => {
   const { user, isLoggedIn } = useAuth()
   const customerId = user?.customerId ?? -1
+  const senderUserId = user?.id ?? ''
 
-  const { data: customerData, error } = useCustomerById(customerId)
-  const { messages, sendMessage } = useStompClient(customerId)
+  const { data: customerData, error: customerError } =
+    useCustomerById(customerId)
+
+  const agentId = customerData?.agentId ?? -1
+
+  const { data: receiverUser, error: receiverError } = useUserIdByReference(
+    undefined,
+    agentId,
+  )
+
+  const { messages, sendMessage } = useStompClient(senderUserId)
 
   const [isOpen, setIsOpen] = useState(false)
   const [newMessage, setNewMessage] = useState('')
 
-  if (error) {
-    console.error('Error fetching customer data:', error)
+  if (customerError) {
+    console.error('Error fetching customer data:', customerError)
     return null
   }
 
-  if (!isLoggedIn) return null
+  if (receiverError) {
+    console.error('Error fetching receiver user by reference:', receiverError)
+    return null
+  }
 
-  const receiverId = customerData?.agentId ?? -1
+  const receiverId = receiverUser?.data.userId ?? ''
+
+  if (!isLoggedIn) return null
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev)
@@ -46,7 +62,7 @@ const ChatWidget = () => {
               <div
                 key={i}
                 className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
-                  msg.senderId === customerId
+                  msg.senderId === senderUserId
                     ? 'ml-auto self-end bg-blue-100 text-right'
                     : 'self-start bg-gray-100 text-left'
                 }`}
