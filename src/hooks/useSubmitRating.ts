@@ -1,11 +1,11 @@
 import api from '@/api/axios'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 
 export const useSubmitRating = () => {
-  const queryClient = useQueryClient()
+  // const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (ratingData: {
-      packageId: any
+      packageId: string | undefined
       customerId: number
       rating: number
       comments: string
@@ -13,8 +13,7 @@ export const useSubmitRating = () => {
       const response = await api.post('/api/ratings', ratingData)
       return response.data
     },
-    onSuccess: () => {
-    },
+    onSuccess: () => {},
     onError: (error) => {
       console.error('Error submitting rating:', error)
     },

@@ -28,55 +28,63 @@ import { useRatings } from '@/hooks/useRatings'
 import { useSubmitRating } from '@/hooks/useSubmitRating'
 import { ratingsView } from '@/types/ratings'
 import { Calendar, MapPin, Star } from 'lucide-react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function PackageDetails() {
   const { packageId } = useParams()
-  
-  const parsedPackageID : any = packageId ? parseInt(packageId) : null
-  const { data: pkg, isLoading: isPackageLoading, error: packageError } = usePackageDetails(packageId!)
-  const { data: ratingData } = useRatings(parsedPackageID!)
-  const filteredRatings = ratingData || [];
 
-  const customerId:number = useAuth().user?.customerId || 0;
+  const parsedPackageID: number | null = packageId ? parseInt(packageId) : null
+  const {
+    data: pkg,
+    isLoading: isPackageLoading,
+    error: packageError,
+  } = usePackageDetails(packageId!)
+  const { data: ratingData } = useRatings(parsedPackageID!)
+  const filteredRatings = ratingData || []
+
+  const customerId: number = useAuth().user?.customerId || 0
   const { mutate: submitRating } = useSubmitRating()
   const [rating, setRating] = useState('5')
   const [comments, setComments] = useState('')
-  const [submitting,setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const navigate = useNavigate()
-  const { isLoggedIn } = useAuth();        
+  const { isLoggedIn } = useAuth()
 
   const handleBookNowClick = () => {
     if (isLoggedIn == true) {
       setShowForm(true)
     } else {
-      navigate('/login', { state: { from: location.pathname } }) 
+      navigate('/login', { state: { from: location.pathname } })
     }
   }
   //Submit function of Ratings
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    setSubmitting(true);
-    submitRating({
-      packageId,
-      customerId,
-      rating: parseInt(rating),
-      comments
-    }, {
-      onSuccess: (newRating) => {
-        setRating('5');
-        setComments('');
-        setSubmitting(false); // Reset submitting state
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setSubmitting(true)
+    submitRating(
+      {
+        packageId,
+        customerId,
+        rating: parseInt(rating),
+        comments,
       },
-      onError: () => {
-        setSubmitting(false); // Reset submitting state on error
-      }
-    })
+      {
+        onSuccess: () => {
+          setRating('5')
+          setComments('')
+          setSubmitting(false) // Reset submitting state
+        },
+        onError: () => {
+          setSubmitting(false) // Reset submitting state on error
+        },
+      },
+    )
   }
 
-  if (isPackageLoading) return <div className='py-12 text-center'>Loading...</div>
+  if (isPackageLoading)
+    return <div className='py-12 text-center'>Loading...</div>
   if (packageError)
     return (
       <div className='py-12 text-center text-red-500'>
@@ -129,7 +137,9 @@ export default function PackageDetails() {
               <div className='flex items-center gap-1'>
                 <Star className='h-5 w-5 fill-yellow-400 text-yellow-400' />
                 <span className='font-medium'>{getAvarageRating()}</span>
-                <span className='text-muted-foreground'>({filteredRatings.length} reviews)</span>
+                <span className='text-muted-foreground'>
+                  ({filteredRatings.length} reviews)
+                </span>
               </div>
             </div>
           </div>
@@ -207,19 +217,17 @@ export default function PackageDetails() {
               </div>
             </CardContent>
             <CardFooter className='flex gap-3'>
-            <Button className='flex-1' onClick={() => handleBookNowClick()}>
-              Book Now
+              <Button className='flex-1' onClick={() => handleBookNowClick()}>
+                Book Now
               </Button>
               <Button variant='outline' className='flex-1'>
                 Reserve Now (Hold for 24 Hours){' '}
               </Button>
             </CardFooter>
-
-            
           </Card>
-          {useAuth().isLoggedIn && showForm && (
-        <BookingFormCard onCancel={() => setShowForm(false) } />
-        )}
+          {isLoggedIn && showForm && (
+            <BookingFormCard onCancel={() => setShowForm(false)} />
+          )}
         </div>
       </div>
 
@@ -233,7 +241,9 @@ export default function PackageDetails() {
         <Card>
           <CardHeader>
             <CardTitle>Customer Reviews</CardTitle>
-            <CardDescription>{getAvarageRating()} average from {filteredRatings.length} reviews</CardDescription>
+            <CardDescription>
+              {getAvarageRating()} average from {filteredRatings.length} reviews
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {/* Rating Breakdown */}
@@ -260,11 +270,13 @@ export default function PackageDetails() {
             <div className='space-y-6'>
               {filteredRatings.map((r: ratingsView) => (
                 <ReviewCard
-                  name={r.custfirstname + " " + r.custlastname}
+                  name={r.custfirstname + ' ' + r.custlastname}
                   rating={r.rating}
                   // date='2 weeks ago'
                   // avatar='https://randomuser.me/api/portraits/women/44.jpg'
-                  comment={r.comments} date={''}              />
+                  comment={r.comments}
+                  date={''}
+                />
               ))}
             </div>
           </CardContent>
@@ -272,53 +284,49 @@ export default function PackageDetails() {
 
         {/* Review Form */}
         <Card className='mt-6'>
-      <CardHeader>
-        <CardTitle>Share Your Experience</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form className='space-y-4' onSubmit={handleSubmit}>
-          <RadioGroup
-            value={rating}
-            onValueChange={setRating}
-            className='flex gap-1'
-          >
-            {[1, 2, 3, 4, 5].map((value) => (
-              <div key={value} className='flex items-center space-x-2'>
-                <RadioGroupItem value={value.toString()} id={`r${value}`} />
-                <Label htmlFor={`r${value}`} className='flex items-center gap-1'>
-                  <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
-                  {value}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-          <Textarea
-            placeholder='Share your thoughts...'
-            className='min-h-[120px]'
-            value={comments}
-            onChange={(e) => setComments(e.target.value)}
-          />
-          <Button type='submit' disabled={ submitting || !comments.trim()}>
-            {submitting ? 'Submitting...' : 'Submit Review'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+          <CardHeader>
+            <CardTitle>Share Your Experience</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className='space-y-4' onSubmit={handleSubmit}>
+              <RadioGroup
+                value={rating}
+                onValueChange={setRating}
+                className='flex gap-1'
+              >
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <div key={value} className='flex items-center space-x-2'>
+                    <RadioGroupItem value={value.toString()} id={`r${value}`} />
+                    <Label
+                      htmlFor={`r${value}`}
+                      className='flex items-center gap-1'
+                    >
+                      <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
+                      {value}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+              <Textarea
+                placeholder='Share your thoughts...'
+                className='min-h-[120px]'
+                value={comments}
+                onChange={(e) => setComments(e.target.value)}
+              />
+              <Button type='submit' disabled={submitting || !comments.trim()}>
+                {submitting ? 'Submitting...' : 'Submit Review'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </section>
-    
   )
 
-  function getAvarageRating(){
-    let getOnlyRating:any = filteredRatings.map(r=>r.rating);
-    let sum = 0;
-    let avgRating=0;
-    getOnlyRating.forEach((r:any) => {
-      sum+=r;
-      avgRating = sum/getOnlyRating.length;
-    });
-    return avgRating.toFixed(1);
+  function getAvarageRating(): string {
+    const ratings = filteredRatings.map((r) => r.rating)
+    const sum = ratings.reduce((acc, curr) => acc + curr, 0)
+    const avg = ratings.length ? sum / ratings.length : 0
+    return avg.toFixed(1)
   }
 }
-
-
