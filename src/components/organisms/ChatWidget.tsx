@@ -50,6 +50,8 @@ const ChatWidget = () => {
     setNewMessage('')
   }
 
+  const handleEndConversation = () => {}
+
   return (
     <div className='fixed right-6 bottom-6 z-50 text-right'>
       {isOpen && (
@@ -87,6 +89,13 @@ const ChatWidget = () => {
               Send
             </Button>
           </div>
+          <Button
+            onClick={handleEndConversation}
+            disabled={messages.length === 0}
+            className='mt-2 rounded-lg border border-red-500 bg-white px-4 py-2 text-sm text-red-500 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50'
+          >
+            End Conversation
+          </Button>
         </div>
       )}
 
