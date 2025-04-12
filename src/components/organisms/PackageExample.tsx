@@ -50,8 +50,8 @@ function PackageExample() {
 
   return (
     <section id='packages' className='bg-secondary py-12'>
-      <div className='flex flex-col items-center justify-center gap-4 px-5 md:flex-row xl:gap-10'>
-        <div className='flex flex-col'>
+      <div className='flex flex-col items-center justify-center gap-4 md:flex-row xl:gap-10 xl:px-5'>
+        <div className='flex flex-col xl:px-9'>
           <div className='text-center'>
             <p className='mb-2 text-sm tracking-widest text-gray-400 uppercase'>
               Explore Destinations
@@ -76,7 +76,7 @@ function PackageExample() {
             ))}
           </div>
         </div>
-        <div className='w-full max-w-sm px-2 md:max-w-2xl lg:max-w-5xl'>
+        <div className='w-full max-w-sm px-2 md:max-w-2xl lg:max-w-5xl xl:mr-6'>
           <Carousel
             opts={{
               align: 'start',
