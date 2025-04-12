@@ -8,4 +8,5 @@ export interface Package {
   pkgagencycommission: number
   destination: string
   photoURL?: string
+  tags?: string[]
 }
