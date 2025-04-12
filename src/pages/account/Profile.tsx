@@ -1,82 +1,75 @@
 import defaultProfile from '@/assets/user-default-avatar.png'
+import { useAuth } from '@/hooks/useAuth'
+import { useCustomerById } from '@/hooks/useCustomer'
 import { Customer } from '@/types/customer'
-import { /*useEffect,*/ useRef, useState } from 'react'
-import { toast, ToastContainer } from 'react-toastify'
-// import { useCustomer } from '@/hooks/useCustomer.ts'
 import { EditIcon } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { z } from 'zod'
-
-const data: Customer = {
-  customerId: 105,
-  custFirstName: 'Elahe',
-  custLastName: 'Vafai',
-  custEmail: 'elahe@example.com',
-  custBusPhone: '403-555-1234',
-  custHomePhone: '403-555-5678',
-  custAddress: '123 Main St',
-  custCity: 'Calgary',
-  custProv: 'AB',
-  custPostal: 'T2X 1A4',
-  custCountry: 'Canada',
-  agentId: 1,
-  points: 300,
-  balance: 125.75,
-  custProfilePic: '',
-}
 
 type CustomerKey = keyof Customer
 
 const fields: { label: string; name: CustomerKey }[] = [
-  { label: 'First Name', name: 'custFirstName' },
-  { label: 'Last Name', name: 'custLastName' },
-  { label: 'Email', name: 'custEmail' },
-  { label: 'Business Phone', name: 'custBusPhone' },
-  { label: 'Home Phone', name: 'custHomePhone' },
-  { label: 'Address', name: 'custAddress' },
-  { label: 'City', name: 'custCity' },
-  { label: 'Province', name: 'custProv' },
-  { label: 'Postal Code', name: 'custPostal' },
-  { label: 'Country', name: 'custCountry' },
+  { label: 'First Name', name: 'custfirstname' },
+  { label: 'Last Name', name: 'custlastname' },
+  { label: 'Email', name: 'custemail' },
+  { label: 'Business Phone', name: 'custbusphone' },
+  { label: 'Home Phone', name: 'custhomephone' },
+  { label: 'Address', name: 'custaddress' },
+  { label: 'City', name: 'custcity' },
+  { label: 'Province', name: 'custprov' },
+  { label: 'Postal Code', name: 'custpostal' },
+  { label: 'Country', name: 'custcountry' },
 ]
 
 const profileSchema = z.object({
-  custFirstName: z.string().min(2, 'First name is required'),
-  custLastName: z.string().min(2, 'Last name is required'),
-  custEmail: z.string().email('Invalid email'),
-  custBusPhone: z.string().optional(),
-  custHomePhone: z.string().optional(),
-  custAddress: z.string().min(2, 'Address is required'),
-  custCity: z.string().min(2, 'City is required'),
-  custProv: z.string().min(2, 'Province is required'),
-  custPostal: z.string().min(2, 'Postal code is required'),
-  custCountry: z.string().min(2, 'Country is required'),
+  custfirstname: z.string().min(2, 'First name is required'),
+  custlastname: z.string().min(2, 'Last name is required'),
+  custemail: z.string().email('Invalid email'),
+  custbusphone: z.string().optional(),
+  custhomephone: z.string().optional(),
+  custaddress: z.string().min(2, 'Address is required'),
+  custcity: z.string().min(2, 'City is required'),
+  custprov: z.string().min(2, 'Province is required'),
+  custpostal: z.string().min(2, 'Postal code is required'),
+  custcountry: z.string().min(2, 'Country is required'),
 })
 
 const Profile = () => {
-  // const { data, isLoading, error } = useCustomer(id)
+  const { user } = useAuth()
+  const customerId = user?.customerId || 0
+  // Fetch customer data
+  const {
+    customer: customer,
+    isLoading,
+    error,
+    uploadPhoto,
+    updateCustomer,
+  } = useCustomerById(customerId)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [customer, setCustomer] = useState<Customer>(data)
   const [editMode, setEditMode] = useState(false)
-  const [editedCustomer, setEditedCustomer] = useState<Customer>(data)
-  const [imagePreview, setImagePreview] = useState<string>(
-    data.custProfilePic || defaultProfile,
-  )
+  const [editedCustomer, setEditedCustomer] = useState<Customer | null>(null)
   const [errors, setErrors] = useState<Partial<Record<CustomerKey, string>>>({})
 
-  // useEffect(() => {
-  //   setCustomer(data)
-  //   setEditedCustomer(data)
-  //   setImagePreview(data.custProfilePic || defaultProfile )
-  // }, [data])
+  // Initialize state when data is loaded
+  useEffect(() => {
+    if (customer) {
+      setEditedCustomer(customer)
+    }
+  }, [customer])
 
-  // if (isLoading) return <p>Loading...</p>
-  // if (error) return <p>Error loading customer. Please try again later.</p>
+  if (isLoading) return <p>Loading...</p>
+  if (error) return <p>Error loading customer. Please try again later.</p>
+  if (!customer || !editedCustomer) return <p>Customer not found</p>
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setEditedCustomer({ ...editedCustomer, [name]: value })
+    setEditedCustomer((prev) => {
+      if (!prev) return null
+      return { ...prev, [name]: value }
+    })
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,45 +77,90 @@ const Profile = () => {
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result as string)
+        // Create a temporary preview while the upload is in progress
         setEditedCustomer((prev) => ({
-          ...prev,
-          custProfilePic: reader.result as string,
+          ...prev!,
+          photoUrl: reader.result as string,
         }))
       }
       reader.readAsDataURL(file)
     }
   }
 
-  const handleDeleteImage = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-    setImagePreview(defaultProfile)
-    setEditedCustomer((prev) => ({ ...prev, custProfilePic: '' }))
-  }
+  const handleSave = async () => {
+    if (!editedCustomer || !customer) return
+    try {
+      const customerToValidate = {
+        ...editedCustomer,
+        custfirstname: editedCustomer.custfirstname || '',
+        custlastname: editedCustomer.custlastname || '',
+        custaddress: editedCustomer.custaddress || '',
+        custcity: editedCustomer.custcity || '',
+        custprov: editedCustomer.custprov || '',
+        custpostal: editedCustomer.custpostal || '',
+        custbusphone: editedCustomer.custbusphone || '',
+        custemail: editedCustomer.custemail || '',
+        photo_path: editedCustomer.photo_path || '',
+      }
 
-  const handleSave = () => {
-    const validation = profileSchema.safeParse(editedCustomer)
-    if (!validation.success) {
-      const fieldErrors = validation.error.flatten().fieldErrors
-      const formattedErrors = Object.fromEntries(
-        Object.entries(fieldErrors).map(([key, val]) => [key, val?.[0]]),
-      ) as Partial<Record<CustomerKey, string>>
-      setErrors(formattedErrors)
-      toast.error('Please fix the validation errors.')
-      return
+      const validation = profileSchema.safeParse(customerToValidate)
+
+      if (!validation.success) {
+        const fieldErrors = validation.error.flatten().fieldErrors
+        const formattedErrors = Object.fromEntries(
+          Object.entries(fieldErrors).map(([key, val]) => [
+            key,
+            val?.[0] || 'Invalid value',
+          ]),
+        ) as Partial<Record<CustomerKey, string>>
+
+        setErrors(formattedErrors)
+        toast.error('Please fix the validation errors.')
+
+        // Log detailed errors for debugging
+        console.log('Validation errors:', validation.error.errors)
+        return
+      }
+
+      const updatePromises = []
+
+      // Check if image was changed (compare with original)
+      if (fileInputRef.current?.files?.length) {
+        const imageFile = fileInputRef.current.files[0]
+        updatePromises.push(uploadPhoto(imageFile))
+      }
+
+      // Check if other fields were changed
+      const changedFields = Object.keys(editedCustomer).filter(
+        (key) =>
+          editedCustomer[key as keyof Customer] !==
+          customer[key as keyof Customer],
+      )
+
+      if (changedFields.length > 0) {
+        console.log('changed fields length: ',changedFields.length);
+        updatePromises.push(updateCustomer(editedCustomer))
+      }
+      // 3. Execute all updates
+      if (updatePromises.length > 0) {
+        await Promise.all(updatePromises)
+        setEditMode(false)
+      } else {
+        toast.info('No changes to save')
+      }
+    } catch (error) {
+      console.error('Update failed:', error)
+      toast.error('Failed to update profile')
     }
 
     setErrors({})
-    setCustomer(editedCustomer)
     setEditMode(false)
     toast.success('Profile updated successfully!')
   }
 
   const handleCancel = () => {
+    if (!customer) return
     setEditedCustomer(customer)
-    setImagePreview(customer.custProfilePic || defaultProfile)
     setErrors({})
     setEditMode(false)
   }
@@ -142,11 +180,15 @@ const Profile = () => {
         <div className='flex flex-col items-center bg-gradient-to-r from-purple-500 via-purple-400 to-purple-600 py-4'>
           <div className='relative'>
             <img
-              src={imagePreview}
+              src={editedCustomer?.photoUrl || defaultProfile}
               alt='Profile'
               className={`h-32 w-32 rounded-full object-cover ${editMode ? 'cursor-pointer' : ''}`}
               onClick={() => {
                 if (editMode) fileInputRef.current?.click()
+              }}
+              onError={(e) => {
+                console.error('Image failed to load:', e);
+                e.currentTarget.src = defaultProfile;
               }}
             />
             <input
@@ -157,35 +199,22 @@ const Profile = () => {
               className='hidden'
             />
           </div>
-
-          {editMode && (
-            <div className='mt-2 flex flex-col items-center'>
-              <button
-                onClick={handleDeleteImage}
-                className='mt-1 text-white hover:underline'
-              >
-                Delete Photo
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Info Fields */}
         <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2'>
           {fields.map((field) => (
-            <div className='flex flex-col'>
-              <div key={field.name} className='flex items-center'>
+            <div key={field.name} className='flex flex-col'>
+              <div className='flex items-center'>
                 <p className='w-[120px] text-sm text-gray-500'>{field.label}</p>
                 {editMode ? (
-                  <>
-                    <input
-                      type='text'
-                      name={field.name}
-                      value={editedCustomer[field.name] || ''}
-                      onChange={handleChange}
-                      className='w-full rounded-lg border border-gray-300 p-2'
-                    />
-                  </>
+                  <input
+                    type='text'
+                    name={field.name}
+                    value={editedCustomer[field.name]}
+                    onChange={handleChange}
+                    className='w-full rounded-lg border border-gray-300 p-2'
+                  />
                 ) : (
                   <p className='flex-1 bg-gray-50 px-3 py-1 text-lg font-semibold'>
                     {customer[field.name]}

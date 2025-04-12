@@ -1,17 +1,19 @@
 export interface Customer {
-  customerId: number
-  custFirstName: string
-  custLastName: string
-  custAddress: string
-  custCity: string
-  custProv: string
-  custPostal: string
-  custCountry?: string
-  custHomePhone?: string
-  custBusPhone: string
-  custEmail: string
-  agentId: number
+  customerid: number
+  custfirstname: string
+  custlastname: string
+  custaddress: string
+  custcity: string
+  custprov: string
+  custpostal: string
+  custcountry?: string
+  custhomephone?: string
+  custbusphone: string
+  custemail: string
+  agentid?: number
   points?: number
   balance?: number
-  custProfilePic?: string
+  photo_path?: string
+  photoUrl?: string
+  customer_tier_id?: number
 }
