@@ -50,7 +50,7 @@ export function PackageList() {
             />
           </Command>
           <Select onValueChange={setSortOption}>
-            <SelectTrigger className='w-64'>
+            <SelectTrigger className='w-full md:w-64'>
               <SelectValue placeholder='Select a sort option' />
             </SelectTrigger>
             <SelectContent>
