@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useCustomerById } from '@/hooks/useCustomer'
 import { Customer } from '@/types/customer'
 import { EditIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { z } from 'zod'
@@ -38,7 +38,7 @@ const profileSchema = z.object({
 
 const Profile = () => {
   const { user } = useAuth()
-  const customerId = user?.customerId || 0
+  const customerId = user?.customerId
   // Fetch customer data
   const {
     customer: customer,
@@ -52,6 +52,9 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false)
   const [editedCustomer, setEditedCustomer] = useState<Customer | null>(null)
   const [errors, setErrors] = useState<Partial<Record<CustomerKey, string>>>({})
+  const [userProfileImage, setUserProfileImage] = useState<string | undefined>(
+    defaultProfile,
+  )
 
   // Initialize state when data is loaded
   useEffect(() => {
@@ -77,10 +80,11 @@ const Profile = () => {
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        // Create a temporary preview while the upload is in progress
+        const previewUrl = reader.result as string
+        setUserProfileImage(previewUrl)
         setEditedCustomer((prev) => ({
           ...prev!,
-          photoUrl: reader.result as string,
+          photoUrl: previewUrl,
         }))
       }
       reader.readAsDataURL(file)
@@ -138,7 +142,7 @@ const Profile = () => {
       )
 
       if (changedFields.length > 0) {
-        console.log('changed fields length: ',changedFields.length);
+        console.log('changed fields length: ', changedFields.length)
         updatePromises.push(updateCustomer(editedCustomer))
       }
       // 3. Execute all updates
@@ -180,15 +184,15 @@ const Profile = () => {
         <div className='flex flex-col items-center bg-gradient-to-r from-purple-500 via-purple-400 to-purple-600 py-4'>
           <div className='relative'>
             <img
-              src={editedCustomer?.photoUrl || defaultProfile}
+              src={userProfileImage}
               alt='Profile'
               className={`h-32 w-32 rounded-full object-cover ${editMode ? 'cursor-pointer' : ''}`}
               onClick={() => {
                 if (editMode) fileInputRef.current?.click()
               }}
               onError={(e) => {
-                console.error('Image failed to load:', e);
-                e.currentTarget.src = defaultProfile;
+                console.error('Image failed to load:', e)
+                e.currentTarget.src = defaultProfile
               }}
             />
             <input
