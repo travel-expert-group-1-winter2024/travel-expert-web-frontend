@@ -7,12 +7,13 @@ type ChatMessage = {
   content: string
 }
 
-export const useStompClient = (customerId: string) => {
+export const useStompClient = (customerId?: string) => {
   const [connected, setConnected] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const clientRef = useRef<Client>(null)
 
   useEffect(() => {
+    if (!customerId) return
     const client = new Client({
       brokerURL: 'ws://localhost:8080/chat',
       reconnectDelay: 5000,
@@ -41,6 +42,7 @@ export const useStompClient = (customerId: string) => {
   }, [customerId])
 
   const sendMessage = (receiverId: string, content: string) => {
+    if (!customerId) return
     const stompClient = clientRef.current
     if (stompClient && stompClient.connected) {
       stompClient.publish({

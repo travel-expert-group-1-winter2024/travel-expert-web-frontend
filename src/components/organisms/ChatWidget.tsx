@@ -31,7 +31,7 @@ const ChatWidget = () => {
 
   const { user, isAuthLoading, isLoggedIn } = useAuth()
   const customerId = user?.customerId
-  const senderUserId = user?.id ?? ''
+  const senderUserId = user?.id
 
   const { customer: customerData, error: customerError } =
     useCustomerById(customerId)
