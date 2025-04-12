@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null
   token: string
   isLoggedIn: boolean
+  isAuthLoading: boolean
   loginAction: (
     data: LoginRequest,
     callbacks?: {
@@ -27,8 +28,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState(localStorage.getItem('site') || '')
   const navigate = useNavigate()
   const location = useLocation()
+  const [isAuthLoading, setIsAuthLoading] = useState(true)
 
-  const from = location.state?.from || '/' 
+  const from = location.state?.from || '/'
 
   // create mutation for login
   const mutation = useMutation({
@@ -68,7 +70,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // check if token is present in local storage
     const storedToken = localStorage.getItem('site')
-    if (!storedToken) return
+    if (!storedToken) {
+      setIsAuthLoading(false)
+      return
+    }
 
     // if token is present, set it to state by
     const restoreUser = async () => {
@@ -79,6 +84,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('Session restore failed:', err)
         logOut()
+      } finally {
+        setIsAuthLoading(false)
       }
     }
 
@@ -89,7 +96,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ token, user, isLoggedIn, loginAction, logOut }}
+      value={{ token, user, isLoggedIn, isAuthLoading, loginAction, logOut }}
     >
       {children}
     </AuthContext.Provider>
