@@ -27,7 +27,7 @@ function PackageExample() {
 
   return (
     <section id='packages' className='bg-secondary py-12'>
-      <div className='flex items-center justify-center gap-4 xl:gap-20'>
+      <div className='flex flex-col items-center justify-center gap-4 md:flex-row xl:gap-20'>
         <div className='flex flex-col'>
           <div className='text-center'>
             <p className='mb-2 text-sm tracking-widest text-gray-400 uppercase'>
@@ -60,16 +60,25 @@ function PackageExample() {
             }}
           >
             <CarouselContent className='-ml-1'>
-              {packages.map((pkg, index) => (
-                <CarouselItem
-                  key={index}
-                  className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
-                >
-                  <div className='p-1'>
-                    <PackageCard pkg={pkg} />
-                  </div>
-                </CarouselItem>
-              ))}
+              {packages
+                .filter(
+                  (pkg) =>
+                    selectedFilter === 'All' ||
+                    pkg.tags?.some(
+                      (tag) =>
+                        tag.toLowerCase() === selectedFilter.toLowerCase(),
+                    ),
+                )
+                .map((pkg, index) => (
+                  <CarouselItem
+                    key={index}
+                    className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
+                  >
+                    <div className='p-1'>
+                      <PackageCard pkg={pkg} />
+                    </div>
+                  </CarouselItem>
+                ))}
             </CarouselContent>
             <CarouselPrevious className='hidden xl:flex' />
             <CarouselNext className='hidden xl:flex' />

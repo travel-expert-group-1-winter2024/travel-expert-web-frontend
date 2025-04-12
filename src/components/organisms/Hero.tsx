@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { NavLink } from 'react-router-dom'
 
 export default function Hero() {
   return (
@@ -19,10 +20,14 @@ export default function Hero() {
             Explore top-rated destinations and plan your perfect trip with us.
           </p>
           <div className='flex gap-4'>
-            <Button size='lg'>Get Started</Button>
-            <Button variant='outline' size='lg'>
-              Learn More
-            </Button>
+            <NavLink to='/#packages'>
+              <Button size='lg'>Get Started</Button>
+            </NavLink>
+            <NavLink to={'/#travel-perks'}>
+              <Button variant='outline' size='lg'>
+                Learn More
+              </Button>
+            </NavLink>
           </div>
         </div>
       </div>

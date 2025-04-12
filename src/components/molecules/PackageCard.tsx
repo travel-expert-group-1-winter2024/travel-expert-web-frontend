@@ -12,13 +12,9 @@ import { useNavigate } from 'react-router-dom'
 
 type Props = {
   pkg: Package
-  imageUrl?: string
 }
 
-export function PackageCard({
-  pkg,
-  imageUrl = 'https://placehold.co/600x400',
-}: Props) {
+export function PackageCard({ pkg }: Props) {
   const navigate = useNavigate()
 
   return (
@@ -29,7 +25,7 @@ export function PackageCard({
       </CardHeader>
       <CardContent className='flex aspect-square items-center justify-center p-6'>
         <img
-          src={imageUrl}
+          src={pkg.photoURL ?? 'https://placehold.co/600x400'}
           alt={pkg.pkgname}
           className='h-full w-full object-cover'
         />
