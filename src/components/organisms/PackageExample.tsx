@@ -27,7 +27,7 @@ function PackageExample() {
 
   return (
     <section id='packages' className='bg-secondary py-12'>
-      <div className='flex items-center justify-center gap-4 xl:gap-20'>
+      <div className='flex flex-col items-center justify-center gap-4 md:flex-row xl:gap-20'>
         <div className='flex flex-col'>
           <div className='text-center'>
             <p className='mb-2 text-sm tracking-widest text-gray-400 uppercase'>
