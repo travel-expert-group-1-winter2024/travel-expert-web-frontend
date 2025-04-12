@@ -4,8 +4,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from '@/components/ui/carousel.tsx'
 import { Skeleton } from '@/components/ui/skeleton.tsx'
 import { usePackages } from '@/hooks/usePackages.ts'
@@ -52,7 +50,7 @@ function PackageExample() {
 
   return (
     <section id='packages' className='bg-secondary py-12'>
-      <div className='flex flex-col items-center justify-center gap-4 md:flex-row xl:gap-20'>
+      <div className='flex flex-col items-center justify-center gap-4 px-5 md:flex-row xl:gap-10'>
         <div className='flex flex-col'>
           <div className='text-center'>
             <p className='mb-2 text-sm tracking-widest text-gray-400 uppercase'>
@@ -104,8 +102,6 @@ function PackageExample() {
                 ))
               )}
             </CarouselContent>
-            <CarouselPrevious className='hidden xl:flex' />
-            <CarouselNext className='hidden xl:flex' />
           </Carousel>
         </div>
       </div>
