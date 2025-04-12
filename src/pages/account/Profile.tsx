@@ -60,6 +60,7 @@ const Profile = () => {
   useEffect(() => {
     if (customer) {
       setEditedCustomer(customer)
+      setUserProfileImage(customer.photoUrl)
     }
   }, [customer])
 
