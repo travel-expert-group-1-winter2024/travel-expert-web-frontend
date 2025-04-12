@@ -10,8 +10,7 @@ import { bookingDetail } from '@/types/bookingDetail'
 
 function Booking() {
   const { user } = useAuth()
-  const customerId = user?.customerId
-  const { data, isLoading, error } = useBookingDetails(customerId)
+  const { data, isLoading, error } = useBookingDetails(user?.customerId)
 
   if (isLoading) return <div>Loading booking details...</div>
 
