@@ -254,7 +254,7 @@ const Profile = () => {
               </button>
               <button
                 onClick={handleSave}
-                className='rounded-lg bg-blue-400 px-6 py-2 font-medium text-white hover:bg-blue-400'
+                className='rounded-lg bg-blue-400 px-6 py-2 font-medium text-white hover:bg-blue-500'
               >
                 Save
               </button>
