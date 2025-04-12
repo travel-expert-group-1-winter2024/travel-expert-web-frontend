@@ -2,10 +2,13 @@ import { getBookDetailByCustomerId } from '@/api/bookingApi.ts'
 import { bookingDetail } from '@/types/bookingDetail.ts'
 import { useQuery } from '@tanstack/react-query'
 
-export const useBookingDetails = (customerId: number) => {
+export const useBookingDetails = (customerId?: number) => {
   return useQuery<bookingDetail[]>({
     queryKey: ['bookingDetail', customerId],
     queryFn: async () => {
+      if (!customerId) {
+        throw new Error('Customer ID is required')
+      }
       const response = await getBookDetailByCustomerId(customerId)
       if (response.status === 200) {
         // If there are errors in the response
