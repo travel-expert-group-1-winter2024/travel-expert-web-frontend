@@ -60,16 +60,25 @@ function PackageExample() {
             }}
           >
             <CarouselContent className='-ml-1'>
-              {packages.map((pkg, index) => (
-                <CarouselItem
-                  key={index}
-                  className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
-                >
-                  <div className='p-1'>
-                    <PackageCard pkg={pkg} />
-                  </div>
-                </CarouselItem>
-              ))}
+              {packages
+                .filter(
+                  (pkg) =>
+                    selectedFilter === 'All' ||
+                    pkg.tags?.some(
+                      (tag) =>
+                        tag.toLowerCase() === selectedFilter.toLowerCase(),
+                    ),
+                )
+                .map((pkg, index) => (
+                  <CarouselItem
+                    key={index}
+                    className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
+                  >
+                    <div className='p-1'>
+                      <PackageCard pkg={pkg} />
+                    </div>
+                  </CarouselItem>
+                ))}
             </CarouselContent>
             <CarouselPrevious className='hidden xl:flex' />
             <CarouselNext className='hidden xl:flex' />
