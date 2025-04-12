@@ -23,9 +23,9 @@ const ChatWidget = () => {
   const customerId = user?.customerId ?? -1
   const senderUserId = user?.id ?? ''
 
-  const { data: customerData, error: customerError } =
+  const { customer: customerData, error: customerError } =
     useCustomerById(customerId)
-  const agentId = customerData?.agentId ?? -1
+  const agentId = customerData?.agentid ?? -1
   const { data: receiverUser, error: receiverError } = useUserIdByReference(
     undefined,
     agentId,
