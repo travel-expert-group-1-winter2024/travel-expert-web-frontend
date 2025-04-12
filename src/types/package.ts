@@ -7,4 +7,5 @@ export interface Package {
   pkgbaseprice: number
   pkgagencycommission: number
   destination: string
+  photoURL?: string
 }
