@@ -12,6 +12,7 @@ export interface bookingDetail {
   firstname: string
   lastname: string
   booking: number
+  bookingNo: string
   region: string
   className: string
   fee: string
