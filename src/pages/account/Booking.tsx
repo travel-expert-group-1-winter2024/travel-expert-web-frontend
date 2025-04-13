@@ -64,9 +64,14 @@ function Booking() {
               {bookings.map((booking: bookingDetail, index) => (
                 <div key={booking.bookingDetailId} className='mb-4'>
                   <p>
-                    <strong>Destination:</strong> {booking.destination} —{' '}
-                    {booking.tripStart.split('T')[0]} to{' '}
-                    {booking.tripEnd.split('T')[0]}
+                    <strong>Destination:</strong> {booking.destination}
+                  </p>
+                  <p>
+                    <strong>Trip Start:</strong>{' '}
+                    {booking.tripStart.split('T')[0]}
+                  </p>
+                  <p>
+                    <strong>Trip End:</strong> {booking.tripEnd.split('T')[0]}
                   </p>
                   {booking.description?.trim() && (
                     <p>
