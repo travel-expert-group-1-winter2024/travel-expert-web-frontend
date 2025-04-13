@@ -14,6 +14,9 @@ export interface bookingDetail {
   booking: number
   bookingNo: string
   bookingStatus: BookingStatus
+  packageId: number
+  travelerCount: number
+  tripTypeId: string
   region: string
   className: string
   fee: string

@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useBookingDetails } from '@/hooks/useBookingDetail'
 import { bookingDetail } from '@/types/bookingDetail'
 import { groupBy } from 'lodash'
+import { Link } from 'react-router-dom'
 
 function Booking() {
   const { user } = useAuth()
@@ -113,9 +114,22 @@ function Booking() {
                   )}
                 </div>
               ))}
-              <Button disabled={bookings[0].bookingStatus !== 'RESERVED'}>
-                Confirm Booking
-              </Button>
+              <Link
+                to={'/payment/' + bookings[0].packageId}
+                state={{
+                  tripType: bookings[0].tripTypeId,
+                  travellers: bookings[0].travelerCount,
+                  isConfirmBooking: true,
+                  bookingId: bookings[0].booking,
+                }}
+              >
+                <Button
+                  className='mt-4'
+                  disabled={bookings[0].bookingStatus !== 'RESERVED'}
+                >
+                  Confirm Booking
+                </Button>
+              </Link>
             </AccordionContent>
           </AccordionItem>
         ))}
