@@ -16,7 +16,7 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu'
 import { useAuth } from '@/hooks/useAuth'
-import { Book, History, LogOut, User } from 'lucide-react'
+import { Book, LogOut, User } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 const navLinks = [
@@ -107,12 +107,6 @@ function AvatarWithDropDownMenu({
             <DropdownMenuItem>
               <Book />
               <span>Booking Detail</span>
-            </DropdownMenuItem>
-          </NavLink>
-          <NavLink to='/account/travel-history'>
-            <DropdownMenuItem>
-              <History />
-              <span>Travel History</span>
             </DropdownMenuItem>
           </NavLink>
         </DropdownMenuGroup>
