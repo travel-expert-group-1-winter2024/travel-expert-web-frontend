@@ -4,6 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button.tsx'
+import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/hooks/useAuth'
 import { useBookingDetails } from '@/hooks/useBookingDetail'
 import { bookingDetail } from '@/types/bookingDetail'
@@ -41,7 +44,24 @@ function Booking() {
               {bookings[0].tripEnd.split('T')[0]}
             </AccordionTrigger>
             <AccordionContent>
-              {bookings.map((booking: bookingDetail) => (
+              <Badge
+                variant={
+                  bookings[0].bookingStatus === 'CANCELLED' ||
+                  bookings[0].bookingStatus === 'EXPIRED'
+                    ? 'destructive'
+                    : 'secondary'
+                }
+                className={`my-2 ${
+                  bookings[0].bookingStatus === 'COMPLETED'
+                    ? 'bg-green-500 text-white'
+                    : bookings[0].bookingStatus === 'RESERVED'
+                      ? 'bg-blue-900 text-white'
+                      : ''
+                }`}
+              >
+                {bookings[0].bookingStatus}
+              </Badge>
+              {bookings.map((booking: bookingDetail, index) => (
                 <div key={booking.bookingDetailId} className='mb-4'>
                   <p>
                     <strong>Destination:</strong> {booking.destination} —{' '}
@@ -83,8 +103,14 @@ function Booking() {
                       <strong>Price:</strong> ${booking.basePrice.toFixed(2)}
                     </p>
                   )}
+                  {index !== bookings.length - 1 && (
+                    <Separator className='my-2' />
+                  )}
                 </div>
               ))}
+              <Button disabled={bookings[0].bookingStatus !== 'RESERVED'}>
+                Confirm Booking
+              </Button>
             </AccordionContent>
           </AccordionItem>
         ))}
