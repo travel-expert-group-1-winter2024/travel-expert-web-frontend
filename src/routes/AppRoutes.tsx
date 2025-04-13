@@ -1,7 +1,9 @@
+import BookingConfirmationPage from '@/pages/BookingConfirmation.tsx'
 import Contact from '@/pages/Contact.tsx'
 import LoginPage from '@/pages/Login.tsx'
 import PackageDetails from '@/pages/PackageDetails.tsx'
 import { PackageList } from '@/pages/PackageList.tsx'
+import PaymentsPage from '@/pages/Payments.tsx'
 import SignUpPage from '@/pages/SignUp.tsx'
 import Booking from '@/pages/account/Booking.tsx'
 import Profile from '@/pages/account/Profile.tsx'
@@ -10,8 +12,6 @@ import { Route, Routes } from 'react-router-dom'
 import AccountLayout from '../layouts/AccountLayout.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
 import Home from '../pages/Home.tsx'
-import PaymentsPage from '@/pages/Payments.tsx'
-import BookingConfirmationPage from '@/pages/BookingConfirmation.tsx'
 import Wallet from '@/pages/account/Wallet.tsx'
 
 function AppRoutes() {
@@ -31,7 +31,10 @@ function AppRoutes() {
             <Route path='wallet' element={<Wallet />} />
           </Route>
           <Route path='/payment/:packageId' element={<PaymentsPage />} />
-          <Route path='/bookingconfirmation' element={<BookingConfirmationPage />} />
+          <Route
+            path='/bookingconfirmation'
+            element={<BookingConfirmationPage />}
+          />
         </Route>
         {/* Other routes */}
       </Route>

@@ -4,9 +4,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from '@/components/ui/carousel.tsx'
+import { Skeleton } from '@/components/ui/skeleton.tsx'
 import { usePackages } from '@/hooks/usePackages.ts'
 import { useState } from 'react'
 
@@ -23,12 +22,36 @@ function PackageExample() {
   const [selectedFilter, setSelectedFilter] = useState('All')
   const { data, isLoading, error } = usePackages()
 
-  const packages = isLoading || error ? [] : (data ?? [])
+  const filteredPackages =
+    selectedFilter === 'All'
+      ? (data ?? [])
+      : (data?.filter((pkg) =>
+          pkg.tags?.some(
+            (tag) => tag.toLowerCase() === selectedFilter.toLowerCase(),
+          ),
+        ) ?? [])
+
+  const skeletonCards = Array.from({ length: 3 }).map((_, index) => (
+    <CarouselItem
+      key={index}
+      className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
+    >
+      <div className='p-1'>
+        <div className='flex flex-col space-y-3 rounded-md border bg-white p-4 shadow-sm'>
+          <Skeleton className='h-[125px] w-full rounded-xl' />
+          <div className='space-y-2'>
+            <Skeleton className='h-4 w-full' />
+            <Skeleton className='h-4 w-3/4' />
+          </div>
+        </div>
+      </div>
+    </CarouselItem>
+  ))
 
   return (
     <section id='packages' className='bg-secondary py-12'>
-      <div className='flex items-center justify-center gap-4 xl:gap-20'>
-        <div className='flex flex-col'>
+      <div className='flex flex-col items-center justify-center gap-4 md:flex-row xl:gap-10 xl:px-5'>
+        <div className='flex flex-col xl:px-9'>
           <div className='text-center'>
             <p className='mb-2 text-sm tracking-widest text-gray-400 uppercase'>
               Explore Destinations
@@ -53,26 +76,32 @@ function PackageExample() {
             ))}
           </div>
         </div>
-        <div className='w-full max-w-sm px-2 md:max-w-2xl lg:max-w-5xl'>
+        <div className='w-full max-w-sm px-2 md:max-w-2xl lg:max-w-5xl xl:mr-6'>
           <Carousel
             opts={{
               align: 'start',
             }}
           >
             <CarouselContent className='-ml-1'>
-              {packages.map((pkg, index) => (
-                <CarouselItem
-                  key={index}
-                  className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
-                >
-                  <div className='p-1'>
-                    <PackageCard pkg={pkg} />
-                  </div>
-                </CarouselItem>
-              ))}
+              {error ? (
+                <div className='py-10 text-center font-medium text-red-500'>
+                  Failed to load packages. Please try again later.
+                </div>
+              ) : isLoading ? (
+                skeletonCards
+              ) : (
+                filteredPackages.map((pkg, index) => (
+                  <CarouselItem
+                    key={index}
+                    className='pl-2 md:basis-1/2 lg:basis-1/2 xl:basis-1/3'
+                  >
+                    <div className='p-1'>
+                      <PackageCard pkg={pkg} />
+                    </div>
+                  </CarouselItem>
+                ))
+              )}
             </CarouselContent>
-            <CarouselPrevious className='hidden xl:flex' />
-            <CarouselNext className='hidden xl:flex' />
           </Carousel>
         </div>
       </div>

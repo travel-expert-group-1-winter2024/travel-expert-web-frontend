@@ -1,5 +1,6 @@
 import PaymentForm from '@/components/molecules/PaymentForm'
 import PaymentSummary from '@/components/molecules/PaymentSummary'
+import { useAuth } from '@/hooks/useAuth.ts'
 import { useCostSummary } from '@/hooks/usePaymentSummary'
 import { stripeKeys } from '@/utils/stripeKeys'
 import { Elements } from '@stripe/react-stripe-js'
@@ -14,6 +15,7 @@ const PaymentsPage = () => {
   const { tripType, travellers } = useLocation().state || {}
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const stripePromise = loadStripe(stripeKeys.publishable)
+  const { isLoggedIn, token } = useAuth()
   const { mutate: costBreakdown, data: costSummaryData } = useCostSummary()
 
   useEffect(() => {
@@ -22,18 +24,18 @@ const PaymentsPage = () => {
         tripTypeId: tripType || 'B',
         travelerCount: travellers || 1,
         packageId: validPackageId,
-        paymentMethod: "STRIPE"
-      };
+        paymentMethod: 'STRIPE',
+      }
 
-      costBreakdown(paymentData)
+      costBreakdown({ data: paymentData, token: token })
     }
-  }, [costBreakdown, tripType, travellers, validPackageId])
+  }, [costBreakdown, tripType, travellers, validPackageId, token])
 
   useEffect(() => {
     if (costSummaryData && costSummaryData.data) {
       // Create payment intent after cost summary is available
       const costData = costSummaryData.data
-      const total = Math.round(costData.total);
+      const total = Math.round(costData.total)
 
       const createPaymentIntent = async () => {
         try {
@@ -55,6 +57,8 @@ const PaymentsPage = () => {
       createPaymentIntent()
     }
   }, [costSummaryData, tripType, travellers, validPackageId])
+
+  if (!isLoggedIn) return null
 
   if (!clientSecret) {
     return <p>Loading payment details...</p>

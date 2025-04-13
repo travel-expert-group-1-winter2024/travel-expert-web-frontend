@@ -1,9 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner'
 
 export function useSignUp() {
   //! The following comments, prefaced with a "?" are for my own understanding of React-Query and Axios
+  const navigate = useNavigate();
   return useMutation({
     //? React-Query's hook for changing data (POST,PUT,DELETE requests)
     mutationFn: async (formData: unknown) => {
@@ -20,6 +22,7 @@ export function useSignUp() {
       toast.success('Signed up successfully', {
         description: 'Your account has been successfully created!',
       })
+      navigate('/login');
     },
 
     onError: async (error: unknown) => {

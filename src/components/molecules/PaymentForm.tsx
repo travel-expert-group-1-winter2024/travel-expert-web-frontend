@@ -1,9 +1,12 @@
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
-import { useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/hooks/useAuth.ts'
+import { useBookingConfirm } from '@/hooks/useBookingConfirm.ts'
 import { useCreateBooking } from '@/hooks/useBookings'
 import { topUpWallet } from '@/hooks/useWalletTopup'
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 interface PaymentFormProps {
   clientSecret: string | null;
@@ -18,9 +21,47 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
   const { packageId } = useParams()
   const location = useLocation()
   const currentPath = location.pathname
-  const { tripType, travellers } = location.state || {}
-  const { mutate: createBooking } = useCreateBooking();
-  // const { mutate, isPending, isSuccess, isError } = useTopUpWallet()
+  const navigate = useNavigate()
+  const { isLoggedIn, token } = useAuth()
+  const { tripType, travellers, bookingId, isConfirmBooking } =
+    location.state || {}
+
+  const {
+    mutate: createBooking,
+    data: bookingResponse,
+    isSuccess: isBookingCreated,
+    isError: isBookingCreateError,
+    isPending: isBookingCreating,
+  } = useCreateBooking()
+  const {
+    mutate: confirmBooking,
+    data: confirmBookingResponse,
+    isError: isBookingConfirmError,
+    isPending: isBookingConfirming,
+    isSuccess: isBookingConfirmed,
+  } = useBookingConfirm()
+
+  useEffect(() => {
+    if (isBookingConfirmed || isBookingCreated) {
+      toast.success('Payment successful')
+      navigate(`/bookingconfirmation`, {
+        state: { bookingdata: bookingResponse || confirmBookingResponse },
+      })
+    }
+    if (isBookingConfirmError || isBookingCreateError) {
+      toast.error('Failed to proceed payment')
+    }
+  }, [
+    isBookingConfirmed,
+    isBookingCreated,
+    isBookingConfirmError,
+    isBookingCreateError,
+  ])
+
+  if (!isLoggedIn) {
+    console.error('User is not logged in.')
+    return null
+  }
 
   const handleSubmit = async (event: any) => {
     event.preventDefault()
@@ -69,16 +110,27 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
             console.log('Top-up failed. Please try again.');
           }
         } else {
-          // We're on a booking page
-          const validPackageId = packageId ? parseInt(packageId) : null
-      
-          if (validPackageId !== null) {
+        const validPackageId = packageId ? parseInt(packageId) : null
+        if (validPackageId !== null) {
+          if (isConfirmBooking) {
+            confirmBooking({
+              token: token,
+              bookingData: {
+                bookingId: bookingId,
+                paymentMethod: 'STRIPE',
+                paymentId: result.paymentIntent.id,
+              },
+            })
+          } else {
             createBooking({
-              tripTypeId: tripType || 'B',
-              travelerCount: travellers || 1,
-              packageId: validPackageId,
-              paymentMethod: 'STRIPE',
-              paymentId: result.paymentIntent.id,
+              token: token,
+              bookingData: {
+                tripTypeId: tripType || 'B',
+                travelerCount: travellers || 1,
+                packageId: validPackageId,
+                paymentMethod: 'STRIPE',
+                paymentId: result.paymentIntent.id,
+              },
             })
           }
         }
@@ -91,47 +143,52 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex flex-col xl:flex-row xl:space-x-8">
+    <form onSubmit={handleSubmit} className='space-y-6'>
+      <div className='flex flex-col xl:flex-row xl:space-x-8'>
         {/* Right side: Stripe Payment Form */}
-        <div className="w-full max-w-[600px]" style={{ width: '600px' }}>
-  <h3 className="text-2xl font-semibold mb-4">Payment Information</h3>
-  <div className="stripe-input">
-    {/* Card Element with styles */}
-    <CardElement
-      options={{
-        style: {
-          base: {
-            color: '#32325d',
-            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-            fontSmoothing: 'antialiased',
-            fontSize: '16px',
-            '::placeholder': {
-              color: '#aab7c4',
-            },
-          },
-          invalid: {
-            color: '#fa755a',
-            iconColor: '#fa755a',
-          },
-        },
-      }}
-    />
-  </div>
+        <div className='w-full max-w-[600px]' style={{ width: '600px' }}>
+          <h3 className='mb-4 text-2xl font-semibold'>Payment Information</h3>
+          <div className='stripe-input'>
+            {/* Card Element with styles */}
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    color: '#32325d',
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
+                    '::placeholder': {
+                      color: '#aab7c4',
+                    },
+                  },
+                  invalid: {
+                    color: '#fa755a',
+                    iconColor: '#fa755a',
+                  },
+                },
+              }}
+            />
+          </div>
 
-  <Button
-    type="submit"
-    disabled={isProcessing || !stripe || !elements}
-    className="mt-6 w-full"
-  >
-    {isProcessing ? 'Processing...' : 'Pay Now'}
-  </Button>
-</div>
-
+          <Button
+            type='submit'
+            disabled={
+              isProcessing ||
+              !stripe ||
+              !elements ||
+              isBookingConfirming ||
+              isBookingCreating
+            }
+            className='mt-6 w-full'
+          >
+            {isProcessing ? 'Processing...' : 'Pay Now'}
+          </Button>
+        </div>
       </div>
     </form>
   )
 }
+}
 
 export default PaymentForm
-

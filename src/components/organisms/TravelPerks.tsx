@@ -4,7 +4,7 @@ import Globe from '@/assets/globe.png'
 
 function TravelPerks() {
   return (
-    <section className='flex justify-center py-12'>
+    <section id='travel-perks' className='flex justify-center py-12'>
       <div className='w-11/12 max-w-6xl'>
         <h2 className='text-center text-3xl font-bold'>Why Travel With Us?</h2>
         <p className='mt-4 text-center text-gray-600'>

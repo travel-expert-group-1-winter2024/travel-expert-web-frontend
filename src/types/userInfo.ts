@@ -1,8 +1,8 @@
 export interface User {
-  id: number
+  id: string
   name: string
   email: string
   roles: string[]
-  customerId?: number
+  customerId: number
   agentId?: number
 }

@@ -1,18 +1,42 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
-import React, { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth.ts'
+import { useCreateBooking } from '@/hooks/useBookings.ts'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 export default function BookingFormCard({
   onCancel,
+  isBookingReservation,
 }: {
   onCancel: () => void
+  isBookingReservation: boolean
 }) {
   const { packageId } = useParams()
   const [travellers, setTravellers] = useState('')
   const [tripType, setTripType] = useState('')
   const [errors, setErrors] = useState({ travellers: '', tripType: '' })
   const navigate = useNavigate()
+  const {
+    mutate: createBooking,
+    isError,
+    isPending,
+    isSuccess,
+  } = useCreateBooking()
+  const { token, isLoggedIn } = useAuth()
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Booking reservation created successfully.')
+      navigate(`/`)
+    }
+    if (isError) {
+      toast.error('Failed to create booking reservation. Please try again.')
+    }
+  }, [isError, isSuccess, isPending])
+
+  if (!isLoggedIn) return null
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -29,9 +53,21 @@ export default function BookingFormCard({
     }
     setErrors(newErrors)
     if (!hasError) {
-      navigate(`/payment/${packageId}`, {
-        state: { tripType, travellers },
-      })
+      if (isBookingReservation) {
+        createBooking({
+          token: token,
+          bookingData: {
+            tripTypeId: tripType,
+            travelerCount: parseInt(travellers),
+            packageId: parseInt(packageId || '0'),
+            bookingMode: 'RESERVE',
+          },
+        })
+      } else {
+        navigate(`/payment/${packageId}`, {
+          state: { tripType, travellers },
+        })
+      }
     }
   }
 
@@ -92,7 +128,9 @@ export default function BookingFormCard({
           <Button variant='outline' type='button' onClick={onCancel}>
             Cancel
           </Button>
-          <Button type='submit'>Submit</Button>
+          <Button type='submit' disabled={isPending}>
+            Submit
+          </Button>
         </CardFooter>
       </form>
     </Card>

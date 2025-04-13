@@ -3,7 +3,10 @@ import { NavLink } from 'react-router-dom'
 const navLinks = [
   { label: 'Profile', to: '/account/profile' },
   { label: 'Bookings', to: '/account/booking' },
+<<<<<<< HEAD
   { label: 'Wallet', to: '/account/wallet' },
+=======
+>>>>>>> main
 ]
 
 function AccountSideBar() {

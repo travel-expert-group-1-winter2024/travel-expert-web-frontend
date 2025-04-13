@@ -1,3 +1,4 @@
+import Logo from '@/assets/logo.png'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,7 +16,7 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu'
 import { useAuth } from '@/hooks/useAuth'
-import { Book, History, LogOut, User } from 'lucide-react'
+import { Book, LogOut, User } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 const navLinks = [
@@ -30,7 +31,10 @@ function Navbar() {
     <header className='border-b p-4'>
       <div className='flex items-center justify-between'>
         <NavLink to='/' className='text-lg font-semibold'>
-          Travel Experts
+          <div className='flex items-center gap-1'>
+            <img src={Logo} alt='Logo' className='h-10 w-10' />
+            <span>Travel Experts</span>
+          </div>
         </NavLink>
         <div className='flex items-center justify-between'>
           <NavigationMenu className='px-2'>
@@ -107,7 +111,7 @@ function AvatarWithDropDownMenu({
           </NavLink>
           <NavLink to='/account/wallet'>
             <DropdownMenuItem>
-              <History />
+              {/* <History /> */}
               <span>Wallet</span>
             </DropdownMenuItem>
           </NavLink>
