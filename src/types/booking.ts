@@ -2,8 +2,9 @@ export interface BookingCreationRequest {
   tripTypeId: string
   travelerCount: number
   packageId: number
-  paymentMethod: string
-  paymentId: string
+  bookingMode?: string
+  paymentMethod?: string
+  paymentId?: string
 }
 
 export interface BookingConfirmationRequest {
