@@ -105,10 +105,10 @@ function AvatarWithDropDownMenu({
               <span>Booking Detail</span>
             </DropdownMenuItem>
           </NavLink>
-          <NavLink to='/account/travel-history'>
+          <NavLink to='/account/wallet'>
             <DropdownMenuItem>
               <History />
-              <span>Travel History</span>
+              <span>Wallet</span>
             </DropdownMenuItem>
           </NavLink>
         </DropdownMenuGroup>

@@ -24,7 +24,6 @@ import { useLocation } from 'react-router-dom'
 export default function BookingConfirmationPage() {
   const { bookingdata } = useLocation().state || {};
   const { data: pkg } = usePackageDetails(bookingdata.data.packageId!)
-  debugger
   const dummyBooking = {
     id: (bookingdata.data.bookingId).toString(),
     customerName: useAuth().user?.name || "",

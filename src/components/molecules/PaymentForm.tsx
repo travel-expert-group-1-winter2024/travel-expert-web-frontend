@@ -3,20 +3,24 @@ import { useState } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useCreateBooking } from '@/hooks/useBookings'
+import { topUpWallet } from '@/hooks/useWalletTopup'
 
 interface PaymentFormProps {
-  clientSecret: string | null
+  clientSecret: string | null;
+  amount?: number;
+  onPaymentSuccess: () => void;
 }
 
-const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
+const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const stripe = useStripe()
   const elements = useElements()
   const { packageId } = useParams()
   const location = useLocation()
+  const currentPath = location.pathname
   const { tripType, travellers } = location.state || {}
-
-  const { mutate: createBooking } = useCreateBooking()
+  const { mutate: createBooking } = useCreateBooking();
+  // const { mutate, isPending, isSuccess, isError } = useTopUpWallet()
 
   const handleSubmit = async (event: any) => {
     event.preventDefault()
@@ -51,16 +55,32 @@ const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
         result.paymentIntent &&
         result.paymentIntent.status === 'succeeded'
       ) {
-        // Make sure packageId is a valid number
-        const validPackageId = packageId ? parseInt(packageId) : null
-        if (validPackageId !== null) {
-          createBooking({
-            tripTypeId: tripType || 'B',
-            travelerCount: travellers || 1,
-            packageId: validPackageId,
-            paymentMethod:"STRIPE",
-            paymentId:result.paymentIntent.id
-          })
+        if (currentPath.includes('wallet')) {
+  
+          // Make the top-up API call
+          const response = await topUpWallet({
+            amount: amount || 0, 
+            description: 'Top-up from credit card'
+          });
+          
+          if (response!) {
+            onPaymentSuccess(); 
+          } else {
+            console.log('Top-up failed. Please try again.');
+          }
+        } else {
+          // We're on a booking page
+          const validPackageId = packageId ? parseInt(packageId) : null
+      
+          if (validPackageId !== null) {
+            createBooking({
+              tripTypeId: tripType || 'B',
+              travelerCount: travellers || 1,
+              packageId: validPackageId,
+              paymentMethod: 'STRIPE',
+              paymentId: result.paymentIntent.id,
+            })
+          }
         }
       }
     } else {
@@ -114,3 +134,4 @@ const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
 }
 
 export default PaymentForm
+
