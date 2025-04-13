@@ -50,10 +50,13 @@ export default function PackageDetails() {
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const navigate = useNavigate()
+  const [isBookingReservation, setIsBookingReservation] =
+    useState<boolean>(false)
   const { isLoggedIn } = useAuth()
 
-  const handleBookNowClick = () => {
-    if (isLoggedIn == true) {
+  const handleBookingClick = (reserve: boolean) => {
+    if (isLoggedIn) {
+      setIsBookingReservation(reserve)
       setShowForm(true)
     } else {
       navigate('/login', { state: { from: location.pathname } })
@@ -217,16 +220,26 @@ export default function PackageDetails() {
               </div>
             </CardContent>
             <CardFooter className='flex gap-3'>
-              <Button className='flex-1' onClick={() => handleBookNowClick()}>
+              <Button
+                className='flex-1'
+                onClick={() => handleBookingClick(false)}
+              >
                 Book Now
               </Button>
-              <Button variant='outline' className='flex-1'>
+              <Button
+                variant='outline'
+                className='flex-1'
+                onClick={() => handleBookingClick(true)}
+              >
                 Reserve Now (Hold for 24 Hours){' '}
               </Button>
             </CardFooter>
           </Card>
           {isLoggedIn && showForm && (
-            <BookingFormCard onCancel={() => setShowForm(false)} />
+            <BookingFormCard
+              onCancel={() => setShowForm(false)}
+              isBookingReservation={isBookingReservation}
+            />
           )}
         </div>
       </div>

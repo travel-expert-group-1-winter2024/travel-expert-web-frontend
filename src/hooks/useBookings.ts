@@ -1,40 +1,18 @@
-import api from '@/api/axios'
+import { createBooking } from '@/api/bookingApi.ts'
+import { BookingCreationRequest } from '@/types/booking.ts'
 import { useMutation } from '@tanstack/react-query'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-
-interface BookingData {
-  tripTypeId: string
-  travelerCount: number
-  packageId: number,
-  paymentMethod:string,
-  paymentId:string
-}
 
 export const useCreateBooking = () => {
-  const navigate = useNavigate();
-  const [bookingdata, setbookingdata] = useState('')
   return useMutation({
-    mutationFn: async (bookingData: BookingData) => {
-      const token = localStorage.getItem('site')?.toString();
-      const response = await api.post('/api/bookings', bookingData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      setbookingdata(response.data)
+    mutationFn: async ({
+      token,
+      bookingData,
+    }: {
+      token: string
+      bookingData: BookingCreationRequest
+    }) => {
+      const response = await createBooking(token, bookingData)
       return response.data
-    },
-    onSuccess: (data) => {
-      if(bookingdata){
-        navigate(`/bookingconfirmation`,
-          {
-            state: { bookingdata:data  }
-          })
-      }
-    },
-    onError: (error) => {
-      console.error('Booking failed:', error)
     },
   })
 }
