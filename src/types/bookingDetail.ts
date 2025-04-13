@@ -13,9 +13,18 @@ export interface bookingDetail {
   lastname: string
   booking: number
   bookingNo: string
+  bookingStatus: BookingStatus
   region: string
   className: string
   fee: string
   product: string
   supplier: string
 }
+
+export type BookingStatus =
+  | 'PENDING'
+  | 'RESERVED'
+  | 'CONFIRMED'
+  | 'CANCELLED'
+  | 'COMPLETED'
+  | 'EXPIRED'
