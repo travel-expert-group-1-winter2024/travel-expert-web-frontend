@@ -5,7 +5,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Elements } from '@stripe/react-stripe-js';
+import { Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { useWallet } from '@/hooks/useWallet';
@@ -134,17 +134,19 @@ function Wallet() {
             </div>
 
             {/* Payment form appears after clicking "Pay" */}
-            {showPaymentForm && clientSecret && (
-              <div className="mt-6">
-                <Elements stripe={stripePromise} options={{ clientSecret }}>
-                  <PaymentForm
-                    clientSecret={clientSecret}
-                    amount={Number(amount)}
-                    onPaymentSuccess={handlePaymentSuccess}
-                  />
-                </Elements>
-              </div>
-            )}
+            {showPaymentForm && clientSecret ? (
+            <div className="mt-6">
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <PaymentForm
+                  clientSecret={clientSecret}
+                  amount={Number(amount)}
+                  onPaymentSuccess={handlePaymentSuccess}
+                />
+              </Elements>
+            </div>
+          ) : (
+            showPaymentForm && <p className="text-sm text-muted">Loading payment form...</p>
+          )}
           </>
         )}
       </CardContent>

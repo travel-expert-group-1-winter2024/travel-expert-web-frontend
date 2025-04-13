@@ -14,7 +14,7 @@ interface PaymentFormProps {
   onPaymentSuccess: () => void;
 }
 
-const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps) => {
+const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const stripe = useStripe()
   const elements = useElements()
@@ -65,7 +65,6 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
 
   const handleSubmit = async (event: any) => {
     event.preventDefault()
-
     if (!stripe || !elements) return
 
     setIsProcessing(true)
@@ -97,41 +96,39 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
         result.paymentIntent.status === 'succeeded'
       ) {
         if (currentPath.includes('wallet')) {
-  
-          // Make the top-up API call
           const response = await topUpWallet({
-            amount: amount || 0, 
+            amount: amount || 0,
             description: 'Top-up from credit card'
           });
-          
-          if (response!) {
-            onPaymentSuccess(); 
+          if (response) {  
+            onPaymentSuccess();
           } else {
             console.log('Top-up failed. Please try again.');
           }
         } else {
-        const validPackageId = packageId ? parseInt(packageId) : null
-        if (validPackageId !== null) {
-          if (isConfirmBooking) {
-            confirmBooking({
-              token: token,
-              bookingData: {
-                bookingId: bookingId,
-                paymentMethod: 'STRIPE',
-                paymentId: result.paymentIntent.id,
-              },
-            })
-          } else {
-            createBooking({
-              token: token,
-              bookingData: {
-                tripTypeId: tripType || 'B',
-                travelerCount: travellers || 1,
-                packageId: validPackageId,
-                paymentMethod: 'STRIPE',
-                paymentId: result.paymentIntent.id,
-              },
-            })
+          const validPackageId = packageId ? parseInt(packageId) : null
+          if (validPackageId !== null) {
+            if (isConfirmBooking) {
+              confirmBooking({
+                token: token,
+                bookingData: {
+                  bookingId: bookingId,
+                  paymentMethod: 'STRIPE',
+                  paymentId: result.paymentIntent.id,
+                },
+              })
+            } else {
+              createBooking({
+                token: token,
+                bookingData: {
+                  tripTypeId: tripType || 'B',
+                  travelerCount: travellers || 1,
+                  packageId: validPackageId,
+                  paymentMethod: 'STRIPE',
+                  paymentId: result.paymentIntent.id,
+                },
+              })
+            }
           }
         }
       }
@@ -140,16 +137,14 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
     }
 
     setIsProcessing(false)
-  }
+  } // <-- missing closing bracket was here
 
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
       <div className='flex flex-col xl:flex-row xl:space-x-8'>
-        {/* Right side: Stripe Payment Form */}
         <div className='w-full max-w-[600px]' style={{ width: '600px' }}>
           <h3 className='mb-4 text-2xl font-semibold'>Payment Information</h3>
           <div className='stripe-input'>
-            {/* Card Element with styles */}
             <CardElement
               options={{
                 style: {
@@ -170,7 +165,6 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
               }}
             />
           </div>
-
           <Button
             type='submit'
             disabled={
@@ -188,7 +182,6 @@ const PaymentForm = ({ clientSecret,amount,onPaymentSuccess }: PaymentFormProps)
       </div>
     </form>
   )
-}
 }
 
 export default PaymentForm
