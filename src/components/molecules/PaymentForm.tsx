@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 interface PaymentFormProps {
   clientSecret: string | null;
   amount?: number;
-  onPaymentSuccess: () => void;
+  onPaymentSuccess: () => any;
 }
 
 const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProps) => {
