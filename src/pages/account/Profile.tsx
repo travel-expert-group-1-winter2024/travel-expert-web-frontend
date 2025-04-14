@@ -215,7 +215,9 @@ const Profile = () => {
             />
           </div>
         </div>
-
+        <p className='text-muted-foreground mt-2 text-right text-xs'>
+          *Maximum file size: 5 MB
+        </p>
         {/* Info Fields */}
         <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2'>
           {fields.map((field) => (
