@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 interface PaymentFormProps {
   clientSecret: string | null;
   amount?: number;
-  onPaymentSuccess: () => any;
+  onPaymentSuccess?: () => void;
 }
 
 const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProps) => {
@@ -101,7 +101,7 @@ const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProp
             description: 'Top-up from credit card'
           });
           if (response) {  
-            onPaymentSuccess();
+            onPaymentSuccess?.()
           } else {
             console.log('Top-up failed. Please try again.');
           }

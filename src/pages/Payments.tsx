@@ -79,7 +79,9 @@ const PaymentsPage = () => {
       <div className='flex w-full items-center justify-center xl:w-1/3 2xl:w-2/5'>
         {clientSecret ? (
           <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <PaymentForm clientSecret={clientSecret} />
+            <PaymentForm clientSecret={clientSecret} onPaymentSuccess={function () {
+              throw new Error('Function not implemented.')
+            } } />
           </Elements>
         ) : (
           <p>Loading payment details...</p>

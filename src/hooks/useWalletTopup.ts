@@ -1,6 +1,4 @@
 import api from "@/api/axios"
-import { useWallet } from "./useWallet"
-
 export interface topUpWallet{
     amount:number,
     description:string
