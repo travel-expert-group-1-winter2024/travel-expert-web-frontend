@@ -110,6 +110,12 @@ function AvatarWithDropDownMenu({
               <span>Booking Detail</span>
             </DropdownMenuItem>
           </NavLink>
+          <NavLink to='/account/wallet'>
+            <DropdownMenuItem>
+              {/* <History /> */}
+              <span>Wallet</span>
+            </DropdownMenuItem>
+          </NavLink>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
