@@ -22,6 +22,7 @@ import { useLocation } from 'react-router-dom'
 
 
 export default function BookingConfirmationPage() {
+  debugger
   const { bookingdata } = useLocation().state || {};
   const { data: pkg } = usePackageDetails(bookingdata.data.packageId!)
   const dummyBooking = {
