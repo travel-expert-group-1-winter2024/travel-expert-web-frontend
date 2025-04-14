@@ -2,27 +2,27 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { useBookingConfirm } from '@/hooks/useBookingConfirm.ts'
 import { useCreateBooking } from '@/hooks/useBookings'
+import { topUpWallet } from '@/hooks/useWalletTopup'
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 interface PaymentFormProps {
-  clientSecret: string | null
+  clientSecret: string | null;
+  amount?: number;
+  onPaymentSuccess?: () => void;
 }
 
-const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { packageId } = useParams()
-
+const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProps) => {
+  const [isProcessing, setIsProcessing] = useState(false)
   const stripe = useStripe()
   const elements = useElements()
-
+  const { packageId } = useParams()
+  const location = useLocation()
+  const currentPath = location.pathname
+  const navigate = useNavigate()
   const { isLoggedIn, token } = useAuth()
-
-  const [isProcessing, setIsProcessing] = useState(false)
-
   const { tripType, travellers, bookingId, isConfirmBooking } =
     location.state || {}
 
@@ -65,7 +65,6 @@ const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault()
-
     if (!stripe || !elements) return
 
     setIsProcessing(true)
@@ -96,29 +95,40 @@ const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
         result.paymentIntent &&
         result.paymentIntent.status === 'succeeded'
       ) {
-        // Make sure packageId is a valid number
-        const validPackageId = packageId ? parseInt(packageId) : null
-        if (validPackageId !== null) {
-          if (isConfirmBooking) {
-            confirmBooking({
-              token: token,
-              bookingData: {
-                bookingId: bookingId,
-                paymentMethod: 'STRIPE',
-                paymentId: result.paymentIntent.id,
-              },
-            })
+        if (currentPath.includes('wallet')) {
+          const response = await topUpWallet({
+            amount: amount || 0,
+            description: 'Top-up from credit card'
+          });
+          if (response) {  
+            onPaymentSuccess?.()
           } else {
-            createBooking({
-              token: token,
-              bookingData: {
-                tripTypeId: tripType || 'B',
-                travelerCount: travellers || 1,
-                packageId: validPackageId,
-                paymentMethod: 'STRIPE',
-                paymentId: result.paymentIntent.id,
-              },
-            })
+            console.log('Top-up failed. Please try again.');
+          }
+        } else {
+          const validPackageId = packageId ? parseInt(packageId) : null
+          if (validPackageId !== null) {
+            if (isConfirmBooking) {
+              confirmBooking({
+                token: token,
+                bookingData: {
+                  bookingId: bookingId,
+                  paymentMethod: 'STRIPE',
+                  paymentId: result.paymentIntent.id,
+                },
+              })
+            } else {
+              createBooking({
+                token: token,
+                bookingData: {
+                  tripTypeId: tripType || 'B',
+                  travelerCount: travellers || 1,
+                  packageId: validPackageId,
+                  paymentMethod: 'STRIPE',
+                  paymentId: result.paymentIntent.id,
+                },
+              })
+            }
           }
         }
       }
@@ -127,16 +137,14 @@ const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
     }
 
     setIsProcessing(false)
-  }
+  } // <-- missing closing bracket was here
 
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
       <div className='flex flex-col xl:flex-row xl:space-x-8'>
-        {/* Right side: Stripe Payment Form */}
         <div className='w-full max-w-[600px]' style={{ width: '600px' }}>
           <h3 className='mb-4 text-2xl font-semibold'>Payment Information</h3>
           <div className='stripe-input'>
-            {/* Card Element with styles */}
             <CardElement
               options={{
                 style: {
@@ -157,7 +165,6 @@ const PaymentForm = ({ clientSecret }: PaymentFormProps) => {
               }}
             />
           </div>
-
           <Button
             type='submit'
             disabled={

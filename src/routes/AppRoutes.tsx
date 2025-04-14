@@ -12,6 +12,7 @@ import { Route, Routes } from 'react-router-dom'
 import AccountLayout from '../layouts/AccountLayout.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
 import Home from '../pages/Home.tsx'
+import Wallet from '@/pages/account/Wallet.tsx'
 
 function AppRoutes() {
   return (
@@ -27,6 +28,7 @@ function AppRoutes() {
           <Route path='/account' element={<AccountLayout />}>
             <Route path='profile' element={<Profile />} />
             <Route path='booking' element={<Booking />} />
+            <Route path='wallet' element={<Wallet />} />
           </Route>
           <Route path='/payment/:packageId' element={<PaymentsPage />} />
           <Route
