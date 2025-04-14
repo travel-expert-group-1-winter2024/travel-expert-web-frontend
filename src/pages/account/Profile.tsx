@@ -184,9 +184,7 @@ const Profile = () => {
   const renderItem = (name: string, value: number | string | undefined) => (
     <div className='flex items-center'>
       <p className='w-[120px] text-sm text-gray-500'>{name}</p>
-      <p className='flex-1 bg-gray-50 px-3 py-1 text-lg font-semibold'>
-        {value}
-      </p>
+      <p className='flex-1 bg-gray-50 px-3 py-1 text-lg'>{value}</p>
     </div>
   )
 
@@ -250,7 +248,7 @@ const Profile = () => {
         {/* Points and Balance */}
         {!editMode && (
           <div className='mt-6 grid grid-cols-2 gap-4'>
-            {renderItem('Points', customer.points)}
+            {renderItem('Points', customer.points.toLocaleString())}
             {renderItem('Balance', customer.balance?.toFixed(2))}
           </div>
         )}
