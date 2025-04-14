@@ -11,7 +11,7 @@ export interface Customer {
   custbusphone: string
   custemail: string
   agentid?: number
-  points?: number
+  points: number
   balance?: number
   photo_path?: string
   photoUrl?: string
