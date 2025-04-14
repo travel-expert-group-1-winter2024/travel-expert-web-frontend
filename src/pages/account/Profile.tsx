@@ -1,4 +1,5 @@
 import defaultProfile from '@/assets/user-default-avatar.png'
+import { Badge } from '@/components/ui/badge.tsx'
 import { useAuth } from '@/hooks/useAuth'
 import { useCustomerById } from '@/hooks/useCustomer'
 import { Customer } from '@/types/customer'
@@ -184,9 +185,7 @@ const Profile = () => {
   const renderItem = (name: string, value: number | string | undefined) => (
     <div className='flex items-center'>
       <p className='w-[120px] text-sm text-gray-500'>{name}</p>
-      <p className='flex-1 bg-gray-50 px-3 py-1 text-lg font-semibold'>
-        {value}
-      </p>
+      <p className='flex-1 bg-gray-50 px-3 py-1 text-lg'>{value}</p>
     </div>
   )
 
@@ -218,6 +217,17 @@ const Profile = () => {
         <p className='text-muted-foreground mt-2 text-right text-xs'>
           *Maximum file size: 5 MB
         </p>
+        <Badge
+          className={`mx-2 ${
+            customer.tier === 'Bronze'
+              ? 'bg-[#CD7F32] text-white'
+              : customer.tier === 'Platinum'
+                ? 'bg-[#E5E4E2] text-black'
+                : ''
+          }`}
+        >
+          {customer.tier}
+        </Badge>
         {/* Info Fields */}
         <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2'>
           {fields.map((field) => (
@@ -250,7 +260,7 @@ const Profile = () => {
         {/* Points and Balance */}
         {!editMode && (
           <div className='mt-6 grid grid-cols-2 gap-4'>
-            {renderItem('Points', customer.points)}
+            {renderItem('Points', customer.points.toLocaleString())}
             {renderItem('Balance', customer.balance?.toFixed(2))}
           </div>
         )}
