@@ -37,7 +37,9 @@ const profileSchema = z.object({
 })
 
 const Profile = () => {
-  const { user } = useAuth()
+  const { user, updateUser, isLoggedIn, isAuthLoading } = useAuth()
+  const userPhotoUrl = user?.photoUrl
+
   const customerId = user?.customerId
   // Fetch customer data
   const {
@@ -46,7 +48,7 @@ const Profile = () => {
     error,
     uploadPhoto,
     updateCustomer,
-  } = useCustomerById(customerId)
+  } = useCustomerById(customerId, userPhotoUrl, isAuthLoading)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [editMode, setEditMode] = useState(false)
@@ -60,10 +62,12 @@ const Profile = () => {
   useEffect(() => {
     if (customer) {
       setEditedCustomer(customer)
-      setUserProfileImage(customer.photoUrl)
+      setUserProfileImage(userPhotoUrl)
     }
-  }, [customer])
+  }, [customer, userPhotoUrl])
 
+  if (isAuthLoading) return <p>Loading auth...</p>
+  if (!isLoggedIn) return null
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error loading customer. Please try again later.</p>
   if (!customer || !editedCustomer) return <p>Customer not found</p>
@@ -130,9 +134,11 @@ const Profile = () => {
       const updatePromises = []
 
       // Check if image was changed (compare with original)
+      let uploadedPhotoUrl: string | null = null
+
       if (fileInputRef.current?.files?.length) {
         const imageFile = fileInputRef.current.files[0]
-        updatePromises.push(uploadPhoto(imageFile))
+        uploadedPhotoUrl = await uploadPhoto(imageFile)
       }
 
       // Check if other fields were changed
@@ -150,6 +156,12 @@ const Profile = () => {
       if (updatePromises.length > 0) {
         await Promise.all(updatePromises)
         setEditMode(false)
+
+        if (uploadedPhotoUrl) {
+          updateUser({ photoUrl: uploadedPhotoUrl })
+        }
+
+        toast.success('Profile updated successfully!')
       } else {
         toast.info('No changes to save')
       }
@@ -160,7 +172,6 @@ const Profile = () => {
 
     setErrors({})
     setEditMode(false)
-    toast.success('Profile updated successfully!')
   }
 
   const handleCancel = () => {
@@ -192,7 +203,6 @@ const Profile = () => {
                 if (editMode) fileInputRef.current?.click()
               }}
               onError={(e) => {
-                console.error('Image failed to load:', e)
                 e.currentTarget.src = defaultProfile
               }}
             />
@@ -205,7 +215,9 @@ const Profile = () => {
             />
           </div>
         </div>
-
+        <p className='text-muted-foreground mt-2 text-right text-xs'>
+          *Maximum file size: 5 MB
+        </p>
         {/* Info Fields */}
         <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2'>
           {fields.map((field) => (
@@ -221,7 +233,7 @@ const Profile = () => {
                     className='w-full rounded-lg border border-gray-300 p-2'
                   />
                 ) : (
-                  <p className='flex-1 bg-gray-50 px-3 py-1 text-lg font-semibold'>
+                  <p className='flex-1 bg-gray-50 px-3 py-1 text-lg'>
                     {customer[field.name]}
                   </p>
                 )}

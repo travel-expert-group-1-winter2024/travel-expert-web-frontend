@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
   user: User | null
+  updateUser: (updatedFields: Partial<User>) => void
   token: string
   isLoggedIn: boolean
   isAuthLoading: boolean
@@ -36,6 +37,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const mutation = useMutation({
     mutationFn: userLogin,
   })
+
+  const updateUser = (updatedFields: Partial<User>) => {
+    if (!user) return
+    setUser({ ...user, ...updatedFields })
+  }
 
   const loginAction = (
     data: LoginRequest,
@@ -96,7 +102,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ token, user, isLoggedIn, isAuthLoading, loginAction, logOut }}
+      value={{
+        token,
+        user,
+        updateUser,
+        isLoggedIn,
+        isAuthLoading,
+        loginAction,
+        logOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

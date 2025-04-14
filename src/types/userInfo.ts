@@ -3,6 +3,7 @@ export interface User {
   name: string
   email: string
   roles: string[]
-  customerId: number
+  customerId?: number
   agentId?: number
+  photoUrl?: string
 }
