@@ -60,6 +60,7 @@ function Navbar() {
             <div className='flex items-center gap-2'>
               <AvatarWithDropDownMenu
                 name={user?.name ?? 'User'}
+                image={user?.photoUrl}
                 signOut={logOut}
               />
             </div>
