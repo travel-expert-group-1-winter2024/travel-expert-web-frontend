@@ -5,4 +5,5 @@ export interface User {
   roles: string[]
   customerId: number
   agentId?: number
+  photoUrl?: string
 }
