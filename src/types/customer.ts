@@ -12,6 +12,7 @@ export interface Customer {
   custemail: string
   agentid?: number
   points: number
+  tier: string
   balance?: number
   photo_path?: string
   photoUrl?: string

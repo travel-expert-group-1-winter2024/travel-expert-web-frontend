@@ -1,4 +1,5 @@
 import defaultProfile from '@/assets/user-default-avatar.png'
+import { Badge } from '@/components/ui/badge.tsx'
 import { useAuth } from '@/hooks/useAuth'
 import { useCustomerById } from '@/hooks/useCustomer'
 import { Customer } from '@/types/customer'
@@ -216,6 +217,17 @@ const Profile = () => {
         <p className='text-muted-foreground mt-2 text-right text-xs'>
           *Maximum file size: 5 MB
         </p>
+        <Badge
+          className={`mx-2 ${
+            customer.tier === 'Bronze'
+              ? 'bg-[#CD7F32] text-white'
+              : customer.tier === 'Platinum'
+                ? 'bg-[#E5E4E2] text-black'
+                : ''
+          }`}
+        >
+          {customer.tier}
+        </Badge>
         {/* Info Fields */}
         <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2'>
           {fields.map((field) => (
