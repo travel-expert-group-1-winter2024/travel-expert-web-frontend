@@ -55,7 +55,7 @@ export default function BookingFormCard({
       travellerNames: '',
     }
     let hasError = false
-
+  
     if (!travellers || parseInt(travellers) <= 0) {
       newErrors.travellers = 'Please enter a valid number of travellers.'
       hasError = true
@@ -102,7 +102,7 @@ export default function BookingFormCard({
         })
       }
     }
-  }
+  }  
 
   return (
     <Card className='mt-4'>
