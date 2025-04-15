@@ -16,7 +16,7 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu'
 import { useAuth } from '@/hooks/useAuth'
-import { Book, LogOut, User } from 'lucide-react'
+import { Book, LogOut, User, Wallet } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import defaultProfile from '@/assets/user-default-avatar.png'
 
@@ -24,6 +24,24 @@ const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'Packages', to: '/packages' },
   { label: 'Contact', to: '/contact' },
+]
+
+const accountLinks = [
+  {
+    to: '/account/profile',
+    icon: <User />,
+    label: 'Account',
+  },
+  {
+    to: '/account/booking',
+    icon: <Book />,
+    label: 'Booking Detail',
+  },
+  {
+    to: '/account/wallet',
+    icon: <Wallet />,
+    label: 'Wallet',
+  },
 ]
 
 function Navbar() {
@@ -108,24 +126,14 @@ function AvatarWithDropDownMenu({
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <NavLink to='/account/profile'>
-            <DropdownMenuItem>
-              <User />
-              <span>Account</span>
-            </DropdownMenuItem>
-          </NavLink>
-          <NavLink to='/account/booking'>
-            <DropdownMenuItem>
-              <Book />
-              <span>Booking Detail</span>
-            </DropdownMenuItem>
-          </NavLink>
-          <NavLink to='/account/wallet'>
-            <DropdownMenuItem>
-              {/* <History /> */}
-              <span>Wallet</span>
-            </DropdownMenuItem>
-          </NavLink>
+          {accountLinks.map(({ to, icon, label }) => (
+            <NavLink key={to} to={to}>
+              <DropdownMenuItem>
+                {icon}
+                <span>{label}</span>
+              </DropdownMenuItem>
+            </NavLink>
+          ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
