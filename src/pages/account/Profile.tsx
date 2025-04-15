@@ -1,5 +1,15 @@
 import defaultProfile from '@/assets/user-default-avatar.png'
 import { Badge } from '@/components/ui/badge.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select.tsx'
 import { useAuth } from '@/hooks/useAuth'
 import { useCustomerById } from '@/hooks/useCustomer'
 import { Customer } from '@/types/customer'
@@ -73,7 +83,9 @@ const Profile = () => {
   if (error) return <p>Error loading customer. Please try again later.</p>
   if (!customer || !editedCustomer) return <p>Customer not found</p>
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target
     setEditedCustomer((prev) => {
       if (!prev) return null
@@ -182,13 +194,6 @@ const Profile = () => {
     setEditMode(false)
   }
 
-  const renderItem = (name: string, value: number | string | undefined) => (
-    <div className='flex items-center'>
-      <p className='w-[120px] text-sm text-gray-500'>{name}</p>
-      <p className='flex-1 bg-gray-50 px-3 py-1 text-lg'>{value}</p>
-    </div>
-  )
-
   return (
     <div className='relative flex flex-col items-center'>
       <div className='w-full bg-white'>
@@ -228,42 +233,57 @@ const Profile = () => {
         >
           {customer.tier}
         </Badge>
+        {/* Points and Balance */}
+        <Badge variant='destructive'>
+          {customer.points.toLocaleString() + ' pts'}
+        </Badge>
         {/* Info Fields */}
-        <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2'>
+        <div className='mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2'>
           {fields.map((field) => (
             <div key={field.name} className='flex flex-col'>
               <div className='flex items-center'>
-                <p className='w-[120px] text-sm text-gray-500'>{field.label}</p>
+                <Label className='w-[120px]'>{field.label}</Label>
                 {editMode ? (
-                  <input
-                    type='text'
+                  field.name === 'custprov' ? (
+                    <ProvinceSelect
+                      name={field.name}
+                      value={editedCustomer[field.name]}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    <div className='flex-1'>
+                      <Input
+                        type='text'
+                        name={field.name}
+                        value={editedCustomer[field.name]}
+                        onChange={handleChange}
+                        className='rounded-lg border border-gray-300 px-3 py-1'
+                      />
+                      {editMode && errors[field.name] && (
+                        <p className='mt-1 text-sm text-red-500'>
+                          {errors[field.name]}
+                        </p>
+                      )}
+                    </div>
+                  )
+                ) : field.name === 'custprov' ? (
+                  <ProvinceSelect
                     name={field.name}
-                    value={editedCustomer[field.name]}
-                    onChange={handleChange}
-                    className='w-full rounded-lg border border-gray-300 p-2'
+                    value={customer[field.name]}
+                    onChange={() => {}}
+                    readOnly
                   />
                 ) : (
-                  <p className='flex-1 bg-gray-50 px-3 py-1 text-lg'>
-                    {customer[field.name]}
-                  </p>
+                  <Input
+                    className='flex-1 px-3 py-1'
+                    value={customer[field.name]}
+                    disabled={true}
+                  />
                 )}
               </div>
-              {editMode && errors[field.name] && (
-                <p className='mt-1 -mb-5 ml-[100px] text-sm text-red-500'>
-                  {errors[field.name]}
-                </p>
-              )}
             </div>
           ))}
         </div>
-
-        {/* Points and Balance */}
-        {!editMode && (
-          <div className='mt-6 grid grid-cols-2 gap-4'>
-            {renderItem('Points', customer.points.toLocaleString())}
-            {renderItem('Balance', customer.balance?.toFixed(2))}
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className='mt-8 flex justify-end gap-4'>
@@ -295,6 +315,55 @@ const Profile = () => {
 
       <ToastContainer position='top-center' autoClose={2000} />
     </div>
+  )
+}
+
+const ProvinceSelect = ({
+  name,
+  value,
+  onChange,
+  readOnly = false,
+}: {
+  name: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  readOnly?: boolean
+}) => {
+  const handleValueChange = (val: string) => {
+    if (readOnly) return
+    const syntheticEvent = {
+      target: { name, value: val },
+    } as React.ChangeEvent<HTMLSelectElement>
+    onChange(syntheticEvent)
+  }
+
+  return (
+    <Select
+      onValueChange={handleValueChange}
+      defaultValue={value}
+      disabled={readOnly}
+    >
+      <SelectTrigger className='flex-1 rounded-lg border border-gray-300 px-3 py-1'>
+        <SelectValue placeholder='Select Province' />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value='AB'>Alberta</SelectItem>
+          <SelectItem value='BC'>British Columbia</SelectItem>
+          <SelectItem value='MB'>Manitoba</SelectItem>
+          <SelectItem value='NB'>New Brunswick</SelectItem>
+          <SelectItem value='NL'>Newfoundland and Labrador</SelectItem>
+          <SelectItem value='NS'>Nova Scotia</SelectItem>
+          <SelectItem value='NT'>Northwest Territories</SelectItem>
+          <SelectItem value='NU'>Nunavut</SelectItem>
+          <SelectItem value='ON'>Ontario</SelectItem>
+          <SelectItem value='PE'>Prince Edward Island</SelectItem>
+          <SelectItem value='QC'>Quebec</SelectItem>
+          <SelectItem value='SK'>Saskatchewan</SelectItem>
+          <SelectItem value='YT'>Yukon</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   )
 }
 
