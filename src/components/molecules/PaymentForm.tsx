@@ -9,12 +9,16 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 interface PaymentFormProps {
-  clientSecret: string | null;
-  amount?: number;
-  onPaymentSuccess?: () => void;
+  clientSecret: string | null
+  amount?: number
+  onPaymentSuccess?: () => void
 }
 
-const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProps) => {
+const PaymentForm = ({
+  clientSecret,
+  amount,
+  onPaymentSuccess,
+}: PaymentFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const stripe = useStripe()
   const elements = useElements()
@@ -23,7 +27,7 @@ const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProp
   const currentPath = location.pathname
   const navigate = useNavigate()
   const { isLoggedIn, token } = useAuth()
-  const { tripType, travellers, bookingId, isConfirmBooking } =
+  const { tripType, travellers, bookingId, isConfirmBooking, travellerNames } =
     location.state || {}
 
   const {
@@ -44,6 +48,7 @@ const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProp
   useEffect(() => {
     if (isBookingConfirmed || isBookingCreated) {
       toast.success('Payment successful')
+      bookingResponse['travellerNames'] = travellerNames;
       navigate(`/bookingconfirmation`, {
         state: { bookingdata: bookingResponse || confirmBookingResponse },
       })
@@ -98,12 +103,12 @@ const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProp
         if (currentPath.includes('wallet')) {
           const response = await topUpWallet({
             amount: amount || 0,
-            description: 'Top-up from credit card'
-          });
-          if (response) {  
+            description: 'Top-up from credit card',
+          })
+          if (response) {
             onPaymentSuccess?.()
           } else {
-            console.log('Top-up failed. Please try again.');
+            console.log('Top-up failed. Please try again.')
           }
         } else {
           const validPackageId = packageId ? parseInt(packageId) : null
@@ -126,6 +131,7 @@ const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProp
                   packageId: validPackageId,
                   paymentMethod: 'STRIPE',
                   paymentId: result.paymentIntent.id,
+                  travellerNames: travellerNames,
                 },
               })
             }
@@ -137,7 +143,7 @@ const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProp
     }
 
     setIsProcessing(false)
-  } // <-- missing closing bracket was here
+  }
 
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>

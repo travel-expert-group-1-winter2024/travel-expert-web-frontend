@@ -16,9 +16,15 @@ export default function BookingFormCard({
   const { packageId } = useParams()
   const [travellers, setTravellers] = useState('')
   const [tripType, setTripType] = useState('')
-  const [errors, setErrors] = useState({ travellers: '', tripType: '',paymentMethod:'' })
+  const [errors, setErrors] = useState({
+    travellers: '',
+    tripType: '',
+    paymentMethod: '',
+  })
   const navigate = useNavigate()
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('')
+  const [travellerNames, setTravellerNames] = useState<string[]>([])
+  const [travellerNameErrors, setTravellerNameErrors] = useState<string[]>([])
 
   const {
     mutate: createBooking,
@@ -42,9 +48,14 @@ export default function BookingFormCard({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const newErrors = { travellers: '', tripType: '', paymentMethod: '' }
+    const newErrors = {
+      travellers: '',
+      tripType: '',
+      paymentMethod: '',
+      travellerNames: '',
+    }
     let hasError = false
-  
+
     if (!travellers || parseInt(travellers) <= 0) {
       newErrors.travellers = 'Please enter a valid number of travellers.'
       hasError = true
@@ -57,9 +68,23 @@ export default function BookingFormCard({
       newErrors.paymentMethod = 'Please select a payment method.'
       hasError = true
     }
-  
+
+    if (parseInt(travellers) > 1) {
+      const nameErrors: string[] = []
+
+      travellerNames.forEach((name, index) => {
+        if (!name.trim()) {
+          nameErrors[index] = `Name for traveller ${index + 1} is required.`
+          hasError = true
+        } else {
+          nameErrors[index] = ''
+        }
+      })
+
+      setTravellerNameErrors(nameErrors)
+    }
     setErrors(newErrors)
-  
+
     if (!hasError) {
       if (isBookingReservation) {
         createBooking({
@@ -73,11 +98,11 @@ export default function BookingFormCard({
         })
       } else {
         navigate(`/payment/${packageId}`, {
-          state: { tripType, travellers, paymentMethod },
+          state: { tripType, travellers, paymentMethod,travellerNames },
         })
       }
     }
-  }  
+  }
 
   return (
     <Card className='mt-4'>
@@ -86,6 +111,7 @@ export default function BookingFormCard({
           <div>
             <input
               type='number'
+              max={8}
               placeholder='Number of Travellers'
               className={`w-full rounded border p-2 ${
                 errors.travellers ? 'border-red-500' : ''
@@ -93,10 +119,23 @@ export default function BookingFormCard({
               value={travellers}
               onChange={(e) => {
                 const value = e.target.value
+                const count = parseInt(value)
                 setTravellers(value)
 
-                if (value && parseInt(value) > 0) {
+                if (count > 0) {
                   setErrors((prev) => ({ ...prev, travellers: '' }))
+                  // Resize names array
+                  setTravellerNames((prev) => {
+                    const newNames = [...prev]
+                    if (count > newNames.length) {
+                      return [
+                        ...newNames,
+                        ...Array(count - newNames.length).fill(''),
+                      ]
+                    } else {
+                      return newNames.slice(0, count)
+                    }
+                  })
                 }
               }}
             />
@@ -104,7 +143,40 @@ export default function BookingFormCard({
               <p className='mt-1 text-sm text-red-500'>{errors.travellers}</p>
             )}
           </div>
+          {parseInt(travellers) > 1 && (
+            <div className='space-y-2'>
+              <label className='block font-medium'>Traveller Names</label>
+              {travellerNames.map((name, index) => (
+                <div key={index}>
+                  <input
+                    type='text'
+                    className={`w-full rounded border p-2 ${
+                      travellerNameErrors[index] ? 'border-red-500' : ''
+                    }`}
+                    placeholder={`Traveller ${index + 1} Name`}
+                    value={name}
+                    onChange={(e) => {
+                      const updatedNames = [...travellerNames]
+                      updatedNames[index] = e.target.value
+                      setTravellerNames(updatedNames)
 
+                      // Clear error as user types
+                      setTravellerNameErrors((prev) => {
+                        const updatedErrors = [...prev]
+                        updatedErrors[index] = ''
+                        return updatedErrors
+                      })
+                    }}
+                  />
+                  {travellerNameErrors[index] && (
+                    <p className='mt-1 text-sm text-red-500'>
+                      {travellerNameErrors[index]}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           <div>
             <select
               className={`w-full rounded border p-2 ${
@@ -142,8 +214,8 @@ export default function BookingFormCard({
                   onChange={(e) => {
                     const value = e.target.value
                     setErrors((prev) => ({ ...prev, paymentMethod: '' }))
-                    setPaymentMethod(value)}
-                  }
+                    setPaymentMethod(value)
+                  }}
                 />
                 Wallet
               </label>
@@ -156,8 +228,8 @@ export default function BookingFormCard({
                   onChange={(e) => {
                     const value = e.target.value
                     setErrors((prev) => ({ ...prev, paymentMethod: '' }))
-                    setPaymentMethod(value)}
-                  }
+                    setPaymentMethod(value)
+                  }}
                 />
                 Card
               </label>

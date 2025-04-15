@@ -9,32 +9,26 @@ import {
 } from '@/components/ui/card'
 import { useAuth } from '@/hooks/useAuth'
 import { usePackageDetails } from '@/hooks/usePackageDetails'
-import {
-  BadgeCheck,
-  CalendarDays,
-  CreditCard,
-  UserRound,
-} from 'lucide-react'
+import { BadgeCheck, CalendarDays, CreditCard, UserRound } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 
 // Dummy data - replace with your actual booking data and payment summary
 
-
 export default function BookingConfirmationPage() {
-  const { bookingdata } = useLocation().state || {};
+  const { bookingdata } = useLocation().state || {}
   const { data: pkg } = usePackageDetails(bookingdata.data.packageId!)
   const dummyBooking = {
-    id: (bookingdata.data.bookingId).toString(),
-    customerName: useAuth().user?.name || "",
-    customerEmail: useAuth().user?.email || "",
+    id: bookingdata.data.bookingId.toString(),
+    customerName: useAuth().user?.name || '',
+    customerEmail: useAuth().user?.email || '',
     bookingDate: new Date().toISOString(),
     startDate: pkg?.pkgstartdate,
     endDate: pkg?.pkgenddate,
     totalAmount: bookingdata.data.finalPrice,
     paymentMethod: bookingdata.data.paymentMethod,
     tourName: pkg?.pkgname,
-    // departureLocation: 'Calgary,Alberta', // Hard coded for now
-    bookingNumber: bookingdata.data.bookingNo
+    travellerNames: bookingdata.travellerNames,
+    bookingNumber: bookingdata.data.bookingNo,
   }
   return (
     <div className='container mx-auto px-4 py-8 sm:px-6 lg:px-8'>
@@ -103,17 +97,20 @@ export default function BookingConfirmationPage() {
                   </div>
                 </div>
 
-                {/* <div className='space-y-2'>
-                  <h3 className='flex items-center gap-2 text-lg font-semibold'>
-                    <MapPin className='h-5 w-5 text-blue-600' />
-                    Departure
-                  </h3>
-                  <div className='pl-7'>
-                    <p className='font-medium'>
-                      {dummyBooking.departureLocation}
+                {dummyBooking.travellerNames.length > 0 && (
+                  <div>
+                    <p className='text-muted-foreground mt-4 text-sm'>
+                      Traveller Names
                     </p>
+                    <ul className='list-disc pl-5 text-base'>
+                      {dummyBooking.travellerNames.map(
+                        (name: any, index: any) => (
+                          <li key={index}>{name}</li>
+                        ),
+                      )}
+                    </ul>
                   </div>
-                </div> */}
+                )}
               </div>
 
               {/* Right column - Customer & Payment */}
