@@ -25,7 +25,7 @@ export function PackageCard({ pkg }: Props) {
       </CardHeader>
       <CardContent className='flex aspect-square items-center justify-center p-6'>
         <img
-          src={pkg.photoURL ?? 'https://placehold.co/600x400'}
+          src={pkg.photoURL || 'https://placehold.co/600x400'}
           alt={pkg.pkgname}
           className='h-full w-full object-cover'
         />

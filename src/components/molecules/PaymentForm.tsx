@@ -137,7 +137,7 @@ const PaymentForm = ({ clientSecret, amount, onPaymentSuccess }: PaymentFormProp
     }
 
     setIsProcessing(false)
-  }
+  } // <-- missing closing bracket was here
 
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>

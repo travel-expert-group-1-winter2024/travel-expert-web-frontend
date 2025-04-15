@@ -159,7 +159,6 @@ const PaymentsPage = () => {
               <button
                 className='w-full rounded bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700'
                 onClick={() => {
-                  // 🔓 Uncomment your booking API call here
                   createBooking({
                     token: token,
                     bookingData: {

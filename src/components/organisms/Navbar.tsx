@@ -16,13 +16,31 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu'
 import { useAuth } from '@/hooks/useAuth'
-import { Book, LogOut, User } from 'lucide-react'
+import { Book, LogOut, User, Wallet } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'Packages', to: '/packages' },
   { label: 'Contact', to: '/contact' },
+]
+
+const accountLinks = [
+  {
+    to: '/account/profile',
+    icon: <User />,
+    label: 'Account',
+  },
+  {
+    to: '/account/booking',
+    icon: <Book />,
+    label: 'Booking Detail',
+  },
+  {
+    to: '/account/wallet',
+    icon: <Wallet />,
+    label: 'Wallet',
+  },
 ]
 
 function Navbar() {
@@ -116,6 +134,14 @@ function AvatarWithDropDownMenu({
               <span>Wallet</span>
             </DropdownMenuItem>
           </NavLink>
+          {accountLinks.map(({ to, icon, label }) => (
+            <NavLink key={to} to={to}>
+              <DropdownMenuItem>
+                {icon}
+                <span>{label}</span>
+              </DropdownMenuItem>
+            </NavLink>
+          ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
