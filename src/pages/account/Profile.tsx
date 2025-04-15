@@ -261,7 +261,6 @@ const Profile = () => {
         {!editMode && (
           <div className='mt-6 grid grid-cols-2 gap-4'>
             {renderItem('Points', customer.points.toLocaleString())}
-            {renderItem('Balance', customer.balance?.toFixed(2))}
           </div>
         )}
 
