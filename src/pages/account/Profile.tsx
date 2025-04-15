@@ -1,4 +1,5 @@
 import defaultProfile from '@/assets/user-default-avatar.png'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
@@ -190,26 +191,31 @@ const Profile = () => {
   const handleCancel = () => {
     if (!customer) return
     setEditedCustomer(customer)
+    setUserProfileImage(user?.photoUrl || defaultProfile)
     setErrors({})
     setEditMode(false)
   }
+
 
   return (
     <div className='relative flex flex-col items-center'>
       <div className='w-full bg-white'>
         <div className='flex flex-col items-center bg-gradient-to-r from-purple-500 via-purple-400 to-purple-600 py-4'>
           <div className='relative'>
-            <img
-              src={userProfileImage}
-              alt='Profile'
-              className={`h-32 w-32 rounded-full object-cover ${editMode ? 'cursor-pointer' : ''}`}
+            <Avatar
+              className={`h-32 w-32 ${editMode ? 'cursor-pointer' : ''}`}
               onClick={() => {
                 if (editMode) fileInputRef.current?.click()
               }}
-              onError={(e) => {
+            >
+              <AvatarImage src={userProfileImage} alt="Profile" onError={(e) => {
                 e.currentTarget.src = defaultProfile
-              }}
-            />
+              }} />
+              <AvatarFallback>
+                {customer?.custfirstname?.charAt(0) ?? 'U'}
+              </AvatarFallback>
+            </Avatar>
+
             <input
               type='file'
               accept='image/*'
