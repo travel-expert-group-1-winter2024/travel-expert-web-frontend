@@ -13,7 +13,6 @@ import {
   BadgeCheck,
   CalendarDays,
   CreditCard,
-  MapPin,
   UserRound,
 } from 'lucide-react'
 import { useLocation } from 'react-router-dom'

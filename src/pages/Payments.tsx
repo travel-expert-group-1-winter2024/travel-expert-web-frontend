@@ -32,7 +32,6 @@ const PaymentsPage = () => {
       data: bookingResponse,
       isSuccess: isBookingCreated,
       isError: isBookingCreateError,
-      isPending: isBookingCreating,
     } = useCreateBooking()
 
     useEffect(() => {
