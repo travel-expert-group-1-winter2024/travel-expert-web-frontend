@@ -17,6 +17,7 @@ type Booking = {
   totalAmount: number
   paymentMethod: string
   tourName: string
+  travellerNames:[]
 }
 
 interface DownloadReceiptButtonProps {

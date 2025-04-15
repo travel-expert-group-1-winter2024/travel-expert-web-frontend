@@ -139,7 +139,7 @@ function Wallet() {
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <PaymentForm
                   clientSecret={clientSecret}
-                  amount={Number(amount)}
+                  totalAmount={Number(amount)}
                   onPaymentSuccess={handlePaymentSuccess}
                 />
               </Elements>

@@ -1,53 +1,58 @@
-import PaymentForm from '@/components/molecules/PaymentForm';
-import PaymentSummary from '@/components/molecules/PaymentSummary';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/hooks/useAuth.ts';
-import { useCreateBooking } from '@/hooks/useBookings';
-import { useCostSummary } from '@/hooks/usePaymentSummary';
-import { useWallet } from '@/hooks/useWallet';
-import { stripeKeys } from '@/utils/stripeKeys';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
+import PaymentForm from '@/components/molecules/PaymentForm'
+import PaymentSummary from '@/components/molecules/PaymentSummary'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { useAuth } from '@/hooks/useAuth.ts'
+import { useCreateBooking } from '@/hooks/useBookings'
+import { useCostSummary } from '@/hooks/usePaymentSummary'
+import { useWallet } from '@/hooks/useWallet'
+import { stripeKeys } from '@/utils/stripeKeys'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const PaymentsPage = () => {
-  const { packageId } = useParams();
-  const validPackageId = packageId ? parseInt(packageId) : 0;
-  const { tripType, travellers, paymentMethod } = useLocation().state || {};
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const stripePromise = loadStripe(stripeKeys.publishable);
-  const { isLoggedIn, token } = useAuth();
-  const { mutate: costBreakdown, data: costSummaryData } = useCostSummary();
-  const { data: wallet } = useWallet();
-  const [insufficientFunds, setInsufficientFunds] = useState(false);
-  const [bookingCreated, setBookingCreated] = useState(false);
-  const [remainingBalance, setRemainingBalance] = useState(0);
+  const { packageId } = useParams()
+  const validPackageId = packageId ? parseInt(packageId) : 0
+  const { tripType, travellers, paymentMethod, travellerNames } =
+    useLocation().state || {}
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const stripePromise = loadStripe(stripeKeys.publishable)
+  const { isLoggedIn, token } = useAuth()
+  const { mutate: costBreakdown, data: costSummaryData } = useCostSummary()
+  const { data: wallet } = useWallet()
+  const [insufficientFunds, setInsufficientFunds] = useState(false)
+  const [bookingCreated, setBookingCreated] = useState(false)
+  const [remainingBalance, setRemainingBalance] = useState(0)
 
-  const navigate = useNavigate();
-    const {
-      mutate: createBooking,
-      data: bookingResponse,
-      isSuccess: isBookingCreated,
-      isError: isBookingCreateError,
-    } = useCreateBooking()
+  const navigate = useNavigate()
+  const {
+    mutate: createBooking,
+    data: bookingResponse,
+    isSuccess: isBookingCreated,
+    isError: isBookingCreateError,
+  } = useCreateBooking()
 
-    useEffect(() => {
-      if (isBookingCreated) {
-        toast.success('Payment successful')
-        navigate(`/bookingconfirmation`, {
-          state: { bookingdata: bookingResponse },
-        })
-      }
-      if (isBookingCreateError) {
-        toast.error('Failed to proceed payment')
-      }
-    }, [
-      isBookingCreated,
-      isBookingCreateError,
-    ])
+  useEffect(() => {
+    if (isBookingCreated) {
+      toast.success('Payment successful')
+      bookingResponse['travellerNames'] = travellerNames
+      navigate(`/bookingconfirmation`, {
+        state: { bookingdata: bookingResponse },
+      })
+    }
+    if (isBookingCreateError) {
+      toast.error('Failed to proceed payment')
+    }
+  }, [isBookingCreated, isBookingCreateError])
 
   useEffect(() => {
     if (tripType && travellers && validPackageId) {
@@ -56,49 +61,52 @@ const PaymentsPage = () => {
         travelerCount: travellers || 1,
         packageId: validPackageId,
         paymentMethod: 'STRIPE',
-      };
+        travellerNames: travellerNames,
+      }
 
-      costBreakdown({ data: paymentData, token: token });
+      costBreakdown({ data: paymentData, token: token })
     }
-  }, [costBreakdown, tripType, travellers, validPackageId, token, paymentMethod]);
+  }, [
+    costBreakdown,
+    tripType,
+    travellers,
+    validPackageId,
+    token,
+    paymentMethod,
+  ])
 
   useEffect(() => {
-
-      const createPaymentIntent = async (total: number) => {
-        try {
-          const response = await axios.post(
-            'http://localhost:8080/api/bookings/create-payment-intent',
-            {
-              packagePrice: total,
-              tripType,
-              travellers,
-              packageId: validPackageId,
-            }
-          );
-          setClientSecret(response.data.clientSecret);
-        } catch (error) {
-          console.error('Error creating payment intent:', error);
-        }
-      };
-  
-
-      if (costSummaryData && costSummaryData.data) {
-        const costData = costSummaryData.data;
-        const total = Math.round(costData.total);
-  
-        if (paymentMethod === 'Wallet') {
-          if (wallet && wallet.balance < total) {
-            setRemainingBalance(total - wallet.balance)
-            setInsufficientFunds(true);
-          } else if (!bookingCreated) {
-            setBookingCreated(true);
-      
-          }
-        } else {
-           createPaymentIntent(total);
-        }
+    const createPaymentIntent = async (total: number) => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/api/bookings/create-payment-intent',
+          {
+            packagePrice: total,
+            tripType,
+            travellers,
+            packageId: validPackageId,
+          },
+        )
+        setClientSecret(response.data.clientSecret)
+      } catch (error) {
+        console.error('Error creating payment intent:', error)
       }
-  
+    }
+
+    if (costSummaryData && costSummaryData.data) {
+      const costData = costSummaryData.data
+      const total = Math.round(costData.total)
+      if (paymentMethod === 'Wallet') {
+        if (wallet && wallet.balance < total) {
+          setRemainingBalance(total - wallet.balance)
+          setInsufficientFunds(true)
+        } else if (!bookingCreated) {
+          setBookingCreated(true)
+        }
+      } else {
+        createPaymentIntent(total)
+      }
+    }
   }, [
     costSummaryData,
     tripType,
@@ -108,10 +116,9 @@ const PaymentsPage = () => {
     paymentMethod,
     wallet,
     bookingCreated,
-  ]);
+  ])
 
-  if (!isLoggedIn) return null;
-  
+  if (!isLoggedIn) return null
 
   return (
     <div className='flex flex-col py-6 xl:flex-row xl:gap-12 xl:px-8'>
@@ -122,10 +129,9 @@ const PaymentsPage = () => {
             tripType={tripType}
             travellers={travellers}
             costSummary={costSummaryData.data}
+            travellerNames={travellerNames}
           />
         )}
-
-       
       </div>
 
       {/* Right Section: Stripe or Other Payment */}
@@ -138,6 +144,7 @@ const PaymentsPage = () => {
               <PaymentForm
                 clientSecret={clientSecret}
                 onPaymentSuccess={() => {}}
+                totalAmount={costSummaryData.data.total}
               />
             </Elements>
           )
@@ -165,6 +172,7 @@ const PaymentsPage = () => {
                       travelerCount: travellers || 1,
                       packageId: validPackageId,
                       paymentMethod: 'WALLET',
+                      travellerNames: travellerNames,
                     },
                   })
                   console.log('Booking with wallet...')
@@ -175,7 +183,7 @@ const PaymentsPage = () => {
             </CardContent>
           </Card>
         ) : null}
-         {paymentMethod === 'Wallet' && insufficientFunds && (
+        {paymentMethod === 'Wallet' && insufficientFunds && (
           <div className='mt-6 flex justify-center'>
             <Card className='w-full max-w-md border-red-600 bg-red-50 shadow-lg'>
               <CardHeader className='flex flex-row items-center gap-2'>
@@ -201,8 +209,6 @@ const PaymentsPage = () => {
       </div>
     </div>
   )
-  
-};
+}
 
-export default PaymentsPage;
-
+export default PaymentsPage
