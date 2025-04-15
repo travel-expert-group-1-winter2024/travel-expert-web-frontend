@@ -296,42 +296,44 @@ export default function PackageDetails() {
         </Card>
 
         {/* Review Form */}
-        <Card className='mt-6'>
-          <CardHeader>
-            <CardTitle>Share Your Experience</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className='space-y-4' onSubmit={handleSubmit}>
-              <RadioGroup
-                value={rating}
-                onValueChange={setRating}
-                className='flex gap-1'
-              >
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <div key={value} className='flex items-center space-x-2'>
-                    <RadioGroupItem value={value.toString()} id={`r${value}`} />
-                    <Label
-                      htmlFor={`r${value}`}
-                      className='flex items-center gap-1'
-                    >
-                      <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
-                      {value}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-              <Textarea
-                placeholder='Share your thoughts...'
-                className='min-h-[120px]'
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-              />
-              <Button type='submit' disabled={submitting || !comments.trim()}>
-                {submitting ? 'Submitting...' : 'Submit Review'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {
+          isLoggedIn && (<Card className='mt-6'>
+            <CardHeader>
+              <CardTitle>Share Your Experience</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className='space-y-4' onSubmit={handleSubmit}>
+                <RadioGroup
+                  value={rating}
+                  onValueChange={setRating}
+                  className='flex gap-1'
+                >
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <div key={value} className='flex items-center space-x-2'>
+                      <RadioGroupItem value={value.toString()} id={`r${value}`} />
+                      <Label
+                        htmlFor={`r${value}`}
+                        className='flex items-center gap-1'
+                      >
+                        <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
+                        {value}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+                <Textarea
+                  placeholder='Share your thoughts...'
+                  className='min-h-[120px]'
+                  value={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                />
+                <Button type='submit' disabled={submitting || !comments.trim()}>
+                  {submitting ? 'Submitting...' : 'Submit Review'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>)
+        }
       </div>
     </section>
   )
