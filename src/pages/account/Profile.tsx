@@ -182,13 +182,6 @@ const Profile = () => {
     setEditMode(false)
   }
 
-  const renderItem = (name: string, value: number | string | undefined) => (
-    <div className='flex items-center'>
-      <p className='w-[120px] text-sm text-gray-500'>{name}</p>
-      <p className='flex-1 bg-gray-50 px-3 py-1 text-lg'>{value}</p>
-    </div>
-  )
-
   return (
     <div className='relative flex flex-col items-center'>
       <div className='w-full bg-white'>
@@ -228,8 +221,12 @@ const Profile = () => {
         >
           {customer.tier}
         </Badge>
+        {/* Points and Balance */}
+        <Badge variant='destructive'>
+          {customer.points.toLocaleString() + ' pts'}
+        </Badge>
         {/* Info Fields */}
-        <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2'>
+        <div className='mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2'>
           {fields.map((field) => (
             <div key={field.name} className='flex flex-col'>
               <div className='flex items-center'>
@@ -243,7 +240,7 @@ const Profile = () => {
                     className='w-full rounded-lg border border-gray-300 p-2'
                   />
                 ) : (
-                  <p className='flex-1 bg-gray-50 px-3 py-1 text-lg'>
+                  <p className='flex-1 bg-gray-50 px-3 py-1'>
                     {customer[field.name]}
                   </p>
                 )}
@@ -256,13 +253,6 @@ const Profile = () => {
             </div>
           ))}
         </div>
-
-        {/* Points and Balance */}
-        {!editMode && (
-          <div className='mt-6 grid grid-cols-2 gap-4'>
-            {renderItem('Points', customer.points.toLocaleString())}
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className='mt-8 flex justify-end gap-4'>
