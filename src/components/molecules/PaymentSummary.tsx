@@ -95,27 +95,27 @@ const PaymentSummary = ({ tripType, travellers,costSummary }: { tripType: string
               <CardContent className='space-y-4 mt-4'>
                 <div className='flex justify-between'>
                   <span>Package Price</span>
-                  <span>${costSummary.packagePrice}</span>
+                  <span>${Number(costSummary.packagePrice).toFixed(2)}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Discount</span>
-                  <span>-${costSummary.discount}</span>
+                  <span>-${Number(costSummary.discount).toFixed(2)}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Charges</span>
-                  <span>${costSummary.charges}</span>
+                  <span>${Number(costSummary.charges).toFixed(2)}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Agency Fees</span>
-                  <span>${costSummary.agencyFees}</span>
+                  <span>${Number(costSummary.agencyFees).toFixed(2)}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Tax</span>
-                  <span>${costSummary.tax}</span>
+                  <span>${Number(costSummary.tax).toFixed(2)}</span>
                 </div>
                 <div className='flex justify-between font-bold'>
                   <span>Total</span>
-                  <span>${costSummary.total}</span>
+                  <span>${Number(costSummary.total).toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>

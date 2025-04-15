@@ -13,7 +13,6 @@ import {
   BadgeCheck,
   CalendarDays,
   CreditCard,
-  MapPin,
   UserRound,
 } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
@@ -32,10 +31,10 @@ export default function BookingConfirmationPage() {
     startDate: pkg?.pkgstartdate,
     endDate: pkg?.pkgenddate,
     totalAmount: bookingdata.data.finalPrice,
-    paymentMethod: 'Credit Card (•••• 4242)', // Hard coded for now
+    paymentMethod: bookingdata.data.paymentMethod,
     tourName: pkg?.pkgname,
-    departureLocation: 'Calgary,Alberta', // Hard coded for now
-    referenceNumber: 'PAY-789456123',  // Hard coded for now
+    // departureLocation: 'Calgary,Alberta', // Hard coded for now
+    bookingNumber: bookingdata.data.bookingNo
   }
   return (
     <div className='container mx-auto px-4 py-8 sm:px-6 lg:px-8'>
@@ -104,7 +103,7 @@ export default function BookingConfirmationPage() {
                   </div>
                 </div>
 
-                <div className='space-y-2'>
+                {/* <div className='space-y-2'>
                   <h3 className='flex items-center gap-2 text-lg font-semibold'>
                     <MapPin className='h-5 w-5 text-blue-600' />
                     Departure
@@ -114,7 +113,7 @@ export default function BookingConfirmationPage() {
                       {dummyBooking.departureLocation}
                     </p>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Right column - Customer & Payment */}
@@ -151,7 +150,7 @@ export default function BookingConfirmationPage() {
                     <div className='flex justify-between'>
                       <span className='text-muted-foreground'>Reference:</span>
                       <span className='font-mono text-sm'>
-                        {dummyBooking.referenceNumber}
+                        {dummyBooking.bookingNumber}
                       </span>
                     </div>
                   </div>

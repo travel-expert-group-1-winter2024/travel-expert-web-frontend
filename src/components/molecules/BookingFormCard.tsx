@@ -16,8 +16,10 @@ export default function BookingFormCard({
   const { packageId } = useParams()
   const [travellers, setTravellers] = useState('')
   const [tripType, setTripType] = useState('')
-  const [errors, setErrors] = useState({ travellers: '', tripType: '' })
+  const [errors, setErrors] = useState({ travellers: '', tripType: '',paymentMethod:'' })
   const navigate = useNavigate()
+  const [paymentMethod, setPaymentMethod] = useState('');
+
   const {
     mutate: createBooking,
     isError,
@@ -40,7 +42,7 @@ export default function BookingFormCard({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const newErrors = { travellers: '', tripType: '' }
+    const newErrors = { travellers: '', tripType: '',paymentMethod:'' }
     let hasError = false
 
     if (!travellers || parseInt(travellers) <= 0) {
@@ -65,74 +67,103 @@ export default function BookingFormCard({
         })
       } else {
         navigate(`/payment/${packageId}`, {
-          state: { tripType, travellers },
+          state: { tripType, travellers,paymentMethod },
         })
       }
     }
   }
 
   return (
-    <Card className='mt-4'>
-      <form onSubmit={handleSubmit}>
-        <CardContent className='space-y-4'>
-          <div>
+<Card className='mt-4'>
+  <form onSubmit={handleSubmit}>
+    <CardContent className='space-y-4'>
+      <div>
+        <input
+          type='number'
+          placeholder='Number of Travellers'
+          className={`w-full rounded border p-2 ${
+            errors.travellers ? 'border-red-500' : ''
+          }`}
+          value={travellers}
+          onChange={(e) => {
+            const value = e.target.value
+            setTravellers(value)
+
+            if (value && parseInt(value) > 0) {
+              setErrors((prev) => ({ ...prev, travellers: '' }))
+            }
+          }}
+        />
+        {errors.travellers && (
+          <p className='mt-1 text-sm text-red-500'>{errors.travellers}</p>
+        )}
+      </div>
+
+      <div>
+        <select
+          className={`w-full rounded border p-2 ${
+            errors.tripType ? 'border-red-500' : ''
+          }`}
+          value={tripType}
+          onChange={(e) => {
+            const value = e.target.value
+            setTripType(value)
+            if (value) {
+              setErrors((prev) => ({ ...prev, tripType: '' }))
+            }
+          }}
+        >
+          <option value=''>Select Trip Type</option>
+          <option value='B'>Business</option>
+          <option value='G'>Group</option>
+          <option value='L'>Leisure</option>
+        </select>
+        {errors.tripType && (
+          <p className='mt-1 text-sm text-red-500'>{errors.tripType}</p>
+        )}
+      </div>
+
+      {/* Payment Method Radio Buttons */}
+      <div>
+        <label className='block mb-2 font-medium'>Payment Method</label>
+        <div className='flex gap-4'>
+          <label className='flex items-center gap-2'>
             <input
-              type='number'
-              placeholder='Number of Travellers'
-              className={`w-full rounded border p-2 ${
-                errors.travellers ? 'border-red-500' : ''
-              }`}
-              value={travellers}
-              onChange={(e) => {
-                const value = e.target.value
-                setTravellers(value)
-
-                // Clear error live if valid
-                if (value && parseInt(value) > 0) {
-                  setErrors((prev) => ({ ...prev, travellers: '' }))
-                }
-              }}
+              type='radio'
+              name='paymentMethod'
+              value='Wallet'
+              checked={paymentMethod === 'Wallet'}
+              onChange={(e) => setPaymentMethod(e.target.value)}
             />
-            {errors.travellers && (
-              <p className='mt-1 text-sm text-red-500'>{errors.travellers}</p>
-            )}
-          </div>
+            Wallet
+          </label>
+          <label className='flex items-center gap-2'>
+            <input
+              type='radio'
+              name='paymentMethod'
+              value='Card'
+              checked={paymentMethod === 'Card'}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            />
+            Card
+          </label>
+        </div>
+        {errors.paymentMethod && (
+          <p className='mt-1 text-sm text-red-500'>{errors.paymentMethod}</p>
+        )}
+      </div>
+    </CardContent>
 
-          <div>
-            <select
-              className={`w-full rounded border p-2 ${
-                errors.tripType ? 'border-red-500' : ''
-              }`}
-              value={tripType}
-              onChange={(e) => {
-                const value = e.target.value
-                setTripType(value)
-                // Clear error if selected
-                if (value) {
-                  setErrors((prev) => ({ ...prev, tripType: '' }))
-                }
-              }}
-            >
-              <option value=''>Select Trip Type</option>
-              <option value='B'>Business</option>
-              <option value='G'>Group</option>
-              <option value='L'>Leisure</option>
-            </select>
-            {errors.tripType && (
-              <p className='mt-1 text-sm text-red-500'>{errors.tripType}</p>
-            )}
-          </div>
-        </CardContent>
+    <CardFooter className='mt-2 flex justify-end gap-2'>
+      <Button variant='outline' type='button' onClick={onCancel}>
+        Cancel
+      </Button>
+      <Button type='submit' disabled={isPending}>
+        Submit
+      </Button>
+    </CardFooter>
+  </form>
+</Card>
 
-        <CardFooter className='mt-2 flex justify-end gap-2'>
-          <Button variant='outline' type='button' onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type='submit' disabled={isPending}>
-            Submit
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
   )
 }

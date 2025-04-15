@@ -116,6 +116,24 @@ function AvatarWithDropDownMenu({
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <NavLink to='/account/profile'>
+            <DropdownMenuItem>
+              <User />
+              <span>Account</span>
+            </DropdownMenuItem>
+          </NavLink>
+          <NavLink to='/account/booking'>
+            <DropdownMenuItem>
+              <Book />
+              <span>Booking Detail</span>
+            </DropdownMenuItem>
+          </NavLink>
+          <NavLink to='/account/wallet'>
+            <DropdownMenuItem>
+              {/* <History /> */}
+              <span>Wallet</span>
+            </DropdownMenuItem>
+          </NavLink>
           {accountLinks.map(({ to, icon, label }) => (
             <NavLink key={to} to={to}>
               <DropdownMenuItem>
