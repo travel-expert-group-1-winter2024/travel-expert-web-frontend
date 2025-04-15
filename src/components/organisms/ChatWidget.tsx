@@ -9,11 +9,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog.tsx'
 import { Button } from '@/components/ui/button.tsx'
+import { useAgentUserIdByReference } from '@/hooks/useAgentUserIdByReference.ts'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { useCustomerById } from '@/hooks/useCustomer.ts'
 import { useEmail } from '@/hooks/useEmail.ts'
 import { useStompClient } from '@/hooks/useStompClient.ts'
-import { useUserIdByReference } from '@/hooks/useUserIdByReference.ts'
 import { MessageCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -35,11 +35,8 @@ const ChatWidget = () => {
 
   const { customer: customerData, error: customerError } =
     useCustomerById(customerId)
-  const agentId = customerData?.agentid
-  const { data: receiverUser, error: receiverError } = useUserIdByReference(
-    undefined,
-    agentId,
-  )
+  const { data: receiverUser, isError: isReferenceError } =
+    useAgentUserIdByReference(customerData?.agentId)
   const { messages, sendMessage } = useStompClient(senderUserId)
 
   if (isAuthLoading || !isLoggedIn || !user) return null
@@ -53,8 +50,11 @@ const ChatWidget = () => {
     return null
   }
 
-  if (receiverError) {
-    console.error('Error fetching receiver user by reference:', receiverError)
+  if (isReferenceError) {
+    console.error(
+      'Error fetching receiver user by reference:',
+      isReferenceError,
+    )
     return null
   }
 
@@ -106,6 +106,24 @@ const ChatWidget = () => {
             Chat with Agent
           </h4>
           <div className='flex-1 space-y-2 overflow-y-auto pr-1'>
+            <div
+              className={`w-fit max-w-[75%] justify-self-center rounded-lg bg-gray-100 px-3 py-2 text-center text-sm`}
+            >
+              <p>
+                {'(' +
+                  new Intl.DateTimeFormat('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                  }).format(new Date()) +
+                  ')'}
+              </p>
+              {receiverId && senderUserId ? (
+                <p>Connected</p>
+              ) : (
+                <p>Connecting...</p>
+              )}
+            </div>
             {messages.map((msg, i) => (
               <div
                 key={i}
