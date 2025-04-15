@@ -139,7 +139,11 @@ export default function BookingFormCard({
                   name='paymentMethod'
                   value='Wallet'
                   checked={paymentMethod === 'Wallet'}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setErrors((prev) => ({ ...prev, paymentMethod: '' }))
+                    setPaymentMethod(value)}
+                  }
                 />
                 Wallet
               </label>
@@ -149,7 +153,11 @@ export default function BookingFormCard({
                   name='paymentMethod'
                   value='Card'
                   checked={paymentMethod === 'Card'}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setErrors((prev) => ({ ...prev, paymentMethod: '' }))
+                    setPaymentMethod(value)}
+                  }
                 />
                 Card
               </label>
