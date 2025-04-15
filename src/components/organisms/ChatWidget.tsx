@@ -44,6 +44,10 @@ const ChatWidget = () => {
 
   if (isAuthLoading || !isLoggedIn || !user) return null
 
+  if (user?.roles?.includes('AGENT')) {
+    return null // Hide chat widget for agents
+  }
+
   if (customerError) {
     console.error('Error fetching customer data:', customerError)
     return null
