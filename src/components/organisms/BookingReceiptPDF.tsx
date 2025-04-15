@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#1e293b',
     marginBottom: 2,
-  }
+  },
 })
 
 // Add your company logo (replace with actual logo)
@@ -236,20 +236,18 @@ export const BookingReceiptPDF = ({ booking }: BookingReceiptPDFProps) => (
             <Text style={styles.label}>Email:</Text>
             <Text style={styles.value}>{booking.customerEmail}</Text>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Traveller Names:</Text>
-            <View style={styles.value}>
-              {booking.travellerNames.length > 0 ? (
-                booking.travellerNames.map((name: string, index: number) => (
+          {booking.travellerNames.length > 0 && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Traveller Names:</Text>
+              <View style={styles.value}>
+                {booking.travellerNames.map((name: string, index: number) => (
                   <Text key={index} style={styles.nameItem}>
                     • {name}
                   </Text>
-                ))
-              ) : (
-                <Text style={styles.value}>No travellers listed</Text>
-              )}
+                ))}
+              </View>
             </View>
-          </View>
+          )}
         </View>
         {/* QR code for easy reference */}
         <QRCodePlaceholder />

@@ -24,7 +24,7 @@ export default function BookingConfirmationPage() {
     bookingDate: new Date().toISOString(),
     startDate: pkg?.pkgstartdate,
     endDate: pkg?.pkgenddate,
-    totalAmount: bookingdata.data.finalPrice,
+    totalAmount: bookingdata.TotalPrice,
     paymentMethod: bookingdata.data.paymentMethod,
     tourName: pkg?.pkgname,
     travellerNames: bookingdata.travellerNames,

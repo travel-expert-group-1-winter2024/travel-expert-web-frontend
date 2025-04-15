@@ -10,13 +10,13 @@ import { toast } from 'sonner'
 
 interface PaymentFormProps {
   clientSecret: string | null
-  amount?: number
+  totalAmount?: number
   onPaymentSuccess?: () => void
 }
 
 const PaymentForm = ({
   clientSecret,
-  amount,
+  totalAmount,
   onPaymentSuccess,
 }: PaymentFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false)
@@ -49,6 +49,7 @@ const PaymentForm = ({
     if (isBookingConfirmed || isBookingCreated) {
       toast.success('Payment successful')
       bookingResponse['travellerNames'] = travellerNames;
+      bookingResponse['TotalPrice'] = totalAmount;
       navigate(`/bookingconfirmation`, {
         state: { bookingdata: bookingResponse || confirmBookingResponse },
       })
@@ -102,7 +103,7 @@ const PaymentForm = ({
       ) {
         if (currentPath.includes('wallet')) {
           const response = await topUpWallet({
-            amount: amount || 0,
+            amount: totalAmount || 0,
             description: 'Top-up from credit card',
           })
           if (response) {

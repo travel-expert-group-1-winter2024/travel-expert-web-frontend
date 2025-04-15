@@ -144,6 +144,7 @@ const PaymentsPage = () => {
               <PaymentForm
                 clientSecret={clientSecret}
                 onPaymentSuccess={() => {}}
+                totalAmount={costSummaryData.data.total}
               />
             </Elements>
           )
