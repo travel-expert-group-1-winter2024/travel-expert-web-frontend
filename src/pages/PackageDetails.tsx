@@ -12,13 +12,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
+// import {
+//   Carousel,
+//   CarouselContent,
+//   CarouselItem,
+//   CarouselNext,
+//   CarouselPrevious,
+// } from '@/components/ui/carousel'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
@@ -102,38 +102,48 @@ export default function PackageDetails() {
       <div className='flex flex-col gap-8 xl:flex-row xl:gap-12'>
         {/* Image Carousel */}
         <div className='w-full xl:w-2/5 2xl:w-1/3'>
-          <div className='sticky top-4'>
-            <Carousel className='rounded-xl shadow-lg xl:rounded-2xl'>
+          <div className="sticky top-4">
+            <div className="aspect-square overflow-hidden rounded-xl xl:rounded-2xl">
+              <img
+                src={
+                  pkg.photoURL ||
+                  `https://placehold.co/1000x1000?text=Image 1`
+                }
+                alt={`${pkg.pkgname}`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            {/*<Carousel className="rounded-xl shadow-lg xl:rounded-2xl">
               <CarouselContent>
                 {[1, 2, 3].map((index) => (
                   <CarouselItem key={index}>
-                    <div className='aspect-square overflow-hidden rounded-xl xl:rounded-2xl'>
+                    <div className="aspect-square overflow-hidden rounded-xl xl:rounded-2xl">
                       <img
                         src={
                           pkg.packageImage ||
                           `https://placehold.co/1000x1000?text=Image+${index}`
                         }
                         alt={`${pkg.pkgname} - ${index}`}
-                        className='h-full w-full object-cover'
+                        className="h-full w-full object-cover"
                       />
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className='left-2 h-10 w-10 xl:h-12 xl:w-12' />
-              <CarouselNext className='right-2 h-10 w-10 xl:h-12 xl:w-12' />
-            </Carousel>
+              <CarouselPrevious className="left-2 h-10 w-10 xl:h-12 xl:w-12" />
+              <CarouselNext className="right-2 h-10 w-10 xl:h-12 xl:w-12" />
+            </Carousel>*/}
           </div>
         </div>
 
         {/* Main Content - Right Side */}
-        <div className='w-full xl:w-3/5 2xl:w-2/3'>
+        <div className="w-full xl:w-3/5 2xl:w-2/3">
           {/* Package Header */}
-          <div className='mb-6 xl:mb-8'>
-            <Badge variant='secondary' className='xl:text-sm'>
+          <div className="mb-6 xl:mb-8">
+            <Badge variant="secondary" className="xl:text-sm">
               {pkg.destination}
             </Badge>
-            <h1 className='mt-3 text-3xl font-bold tracking-tight xl:text-4xl'>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight xl:text-4xl">
               {pkg.pkgname}
             </h1>
             <div className='mt-2 flex items-center gap-4'>

@@ -1,5 +1,5 @@
+//import React from 'react'
 import Logo from '@/assets/logo.png'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -16,31 +16,14 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu'
 import { useAuth } from '@/hooks/useAuth'
-import { Book, LogOut, User, Wallet } from 'lucide-react'
+import { Book, LogOut, User } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
+import defaultProfile from '@/assets/user-default-avatar.png'
 
 const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'Packages', to: '/packages' },
   { label: 'Contact', to: '/contact' },
-]
-
-const accountLinks = [
-  {
-    to: '/account/profile',
-    icon: <User />,
-    label: 'Account',
-  },
-  {
-    to: '/account/booking',
-    icon: <Book />,
-    label: 'Booking Detail',
-  },
-  {
-    to: '/account/wallet',
-    icon: <Wallet />,
-    label: 'Wallet',
-  },
 ]
 
 function Navbar() {
@@ -100,30 +83,49 @@ type AvatarWithDropDownMenuProps = {
 }
 
 function AvatarWithDropDownMenu({
-  image,
-  name,
-  signOut,
-}: AvatarWithDropDownMenuProps) {
+                                  //image,
+                                  // name,
+                                  signOut,
+                                }: AvatarWithDropDownMenuProps) {
+  const { user } = useAuth()
+  const userPhotoUrl = user?.photoUrl
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar>
-          <AvatarImage src={image} />
-          <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-        </Avatar>
+        <img
+          src={
+            userPhotoUrl && userPhotoUrl !== '' ? userPhotoUrl : defaultProfile
+          }
+          alt='Profile'
+          onError={(e) => {
+            e.currentTarget.onerror = null // to prevent infinite loop
+            e.currentTarget.src = defaultProfile
+          }}
+          className='h-8 w-8 rounded-full object-cover'
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-56'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {accountLinks.map(({ to, icon, label }) => (
-            <NavLink key={to} to={to}>
-              <DropdownMenuItem>
-                {icon}
-                <span>{label}</span>
-              </DropdownMenuItem>
-            </NavLink>
-          ))}
+          <NavLink to='/account/profile'>
+            <DropdownMenuItem>
+              <User />
+              <span>Account</span>
+            </DropdownMenuItem>
+          </NavLink>
+          <NavLink to='/account/booking'>
+            <DropdownMenuItem>
+              <Book />
+              <span>Booking Detail</span>
+            </DropdownMenuItem>
+          </NavLink>
+          <NavLink to='/account/wallet'>
+            <DropdownMenuItem>
+              {/* <History /> */}
+              <span>Wallet</span>
+            </DropdownMenuItem>
+          </NavLink>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
