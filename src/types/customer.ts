@@ -10,7 +10,7 @@ export interface Customer {
   custhomephone?: string
   custbusphone: string
   custemail: string
-  agentid?: number
+  agentId?: number
   points: number
   tier: string
   balance?: number
