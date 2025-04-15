@@ -1,5 +1,5 @@
+//import React from 'react'
 import Logo from '@/assets/logo.png'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { Book, LogOut, User } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
+import defaultProfile from '@/assets/user-default-avatar.png'
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -82,17 +83,26 @@ type AvatarWithDropDownMenuProps = {
 }
 
 function AvatarWithDropDownMenu({
-  image,
-  name,
+  //image,
+ // name,
   signOut,
 }: AvatarWithDropDownMenuProps) {
+  const { user } = useAuth()
+  const userPhotoUrl = user?.photoUrl
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar>
-          <AvatarImage src={image} />
-          <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-        </Avatar>
+        <img
+          src={
+            userPhotoUrl && userPhotoUrl !== '' ? userPhotoUrl : defaultProfile
+          }
+          alt='Profile'
+          onError={(e) => {
+            e.currentTarget.onerror = null // to prevent infinite loop
+            e.currentTarget.src = defaultProfile
+          }}
+          className='h-8 w-8 rounded-full object-cover'
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-56'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
