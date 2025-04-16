@@ -40,12 +40,6 @@ function Booking() {
       <Accordion type='multiple'>
         {Object.entries(groupedBookings).map(([bookingNo, bookings]) => {
           const firstBooking = bookings[0]
-
-          // ✅ Get first booking with travellername
-          const firstWithTravellerName = bookings.find(
-            b => b.travellername?.trim()
-          )
-
           return (
             <AccordionItem key={bookingNo} value={`item-${bookingNo}`}>
               <AccordionTrigger>
