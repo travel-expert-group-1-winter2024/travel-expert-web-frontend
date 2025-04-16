@@ -66,8 +66,8 @@ export function PackageList() {
           </Select>
         </div>
         <div className='mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-          {packages.map((pkg) => (
-            <PackageCard pkg={pkg} />
+          {packages.map((pkg, index) => (
+            <PackageCard key={index} pkg={pkg} />
           ))}
         </div>
       </div>
