@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import axios from 'axios';
 import { useWallet } from '@/hooks/useWallet';
 import { stripeKeys } from '@/utils/stripeKeys';
 import PaymentForm from '@/components/molecules/PaymentForm';
