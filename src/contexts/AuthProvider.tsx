@@ -1,6 +1,7 @@
 import { authUser, userLogin } from '@/api/authApi.ts'
 import { LoginRequest } from '@/types/auth.ts'
 import { User } from '@/types/userInfo.ts'
+import { setToken as setGlobalToken } from '@/utils/tokenService'
 import { useMutation } from '@tanstack/react-query'
 import * as React from 'react'
 import { createContext, useEffect, useState } from 'react'
@@ -55,6 +56,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data, token } = response.data
         setUser(data)
         setToken(token)
+        setGlobalToken(token)
         localStorage.setItem('site', token)
         navigate(from, { replace: true })
         callbacks?.onSuccess?.()
@@ -86,6 +88,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const res = await authUser(storedToken)
         setToken(storedToken)
+        setGlobalToken(storedToken)
         setUser(res.data.data)
       } catch (err) {
         console.error('Session restore failed:', err)
