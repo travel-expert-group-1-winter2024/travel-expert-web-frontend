@@ -22,8 +22,13 @@ import { toast } from 'sonner'
 const PaymentsPage = () => {
   const { packageId } = useParams()
   const validPackageId = packageId ? parseInt(packageId) : 0
-  const { tripType, travellers, paymentMethod, travellerNames } =
-    useLocation().state || {}
+  const {
+    tripType,
+    travellers,
+    paymentMethod,
+    travellerNames,
+    isConfirmBooking,
+  } = useLocation().state || {}
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const stripePromise = loadStripe(stripeKeys.publishable)
   const { isLoggedIn, token } = useAuth()
@@ -32,6 +37,7 @@ const PaymentsPage = () => {
   const [insufficientFunds, setInsufficientFunds] = useState(false)
   const [bookingCreated, setBookingCreated] = useState(false)
   const [remainingBalance, setRemainingBalance] = useState(0)
+  
 
   const navigate = useNavigate()
   const {
@@ -175,7 +181,6 @@ const PaymentsPage = () => {
                       travellerNames: travellerNames,
                     },
                   })
-                  console.log('Booking with wallet...')
                 }}
               >
                 Pay with Wallet
@@ -206,6 +211,19 @@ const PaymentsPage = () => {
             </Card>
           </div>
         )}
+        {isConfirmBooking ? (
+          !clientSecret ? (
+            <p>Loading payment details...</p>
+          ) : (
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <PaymentForm
+                clientSecret={clientSecret}
+                onPaymentSuccess={() => {}}
+                totalAmount={costSummaryData.data.total}
+              />
+            </Elements>
+          )
+        ) : null}
       </div>
     </div>
   )
