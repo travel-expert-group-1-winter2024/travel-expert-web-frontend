@@ -113,26 +113,6 @@ export default function PackageDetails() {
                 className="h-full w-full object-cover"
               />
             </div>
-            {/*<Carousel className="rounded-xl shadow-lg xl:rounded-2xl">
-              <CarouselContent>
-                {[1, 2, 3].map((index) => (
-                  <CarouselItem key={index}>
-                    <div className="aspect-square overflow-hidden rounded-xl xl:rounded-2xl">
-                      <img
-                        src={
-                          pkg.packageImage ||
-                          `https://placehold.co/1000x1000?text=Image+${index}`
-                        }
-                        alt={`${pkg.pkgname} - ${index}`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="left-2 h-10 w-10 xl:h-12 xl:w-12" />
-              <CarouselNext className="right-2 h-10 w-10 xl:h-12 xl:w-12" />
-            </Carousel>*/}
           </div>
         </div>
 

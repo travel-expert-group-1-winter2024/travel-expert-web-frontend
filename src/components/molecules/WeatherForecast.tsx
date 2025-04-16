@@ -2,13 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useWeatherForecast } from '@/hooks/useWeatherForecast'
 import { Cloud, CloudRain, CloudSun, Sun, Thermometer } from 'lucide-react'
 
-// interface WeatherDay {
-//   date: string
-//   high: number
-//   low: number
-//   condition: 'sunny' | 'cloudy' | 'rainy' | 'partly-cloudy'
-// }
-
 export function WeatherForecast({
   startDate,
   destination,
@@ -93,7 +86,7 @@ export function WeatherForecast({
             <div key={day.date} className='rounded-lg border p-4'>
               <div className='flex items-center justify-between'>
                 <h3 className='font-medium'>
-                  {new Date(day.date).toLocaleDateString('en-US', {
+                  {new Date(day.date).toLocaleString('en-US', {
                     weekday: 'short',
                     month: 'short',
                     day: 'numeric',
@@ -102,12 +95,14 @@ export function WeatherForecast({
                 {getWeatherIcon(day.condition)}
               </div>
               <div className='mt-4 flex items-center justify-between'>
-                <span className='text-2xl font-bold'>
-                  {Math.round(day.high)}°
-                </span>
-                <span className='text-muted-foreground'>
-                  {Math.round(day.low)}°
-                </span>
+                <div className='flex gap-2'>
+                  <span className='font-medium'>
+                    H: {Math.round(day.high)}°C
+                  </span>
+                  <span className='text-muted-foreground'>
+                    L: {Math.round(day.low)}°C
+                  </span>
+                </div>
               </div>
               <div className='text-muted-foreground mt-2 text-sm capitalize'>
                 {day.condition.replace('-', ' ')}
