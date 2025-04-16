@@ -74,6 +74,7 @@ const Profile = () => {
     mutate: deleteCustomer,
     isError: isDeleteError,
     error: errorDeleting,
+    isSuccess: isDeleteSuccess,
   } = useDeleteCustomer()
 
   // Initialize state when data is loaded
@@ -83,6 +84,18 @@ const Profile = () => {
       setUserProfileImage(userPhotoUrl)
     }
   }, [customer, userPhotoUrl])
+
+  useEffect(() => {
+    if (isDeleteError) {
+      console.error('Error deleting customer:', errorDeleting)
+      toast.error('Failed to delete profile. Please try again.')
+      return
+    }
+    if (isDeleteSuccess) {
+      toast.success('Profile deleted successfully.')
+      logOut()
+    }
+  }, [isDeleteSuccess, isDeleteError, errorDeleting, logOut])
 
   if (isAuthLoading) return <p>Loading auth...</p>
   if (!isLoggedIn) return null
@@ -212,17 +225,6 @@ const Profile = () => {
     }
 
     deleteCustomer(customerId)
-
-    if (isDeleteError) {
-      console.error('Error deleting customer:', errorDeleting)
-      toast.error('Failed to delete profile. Please try again.')
-      return
-    }
-
-    logOut()
-
-    console.error('Error deleting profile:', error)
-    toast.error('Failed to delete profile. Please try again.')
   }
 
   return (
