@@ -19,6 +19,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { z } from 'zod'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 type CustomerKey = keyof Customer
 
@@ -51,6 +53,7 @@ const profileSchema = z.object({
 const Profile = () => {
   const { user, updateUser, isLoggedIn, isAuthLoading } = useAuth()
   const userPhotoUrl = user?.photoUrl
+  const navigate = useNavigate()
 
   const customerId = user?.customerId
   // Fetch customer data
@@ -196,6 +199,27 @@ const Profile = () => {
     setEditMode(false)
   }
 
+  const handleDeleteProfile = async () => {
+    if (!window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(`http://localhost:8080/api/customers/${user?.customerId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      localStorage.removeItem('token')
+      navigate('/login')
+    } catch (error) {
+      console.error('Error deleting profile:', error)
+      toast.error('Failed to delete profile. Please try again.')
+    }
+  }
+
 
   return (
     <div className='relative flex flex-col items-center'>
@@ -316,6 +340,15 @@ const Profile = () => {
               <EditIcon />
             </button>
           )}
+        </div>
+
+        <div className='mt-6 flex justify-center'>
+          <button
+            onClick={handleDeleteProfile}
+            className='rounded-lg bg-red-600 px-6 py-2 font-medium text-white hover:bg-red-700'
+          >
+            Delete My Profile
+          </button>
         </div>
       </div>
 
