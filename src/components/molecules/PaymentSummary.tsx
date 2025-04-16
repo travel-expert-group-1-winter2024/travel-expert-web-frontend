@@ -15,12 +15,11 @@ const PaymentSummary = ({
   tripType: string
   travellers: number
   costSummary: costSummary
-  travellerNames: []
+  travellerNames: string[]
 }) => {
   const { packageId } = useParams()
   const customerDetails = useAuth().user
   const { data: packageDetails } = usePackageDetails(packageId!)
-
   let typeOfTrip = ''
   if (tripType === 'B') {
     typeOfTrip = 'Business'
@@ -118,7 +117,7 @@ const PaymentSummary = ({
                 <p className='text-base'>{travellers}</p>
               </div>
 
-              {travellerNames.length > 0 && (
+              {travellerNames.length > 1 && (
                 <div>
                   <p className='text-muted-foreground mt-4 text-sm'>
                     Traveller Names

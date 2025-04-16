@@ -22,6 +22,7 @@ export interface bookingDetail {
   fee: string
   product: string
   supplier: string
+  travellername:string
 }
 
 export type BookingStatus =

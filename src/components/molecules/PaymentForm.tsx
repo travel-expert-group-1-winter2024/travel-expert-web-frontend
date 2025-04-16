@@ -48,8 +48,13 @@ const PaymentForm = ({
   useEffect(() => {
     if (isBookingConfirmed || isBookingCreated) {
       toast.success('Payment successful')
-      bookingResponse['travellerNames'] = travellerNames;
-      bookingResponse['TotalPrice'] = totalAmount;
+      if(bookingResponse){
+        bookingResponse['travellerNames'] = travellerNames;
+        bookingResponse['TotalPrice'] = totalAmount;
+      } else{
+        confirmBookingResponse['travellerNames'] = travellerNames;
+        confirmBookingResponse['TotalPrice'] = totalAmount;
+      }
       navigate(`/bookingconfirmation`, {
         state: { bookingdata: bookingResponse || confirmBookingResponse },
       })
