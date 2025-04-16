@@ -1,3 +1,4 @@
+import { stripeIntent } from '@/api/stripeIntentApi'
 import PaymentForm from '@/components/molecules/PaymentForm'
 import PaymentSummary from '@/components/molecules/PaymentSummary'
 import {
@@ -14,7 +15,6 @@ import { useWallet } from '@/hooks/useWallet'
 import { stripeKeys } from '@/utils/stripeKeys'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -47,8 +47,9 @@ const PaymentsPage = () => {
 
   useEffect(() => {
     if (isBookingCreated) {
-      toast.success('Payment successful')
+      toast.success('Payment successful');
       bookingResponse['travellerNames'] = travellerNames
+      bookingResponse['TotalPrice']=costSummaryData.data.total
       navigate(`/bookingconfirmation`, {
         state: { bookingdata: bookingResponse },
       })
@@ -82,15 +83,12 @@ const PaymentsPage = () => {
   useEffect(() => {
     const createPaymentIntent = async (total: number) => {
       try {
-        const response = await axios.post(
-          'http://localhost:8080/api/bookings/create-payment-intent',
-          {
-            packagePrice: total,
-            tripType,
-            travellers,
-            packageId: validPackageId,
-          },
-        )
+        const response = await stripeIntent({
+          packagePrice: total,
+          tripType,
+          travellers,
+          packageId: validPackageId,
+        })
         setClientSecret(response.data.clientSecret)
       } catch (error) {
         console.error('Error creating payment intent:', error)
