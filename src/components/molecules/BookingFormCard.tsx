@@ -202,7 +202,8 @@ export default function BookingFormCard({
           </div>
 
           {/* Payment Method Radio Buttons */}
-          <div>
+          { !isBookingReservation && (
+            <div>
             <label className='mb-2 block font-medium'>Payment Method</label>
             <div className='flex gap-4'>
               <label className='flex items-center gap-2'>
@@ -240,6 +241,7 @@ export default function BookingFormCard({
               </p>
             )}
           </div>
+          )}
         </CardContent>
 
         <CardFooter className='mt-2 flex justify-end gap-2'>
