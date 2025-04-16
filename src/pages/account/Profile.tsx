@@ -1,5 +1,5 @@
 import defaultProfile from '@/assets/user-default-avatar.png'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar.tsx'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
@@ -13,14 +13,13 @@ import {
 } from '@/components/ui/select.tsx'
 import { useAuth } from '@/hooks/useAuth'
 import { useCustomerById } from '@/hooks/useCustomer'
+import { useDeleteCustomer } from '@/hooks/useDeleteCustomer.ts'
 import { Customer } from '@/types/customer'
 import { EditIcon } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { z } from 'zod'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 
 type CustomerKey = keyof Customer
 
@@ -51,9 +50,8 @@ const profileSchema = z.object({
 })
 
 const Profile = () => {
-  const { user, updateUser, isLoggedIn, isAuthLoading } = useAuth()
+  const { user, updateUser, logOut, isLoggedIn, isAuthLoading } = useAuth()
   const userPhotoUrl = user?.photoUrl
-  const navigate = useNavigate()
 
   const customerId = user?.customerId
   // Fetch customer data
@@ -72,6 +70,11 @@ const Profile = () => {
   const [userProfileImage, setUserProfileImage] = useState<string | undefined>(
     defaultProfile,
   )
+  const {
+    mutate: deleteCustomer,
+    isError: isDeleteError,
+    error: errorDeleting,
+  } = useDeleteCustomer()
 
   // Initialize state when data is loaded
   useEffect(() => {
@@ -200,26 +203,27 @@ const Profile = () => {
   }
 
   const handleDeleteProfile = async () => {
-    if (!window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete your profile? This action cannot be undone.',
+      )
+    ) {
       return
     }
 
-    try {
-      const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:8080/api/customers/${user?.customerId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    deleteCustomer(customerId)
 
-      localStorage.removeItem('token')
-      navigate('/login')
-    } catch (error) {
-      console.error('Error deleting profile:', error)
+    if (isDeleteError) {
+      console.error('Error deleting customer:', errorDeleting)
       toast.error('Failed to delete profile. Please try again.')
+      return
     }
-  }
 
+    logOut()
+
+    console.error('Error deleting profile:', error)
+    toast.error('Failed to delete profile. Please try again.')
+  }
 
   return (
     <div className='relative flex flex-col items-center'>
@@ -232,9 +236,13 @@ const Profile = () => {
                 if (editMode) fileInputRef.current?.click()
               }}
             >
-              <AvatarImage src={userProfileImage} alt="Profile" onError={(e) => {
-                e.currentTarget.src = defaultProfile
-              }} />
+              <AvatarImage
+                src={userProfileImage}
+                alt='Profile'
+                onError={(e) => {
+                  e.currentTarget.src = defaultProfile
+                }}
+              />
               <AvatarFallback>
                 {customer?.custfirstname?.charAt(0) ?? 'U'}
               </AvatarFallback>
