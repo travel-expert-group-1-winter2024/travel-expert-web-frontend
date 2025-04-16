@@ -1,5 +1,5 @@
 import defaultProfile from '@/assets/user-default-avatar.png'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar.tsx'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select.tsx'
 import { useAuth } from '@/hooks/useAuth'
 import { useCustomerById } from '@/hooks/useCustomer'
+import { useDeleteCustomer } from '@/hooks/useDeleteCustomer.ts'
 import { Customer } from '@/types/customer'
 import { EditIcon } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
@@ -49,7 +50,7 @@ const profileSchema = z.object({
 })
 
 const Profile = () => {
-  const { user, updateUser, isLoggedIn, isAuthLoading } = useAuth()
+  const { user, updateUser, logOut, isLoggedIn, isAuthLoading } = useAuth()
   const userPhotoUrl = user?.photoUrl
 
   const customerId = user?.customerId
@@ -69,6 +70,12 @@ const Profile = () => {
   const [userProfileImage, setUserProfileImage] = useState<string | undefined>(
     defaultProfile,
   )
+  const {
+    mutate: deleteCustomer,
+    isError: isDeleteError,
+    error: errorDeleting,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteCustomer()
 
   // Initialize state when data is loaded
   useEffect(() => {
@@ -77,6 +84,18 @@ const Profile = () => {
       setUserProfileImage(userPhotoUrl)
     }
   }, [customer, userPhotoUrl])
+
+  useEffect(() => {
+    if (isDeleteError) {
+      console.error('Error deleting customer:', errorDeleting)
+      toast.error('Failed to delete profile. Please try again.')
+      return
+    }
+    if (isDeleteSuccess) {
+      toast.success('Profile deleted successfully.')
+      logOut()
+    }
+  }, [isDeleteSuccess, isDeleteError, errorDeleting, logOut])
 
   if (isAuthLoading) return <p>Loading auth...</p>
   if (!isLoggedIn) return null
@@ -196,6 +215,17 @@ const Profile = () => {
     setEditMode(false)
   }
 
+  const handleDeleteProfile = async () => {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete your profile? This action cannot be undone.',
+      )
+    ) {
+      return
+    }
+
+    deleteCustomer(customerId)
+  }
 
   return (
     <div className='relative flex flex-col items-center'>
@@ -208,9 +238,13 @@ const Profile = () => {
                 if (editMode) fileInputRef.current?.click()
               }}
             >
-              <AvatarImage src={userProfileImage} alt="Profile" onError={(e) => {
-                e.currentTarget.src = defaultProfile
-              }} />
+              <AvatarImage
+                src={userProfileImage}
+                alt='Profile'
+                onError={(e) => {
+                  e.currentTarget.src = defaultProfile
+                }}
+              />
               <AvatarFallback>
                 {customer?.custfirstname?.charAt(0) ?? 'U'}
               </AvatarFallback>
@@ -316,6 +350,15 @@ const Profile = () => {
               <EditIcon />
             </button>
           )}
+        </div>
+
+        <div className='mt-6 flex justify-center'>
+          <button
+            onClick={handleDeleteProfile}
+            className='rounded-lg bg-red-600 px-6 py-2 font-medium text-white hover:bg-red-700'
+          >
+            Delete My Profile
+          </button>
         </div>
       </div>
 
