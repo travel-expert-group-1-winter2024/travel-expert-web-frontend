@@ -71,7 +71,6 @@ export default function BookingFormCard({
 
     if (parseInt(travellers) > 1) {
       const nameErrors: string[] = []
-
       travellerNames.forEach((name, index) => {
         if (!name.trim()) {
           nameErrors[index] = `Name for traveller ${index + 1} is required.`
@@ -94,6 +93,7 @@ export default function BookingFormCard({
             travelerCount: parseInt(travellers),
             packageId: parseInt(packageId || '0'),
             bookingMode: 'RESERVE',
+            travellerNames:travellerNames
           },
         })
       } else {

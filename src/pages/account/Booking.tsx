@@ -38,101 +38,121 @@ function Booking() {
     <div className='p-4'>
       <h2 className='mb-4 text-xl font-semibold'>Your Bookings</h2>
       <Accordion type='multiple'>
-        {Object.entries(groupedBookings).map(([bookingNo, bookings]) => (
-          <AccordionItem key={bookingNo} value={`item-${bookingNo}`}>
-            <AccordionTrigger>
-              Booking No: {bookingNo} — {bookings[0].tripStart.split('T')[0]} to{' '}
-              {bookings[0].tripEnd.split('T')[0]}
-            </AccordionTrigger>
-            <AccordionContent>
-              <Badge
-                variant={
-                  bookings[0].bookingStatus === 'CANCELLED' ||
-                  bookings[0].bookingStatus === 'EXPIRED'
-                    ? 'destructive'
-                    : 'secondary'
-                }
-                className={`my-2 ${
-                  bookings[0].bookingStatus === 'COMPLETED'
-                    ? 'bg-green-500 text-white'
-                    : bookings[0].bookingStatus === 'RESERVED'
-                      ? 'bg-blue-900 text-white'
-                      : ''
-                }`}
-              >
-                {bookings[0].bookingStatus}
-              </Badge>
-              {bookings.map((booking: bookingDetail, index) => (
-                <div key={booking.bookingDetailId} className='mb-4'>
-                  <p>
-                    <strong>Destination:</strong> {booking.destination}
-                  </p>
-                  <p>
-                    <strong>Trip Start:</strong>{' '}
-                    {booking.tripStart.split('T')[0]}
-                  </p>
-                  <p>
-                    <strong>Trip End:</strong> {booking.tripEnd.split('T')[0]}
-                  </p>
-                  {booking.description?.trim() && (
-                    <p>
-                      <strong>Description:</strong> {booking.description}
-                    </p>
-                  )}
-                  {booking.region?.trim() && (
-                    <p>
-                      <strong>Region:</strong> {booking.region.trim()}
-                    </p>
-                  )}
-                  {booking.className?.trim() && (
-                    <p>
-                      <strong>Class:</strong> {booking.className}
-                    </p>
-                  )}
-                  {booking.fee?.trim() && (
-                    <p>
-                      <strong>Fees Charged:</strong> {booking.fee}
-                    </p>
-                  )}
-                  {booking.product?.trim() && (
-                    <p>
-                      <strong>Product:</strong> {booking.product}
-                    </p>
-                  )}
-                  {booking.supplier?.trim() && (
-                    <p>
-                      <strong>Supplier:</strong> {booking.supplier}
-                    </p>
-                  )}
-                  {booking.basePrice !== null && !isNaN(booking.basePrice) && (
-                    <p>
-                      <strong>Price:</strong> ${booking.basePrice.toFixed(2)}
-                    </p>
-                  )}
-                  {index !== bookings.length - 1 && (
-                    <Separator className='my-2' />
-                  )}
-                </div>
-              ))}
-              <Link
-                to={'/payment/' + bookings[0].packageId}
-                state={{
-                  tripType: bookings[0].tripTypeId,
-                  travellers: bookings[0].travelerCount,
-                  isConfirmBooking: true,
-                  bookingId: bookings[0].booking,
-                }}
-              >
-                <Button
-                  className='mt-4'
-                  disabled={bookings[0].bookingStatus !== 'RESERVED'}
+        {Object.entries(groupedBookings).map(([bookingNo, bookings]) => {
+          const firstBooking = bookings[0]
+          return (
+            <AccordionItem key={bookingNo} value={`item-${bookingNo}`}>
+              <AccordionTrigger>
+                Booking No: {bookingNo} — {firstBooking.tripStart.split('T')[0]} to{' '}
+                {firstBooking.tripEnd.split('T')[0]}
+              </AccordionTrigger>
+              <AccordionContent>
+                <Badge
+                  variant={
+                    firstBooking.bookingStatus === 'CANCELLED' ||
+                    firstBooking.bookingStatus === 'EXPIRED'
+                      ? 'destructive'
+                      : 'secondary'
+                  }
+                  className={`my-2 ${
+                    firstBooking.bookingStatus === 'COMPLETED'
+                      ? 'bg-green-500 text-white'
+                      : firstBooking.bookingStatus === 'RESERVED'
+                        ? 'bg-blue-900 text-white'
+                        : ''
+                  }`}
                 >
-                  Confirm Booking
-                </Button>
-              </Link>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
+                  {firstBooking.bookingStatus}
+                </Badge>
+
+                {bookings.map((booking: bookingDetail, index) => (
+                  <div key={booking.bookingDetailId} className='mb-4'>
+                    <p>
+                      <strong>Destination:</strong> {booking.destination}
+                    </p>
+                    <p>
+                      <strong>Trip Start:</strong> {booking.tripStart.split('T')[0]}
+                    </p>
+                    <p>
+                      <strong>Trip End:</strong> {booking.tripEnd.split('T')[0]}
+                    </p>
+                    {booking.description?.trim() && (
+                      <p>
+                        <strong>Description:</strong> {booking.description}
+                      </p>
+                    )}
+                    {booking.region?.trim() && (
+                      <p>
+                        <strong>Region:</strong> {booking.region.trim()}
+                      </p>
+                    )}
+                    {booking.className?.trim() && (
+                      <p>
+                        <strong>Class:</strong> {booking.className}
+                      </p>
+                    )}
+                    {booking.fee?.trim() && (
+                      <p>
+                        <strong>Fees Charged:</strong> {booking.fee}
+                      </p>
+                    )}
+                    {booking.product?.trim() && (
+                      <p>
+                        <strong>Product:</strong> {booking.product}
+                      </p>
+                    )}
+                    {booking.supplier?.trim() && (
+                      <p>
+                        <strong>Supplier:</strong> {booking.supplier}
+                      </p>
+                    )}
+                    {booking.travellername && (
+                      <div>
+                        <strong>Traveller(s):</strong>
+                        <ul className='ml-4 list-inside list-disc'>
+                          {booking.travellername
+                            .split(',')
+                            .map((name, idx) => (
+                              <li key={idx}>{name.trim()}</li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+                    {booking.basePrice !== null &&
+                      !isNaN(booking.basePrice) && (
+                        <p>
+                          <strong>Price:</strong> ${booking.basePrice.toFixed(2)}
+                        </p>
+                      )}
+                    {index !== bookings.length - 1 && (
+                      <Separator className='my-2' />
+                    )}
+                  </div>
+                ))}
+
+                <Link
+                  to={'/payment/' + firstBooking.packageId}
+                  state={{
+                    tripType: firstBooking.tripTypeId,
+                    travellers: firstBooking.travelerCount,
+                    isConfirmBooking: true,
+                    bookingId: firstBooking.booking,
+                    travellerNames: firstBooking?.travellername
+                    ? firstBooking.travellername.split(',').map((n) => n.trim())
+                    : [],
+                  }}
+                >
+                  <Button
+                    className='mt-4'
+                    disabled={firstBooking.bookingStatus !== 'RESERVED'}
+                  >
+                    Confirm Booking
+                  </Button>
+                </Link>
+              </AccordionContent>
+            </AccordionItem>
+          )
+        })}
       </Accordion>
     </div>
   )

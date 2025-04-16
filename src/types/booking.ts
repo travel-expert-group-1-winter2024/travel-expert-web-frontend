@@ -5,11 +5,12 @@ export interface BookingCreationRequest {
   bookingMode?: string
   paymentMethod?: string
   paymentId?: string
-  travellerNames?:[]
+  travellerNames?:string[]
 }
 
 export interface BookingConfirmationRequest {
   bookingId: number
   paymentMethod: string
   paymentId: string
+  travellerNames?:string[]
 }
