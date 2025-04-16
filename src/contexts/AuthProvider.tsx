@@ -15,9 +15,10 @@ interface AuthContextType {
   loginAction: (
     data: LoginRequest,
     callbacks?: {
-      onSuccess?: () => void
+      onSuccess?: (user: User) => void
       onError?: (err: Error) => void
     },
+    handlePostLogin?: boolean,
   ) => void
   logOut: () => void
 }
@@ -46,9 +47,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginAction = (
     data: LoginRequest,
     callbacks?: {
-      onSuccess?: () => void
+      onSuccess?: (user: User) => void
       onError?: (err: Error) => void
     },
+    handlePostLogin?: boolean,
   ): void => {
     mutation.mutate(data, {
       onSuccess: (response) => {
@@ -56,8 +58,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data)
         setToken(token)
         localStorage.setItem('site', token)
-        navigate(from, { replace: true })
-        callbacks?.onSuccess?.()
+        if (!handlePostLogin) {
+          navigate(from, { replace: true })
+        }
+        callbacks?.onSuccess?.(data)
       },
       onError: (err) => {
         callbacks?.onError?.(err)
