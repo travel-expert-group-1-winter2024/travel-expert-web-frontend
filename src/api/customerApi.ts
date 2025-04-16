@@ -25,3 +25,6 @@ export const uploadCustomerPhoto = (customerId: number, image: File) => {
 
 export const getCustomerPhoto = async (id: number) =>
   await api.get<{ imageURL: string }>(`/api/customers/${id}/photo`)
+
+export const deleteCustomerById = (customerId: number) =>
+  api.delete(`/api/customers/${customerId}`)
