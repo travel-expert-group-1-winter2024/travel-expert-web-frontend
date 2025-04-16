@@ -55,7 +55,7 @@ export default function BookingFormCard({
       travellerNames: '',
     }
     let hasError = false
-  
+
     if (!travellers || parseInt(travellers) <= 0) {
       newErrors.travellers = 'Please enter a valid number of travellers.'
       hasError = true
@@ -93,16 +93,16 @@ export default function BookingFormCard({
             travelerCount: parseInt(travellers),
             packageId: parseInt(packageId || '0'),
             bookingMode: 'RESERVE',
-            travellerNames:travellerNames
+            travellerNames: travellerNames,
           },
         })
       } else {
         navigate(`/payment/${packageId}`, {
-          state: { tripType, travellers, paymentMethod,travellerNames },
+          state: { tripType, travellers, paymentMethod, travellerNames },
         })
       }
     }
-  }  
+  }
 
   return (
     <Card className='mt-4'>
@@ -202,44 +202,46 @@ export default function BookingFormCard({
           </div>
 
           {/* Payment Method Radio Buttons */}
-          <div>
-            <label className='mb-2 block font-medium'>Payment Method</label>
-            <div className='flex gap-4'>
-              <label className='flex items-center gap-2'>
-                <input
-                  type='radio'
-                  name='paymentMethod'
-                  value='Wallet'
-                  checked={paymentMethod === 'Wallet'}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setErrors((prev) => ({ ...prev, paymentMethod: '' }))
-                    setPaymentMethod(value)
-                  }}
-                />
-                Wallet
-              </label>
-              <label className='flex items-center gap-2'>
-                <input
-                  type='radio'
-                  name='paymentMethod'
-                  value='Card'
-                  checked={paymentMethod === 'Card'}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setErrors((prev) => ({ ...prev, paymentMethod: '' }))
-                    setPaymentMethod(value)
-                  }}
-                />
-                Card
-              </label>
+          {!isBookingReservation && (
+            <div>
+              <label className='mb-2 block font-medium'>Payment Method</label>
+              <div className='flex gap-4'>
+                <label className='flex items-center gap-2'>
+                  <input
+                    type='radio'
+                    name='paymentMethod'
+                    value='Wallet'
+                    checked={paymentMethod === 'Wallet'}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setErrors((prev) => ({ ...prev, paymentMethod: '' }))
+                      setPaymentMethod(value)
+                    }}
+                  />
+                  Wallet
+                </label>
+                <label className='flex items-center gap-2'>
+                  <input
+                    type='radio'
+                    name='paymentMethod'
+                    value='Card'
+                    checked={paymentMethod === 'Card'}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setErrors((prev) => ({ ...prev, paymentMethod: '' }))
+                      setPaymentMethod(value)
+                    }}
+                  />
+                  Card
+                </label>
+              </div>
+              {errors.paymentMethod && (
+                <p className='mt-1 text-sm text-red-500'>
+                  {errors.paymentMethod}
+                </p>
+              )}
             </div>
-            {errors.paymentMethod && (
-              <p className='mt-1 text-sm text-red-500'>
-                {errors.paymentMethod}
-              </p>
-            )}
-          </div>
+          )}
         </CardContent>
 
         <CardFooter className='mt-2 flex justify-end gap-2'>
