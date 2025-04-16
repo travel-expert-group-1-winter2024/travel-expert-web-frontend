@@ -20,7 +20,6 @@ const PaymentSummary = ({
   const { packageId } = useParams()
   const customerDetails = useAuth().user
   const { data: packageDetails } = usePackageDetails(packageId!)
-  console.log(travellerNames);
   let typeOfTrip = ''
   if (tripType === 'B') {
     typeOfTrip = 'Business'

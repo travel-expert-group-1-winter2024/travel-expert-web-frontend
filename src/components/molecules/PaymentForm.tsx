@@ -55,7 +55,6 @@ const PaymentForm = ({
         confirmBookingResponse['travellerNames'] = travellerNames;
         confirmBookingResponse['TotalPrice'] = totalAmount;
       }
-
       navigate(`/bookingconfirmation`, {
         state: { bookingdata: bookingResponse || confirmBookingResponse },
       })

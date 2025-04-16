@@ -37,8 +37,6 @@ const PaymentsPage = () => {
   const [insufficientFunds, setInsufficientFunds] = useState(false)
   const [bookingCreated, setBookingCreated] = useState(false)
   const [remainingBalance, setRemainingBalance] = useState(0)
-  
-
   const navigate = useNavigate()
   const {
     mutate: createBooking,
