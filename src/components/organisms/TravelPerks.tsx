@@ -29,7 +29,7 @@ function TravelPerks() {
       id='travel-perks'
       className='bg-gradient-to-b from-white to-gray-50 py-16 md:py-24'
     >
-      <div className='container px-4'>
+      <div className='container px-4 m-auto'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
