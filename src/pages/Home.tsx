@@ -9,8 +9,8 @@ const Home = () => {
     <>
       <Hero />
       <TravelPerks />
-      <LoyaltyProgram />
       <PackageExample />
+      <LoyaltyProgram />
       <Testimonial />
     </>
   )
