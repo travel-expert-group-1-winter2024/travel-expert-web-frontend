@@ -71,9 +71,10 @@ const PaymentForm = ({
     }
 
     if (topUpSuccess) {
-      toast.success('Top-up successful')
       if (onPaymentSuccess) {
         onPaymentSuccess(topUpResponse.data)
+      } else {
+        toast.success('Top-up successful')
       }
     }
 
