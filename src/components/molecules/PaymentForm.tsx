@@ -182,7 +182,7 @@ const PaymentForm = ({
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
       <div className='flex flex-col xl:flex-row xl:space-x-8'>
-        <div className='w-full max-w-[600px]' style={{ width: '600px' }}>
+        <div className='w-full max-w-md'>
           <h3 className='mb-4 text-2xl font-semibold'>Payment Information</h3>
           <div className='stripe-input'>
             <CardElement
