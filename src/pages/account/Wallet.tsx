@@ -18,7 +18,8 @@ import { toast } from 'sonner'
 function Wallet() {
   const { data: wallet, isLoading, error } = useWallet()
   const [showInput, setShowInput] = useState(false)
-  const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState<number | ''>('')
+  const [displayAmount, setDisplayAmount] = useState<string>('')
   const [amountError, setAmountError] = useState('')
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
@@ -43,14 +44,26 @@ function Wallet() {
     setShowInput(false)
     setClientSecret(null)
     setShowPaymentForm(false)
+    setAmount(0)
+    setDisplayAmount('')
+    setAmountError('')
 
     const formattedBalance = getFormattedCurrency(data.balance)
     const formattedDate = new Date(data.lastUpdated).toLocaleString()
     setBalance(formattedBalance)
     setLastUpdate(formattedDate)
+
+    toast.success('Payment successful! Your wallet has been topped up.')
   }
 
   const handlePaymentFailure = () => {
+    setShowInput(false)
+    setClientSecret(null)
+    setShowPaymentForm(false)
+    setAmount(0)
+    setDisplayAmount('')
+    setAmountError('')
+
     toast.error('Payment failed. Please try again.')
   }
 
@@ -133,12 +146,19 @@ function Wallet() {
               <Label htmlFor='amount'>Amount to Add (CAD)</Label>
               <Input
                 id='amount'
-                type='number'
-                min='1'
+                type='text'
                 placeholder='Enter amount'
-                value={amount}
+                value={displayAmount}
                 onChange={(e) => {
-                  setAmount(e.target.value)
+                  const raw = e.target.value.replace(/,/g, '')
+                  const num = Number(raw)
+                  if (!isNaN(num)) {
+                    setAmount(num)
+                    setDisplayAmount(num.toLocaleString())
+                  } else {
+                    setAmount('')
+                    setDisplayAmount('')
+                  }
                   setAmountError('')
                 }}
               />
