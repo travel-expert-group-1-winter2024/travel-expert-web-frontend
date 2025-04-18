@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { useBookingConfirm } from '@/hooks/useBookingConfirm.ts'
 import { useCreateBooking } from '@/hooks/useBookings'
-import { topUpWallet } from '@/hooks/useWalletTopup'
+import { useTopUpWallet } from '@/hooks/useWalletTopup'
+import { topUpWalletResponse } from '@/types/wallet.ts'
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -11,13 +12,15 @@ import { toast } from 'sonner'
 interface PaymentFormProps {
   clientSecret: string | null
   totalAmount?: number
-  onPaymentSuccess?: () => void
+  onPaymentSuccess?: (data: topUpWalletResponse) => void
+  onPaymentFailure?: () => void
 }
 
 const PaymentForm = ({
   clientSecret,
   totalAmount,
   onPaymentSuccess,
+  onPaymentFailure,
 }: PaymentFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const stripe = useStripe()
@@ -44,29 +47,59 @@ const PaymentForm = ({
     isPending: isBookingConfirming,
     isSuccess: isBookingConfirmed,
   } = useBookingConfirm()
+  const {
+    mutate: topUpWallet,
+    data: topUpResponse,
+    isError: isTopUpError,
+    isPending: isTopUpPending,
+    isSuccess: topUpSuccess,
+  } = useTopUpWallet()
 
   useEffect(() => {
     if (isBookingConfirmed || isBookingCreated) {
       toast.success('Payment successful')
-      if(bookingResponse){
-        bookingResponse['travellerNames'] = travellerNames;
-        bookingResponse['TotalPrice'] = totalAmount;
-      } else{
-        confirmBookingResponse['travellerNames'] = travellerNames;
-        confirmBookingResponse['TotalPrice'] = totalAmount;
+      if (bookingResponse) {
+        bookingResponse['travellerNames'] = travellerNames
+        bookingResponse['TotalPrice'] = totalAmount
+      } else {
+        confirmBookingResponse['travellerNames'] = travellerNames
+        confirmBookingResponse['TotalPrice'] = totalAmount
       }
       navigate(`/bookingconfirmation`, {
         state: { bookingdata: bookingResponse || confirmBookingResponse },
       })
     }
-    if (isBookingConfirmError || isBookingCreateError) {
-      toast.error('Failed to proceed payment')
+
+    if (topUpSuccess) {
+      if (onPaymentSuccess) {
+        onPaymentSuccess(topUpResponse.data)
+      } else {
+        toast.success('Top-up successful')
+      }
+    }
+
+    if (isBookingConfirmError || isBookingCreateError || isTopUpError) {
+      if (onPaymentFailure) {
+        onPaymentFailure()
+      } else {
+        toast.error('Failed to proceed payment')
+      }
     }
   }, [
     isBookingConfirmed,
     isBookingCreated,
     isBookingConfirmError,
     isBookingCreateError,
+    isTopUpError,
+    bookingResponse,
+    navigate,
+    confirmBookingResponse,
+    travellerNames,
+    totalAmount,
+    topUpSuccess,
+    onPaymentSuccess,
+    topUpResponse,
+    onPaymentFailure,
   ])
 
   if (!isLoggedIn) {
@@ -107,15 +140,10 @@ const PaymentForm = ({
         result.paymentIntent.status === 'succeeded'
       ) {
         if (currentPath.includes('wallet')) {
-          const response = await topUpWallet({
+          topUpWallet({
             amount: totalAmount || 0,
             description: 'Top-up from credit card',
           })
-          if (response) {
-            onPaymentSuccess?.()
-          } else {
-            console.log('Top-up failed. Please try again.')
-          }
         } else {
           const validPackageId = packageId ? parseInt(packageId) : null
           if (validPackageId !== null) {
@@ -154,7 +182,7 @@ const PaymentForm = ({
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
       <div className='flex flex-col xl:flex-row xl:space-x-8'>
-        <div className='w-full max-w-[600px]' style={{ width: '600px' }}>
+        <div className='w-full max-w-md'>
           <h3 className='mb-4 text-2xl font-semibold'>Payment Information</h3>
           <div className='stripe-input'>
             <CardElement
@@ -184,7 +212,8 @@ const PaymentForm = ({
               !stripe ||
               !elements ||
               isBookingConfirming ||
-              isBookingCreating
+              isBookingCreating ||
+              isTopUpPending
             }
             className='mt-6 w-full'
           >

@@ -1,17 +1,12 @@
-import api from "@/api/axios"
-export interface topUpWallet{
-    amount:number,
-    description:string
-}
+import { topUpWallet } from '@/api/walletApi.ts'
+import { topUpWalletRequest } from '@/types/wallet.ts'
+import { useMutation } from '@tanstack/react-query'
 
-export const topUpWallet = (topupData:topUpWallet) => {
-    const token = localStorage.getItem('site')?.toString()
-    return api.post(
-      '/api/wallet/topup',topupData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-  }
+export const useTopUpWallet = () => {
+  return useMutation({
+    mutationFn: async (data: topUpWalletRequest) => {
+      const response = await topUpWallet(data)
+      return response.data
+    },
+  })
+}
