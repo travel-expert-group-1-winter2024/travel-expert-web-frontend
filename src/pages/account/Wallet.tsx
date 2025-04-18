@@ -7,10 +7,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useWallet } from '@/hooks/useWallet'
+import { topUpWalletResponse } from '@/types/wallet.ts'
+import { getFormattedCurrency } from '@/utils/currency.ts'
 import { stripeKeys } from '@/utils/stripeKeys'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 function Wallet() {
   const { data: wallet, isLoading, error } = useWallet()
@@ -19,18 +22,36 @@ function Wallet() {
   const [amountError, setAmountError] = useState('')
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [balance, setBalance] = useState<string>('0.00')
+  const [lastUpdated, setLastUpdate] = useState<string>('')
+
+  useEffect(() => {
+    if (wallet) {
+      // format balance
+      const formattedBalance = getFormattedCurrency(wallet.balance)
+      // format date
+      const formattedDate = new Date(wallet.lastUpdated).toLocaleString()
+
+      setBalance(formattedBalance)
+      setLastUpdate(formattedDate)
+    }
+  }, [wallet])
 
   const stripePromise = loadStripe(stripeKeys.publishable)
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (data: topUpWalletResponse) => {
     setShowInput(false)
     setClientSecret(null)
     setShowPaymentForm(false)
-    fetchUpdatedWalletData()
+
+    const formattedBalance = getFormattedCurrency(data.balance)
+    const formattedDate = new Date(data.lastUpdated).toLocaleString()
+    setBalance(formattedBalance)
+    setLastUpdate(formattedDate)
   }
 
-  const fetchUpdatedWalletData = async () => {
-    window.location.reload() // Or use queryClient.invalidateQueries if using React Query
+  const handlePaymentFailure = () => {
+    toast.error('Payment failed. Please try again.')
   }
 
   const handleAddMoneyClick = () => {
@@ -94,16 +115,11 @@ function Wallet() {
       <CardContent className='space-y-4'>
         <div>
           <span className='font-semibold'>Balance:</span>{' '}
-          <span className='font-bold text-green-600'>
-            ${wallet?.balance.toFixed(2)}
-          </span>
+          <span className='font-bold text-green-600'>{balance}</span>
         </div>
         <div>
           <span className='font-semibold'>Last Updated:</span>{' '}
-          <span className='text-muted-foreground'>
-            {wallet?.lastUpdated &&
-              new Date(wallet.lastUpdated).toLocaleString()}
-          </span>
+          <span className='text-muted-foreground'>{lastUpdated}</span>
         </div>
 
         {/* Add Money Section */}
@@ -142,6 +158,7 @@ function Wallet() {
                     clientSecret={clientSecret}
                     totalAmount={Number(amount)}
                     onPaymentSuccess={handlePaymentSuccess}
+                    onPaymentFailure={handlePaymentFailure}
                   />
                 </Elements>
               </div>
