@@ -33,12 +33,15 @@ export default function PackageDetails() {
     isLoading: isPackageLoading,
     error: packageError,
   } = usePackageDetails(packageId!)
-  const { data: ratingData, refetch } = useRatings(parsedPackageID!)
+  const { data: ratingData, refetch: refetchRatings } = useRatings(
+    parsedPackageID ?? 0,
+  )
   const [ratingList, setRatingList] = useState<ratingsView[]>([])
 
   useEffect(() => {
-    if (!ratingData) return
-    setRatingList(ratingData)
+    if (ratingData) {
+      setRatingList(ratingData)
+    }
   }, [ratingData])
 
   const customerId: number = useAuth().user?.customerId || 0
@@ -76,7 +79,7 @@ export default function PackageDetails() {
           setRating('5')
           setComments('')
           setSubmitting(false) // Reset submitting state
-          await refetch() // Refetch ratings after submission
+          await refetchRatings() // Refetch ratings after submission
         },
         onError: () => {
           setSubmitting(false) // Reset submitting state on error
