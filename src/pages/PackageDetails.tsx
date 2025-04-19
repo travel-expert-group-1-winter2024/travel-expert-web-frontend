@@ -254,8 +254,6 @@ export default function PackageDetails() {
                 <ReviewCard
                   name={r.custfirstname + ' ' + r.custlastname}
                   rating={r.rating}
-                  // date='2 weeks ago'
-                  // avatar='https://randomuser.me/api/portraits/women/44.jpg'
                   comment={r.comments}
                   date={''}
                 />
