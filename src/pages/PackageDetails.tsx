@@ -12,13 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-// import {
-//   Carousel,
-//   CarouselContent,
-//   CarouselItem,
-//   CarouselNext,
-//   CarouselPrevious,
-// } from '@/components/ui/carousel'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
@@ -28,7 +21,7 @@ import { useRatings } from '@/hooks/useRatings'
 import { useSubmitRating } from '@/hooks/useSubmitRating'
 import { ratingsView } from '@/types/ratings'
 import { Calendar, MapPin, Star } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function PackageDetails() {
@@ -40,8 +33,13 @@ export default function PackageDetails() {
     isLoading: isPackageLoading,
     error: packageError,
   } = usePackageDetails(packageId!)
-  const { data: ratingData } = useRatings(parsedPackageID!)
-  const filteredRatings = ratingData || []
+  const { data: ratingData, refetch } = useRatings(parsedPackageID!)
+  const [ratingList, setRatingList] = useState<ratingsView[]>([])
+
+  useEffect(() => {
+    if (!ratingData) return
+    setRatingList(ratingData)
+  }, [ratingData])
 
   const customerId: number = useAuth().user?.customerId || 0
   const { mutate: submitRating } = useSubmitRating()
@@ -74,10 +72,11 @@ export default function PackageDetails() {
         comments,
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           setRating('5')
           setComments('')
           setSubmitting(false) // Reset submitting state
+          await refetch() // Refetch ratings after submission
         },
         onError: () => {
           setSubmitting(false) // Reset submitting state on error
@@ -130,7 +129,7 @@ export default function PackageDetails() {
                 <Star className='h-5 w-5 fill-yellow-400 text-yellow-400' />
                 <span className='font-medium'>{getAvarageRating()}</span>
                 <span className='text-muted-foreground'>
-                  ({filteredRatings.length} reviews)
+                  ({ratingList.length} reviews)
                 </span>
               </div>
             </div>
@@ -244,13 +243,13 @@ export default function PackageDetails() {
           <CardHeader>
             <CardTitle>Customer Reviews</CardTitle>
             <CardDescription>
-              {getAvarageRating()} average from {filteredRatings.length} reviews
+              {getAvarageRating()} average from {ratingList.length} reviews
             </CardDescription>
           </CardHeader>
           <CardContent>
             {/* Review List */}
             <div className='space-y-6'>
-              {filteredRatings.map((r: ratingsView) => (
+              {ratingList.map((r: ratingsView) => (
                 <ReviewCard
                   name={r.custfirstname + ' ' + r.custlastname}
                   rating={r.rating}
@@ -309,7 +308,7 @@ export default function PackageDetails() {
   )
 
   function getAvarageRating(): string {
-    const ratings = filteredRatings.map((r) => r.rating)
+    const ratings = ratingList.map((r) => r.rating)
     const sum = ratings.reduce((acc, curr) => acc + curr, 0)
     const avg = ratings.length ? sum / ratings.length : 0
     return avg.toFixed(1)
