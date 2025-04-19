@@ -124,7 +124,7 @@ const Contact = () => {
         <Search className='absolute top-3.5 left-4 h-5 w-5 text-blue-400' />
       </div>
 
-      <div className='mx-auto mb-20 grid max-w-6xl gap-8 md:grid-cols-2 lg:grid-cols-3'>
+      <div className='mx-auto mb-20 grid max-w-6xl gap-8 md:grid-cols-2'>
         {filteredAgencies.length > 0 ? (
           filteredAgencies.map((agency) => (
             <div
