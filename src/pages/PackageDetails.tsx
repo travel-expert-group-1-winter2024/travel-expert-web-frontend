@@ -25,16 +25,15 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function PackageDetails() {
-  const { packageId } = useParams()
-
-  const parsedPackageID: number | null = packageId ? parseInt(packageId) : null
+  const packageIdParam = useParams().packageId
+  const parsedPackageId = packageIdParam ? parseInt(packageIdParam) : null
   const {
     data: pkg,
     isLoading: isPackageLoading,
     error: packageError,
-  } = usePackageDetails(packageId!)
+  } = usePackageDetails(parsedPackageId?.toString() ?? undefined)
   const { data: ratingData, refetch: refetchRatings } = useRatings(
-    parsedPackageID ?? 0,
+    parsedPackageId ?? undefined,
   )
   const [ratingList, setRatingList] = useState<ratingsView[]>([])
 
@@ -55,6 +54,12 @@ export default function PackageDetails() {
     useState<boolean>(false)
   const { isLoggedIn } = useAuth()
 
+  if (!parsedPackageId) {
+    return (
+      <div className='py-12 text-center text-red-500'>Invalid Package ID</div>
+    )
+  }
+
   const handleBookingClick = (reserve: boolean) => {
     if (isLoggedIn) {
       setIsBookingReservation(reserve)
@@ -69,7 +74,7 @@ export default function PackageDetails() {
     setSubmitting(true)
     submitRating(
       {
-        packageId,
+        packageId: parsedPackageId.toString(),
         customerId,
         rating: parseInt(rating),
         comments,
