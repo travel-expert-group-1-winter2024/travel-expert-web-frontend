@@ -102,28 +102,27 @@ export default function PackageDetails() {
       <div className='flex flex-col gap-8 xl:flex-row xl:gap-12'>
         {/* Image Carousel */}
         <div className='w-full xl:w-2/5 2xl:w-1/3'>
-          <div className="sticky top-4">
-            <div className="aspect-square overflow-hidden rounded-xl xl:rounded-2xl">
+          <div className='sticky top-4'>
+            <div className='aspect-square overflow-hidden rounded-xl xl:rounded-2xl'>
               <img
                 src={
-                  pkg.photoURL ||
-                  `https://placehold.co/1000x1000?text=Image 1`
+                  pkg.photoURL || `https://placehold.co/1000x1000?text=Image 1`
                 }
                 alt={`${pkg.pkgname}`}
-                className="h-full w-full object-cover"
+                className='h-full w-full object-cover'
               />
             </div>
           </div>
         </div>
 
         {/* Main Content - Right Side */}
-        <div className="w-full xl:w-3/5 2xl:w-2/3">
+        <div className='w-full xl:w-3/5 2xl:w-2/3'>
           {/* Package Header */}
-          <div className="mb-6 xl:mb-8">
-            <Badge variant="secondary" className="xl:text-sm">
+          <div className='mb-6 xl:mb-8'>
+            <Badge variant='secondary' className='xl:text-sm'>
               {pkg.destination}
             </Badge>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight xl:text-4xl">
+            <h1 className='mt-3 text-3xl font-bold tracking-tight xl:text-4xl'>
               {pkg.pkgname}
             </h1>
             <div className='mt-2 flex items-center gap-4'>
@@ -249,26 +248,6 @@ export default function PackageDetails() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Rating Breakdown */}
-            {/* <div className='mb-6 space-y-3'>
-              {[5, 4, 3, 2, 1].map((stars) => (
-                <div key={stars} className='flex items-center gap-3'>
-                  <span className='w-12 text-sm'>{stars} star</span>
-                  <div className='h-2 flex-1 overflow-hidden rounded-full bg-gray-200'>
-                    <div
-                      className='h-full bg-yellow-400'
-                      style={{
-                        width: `${(stars === 5 ? 18 : stars === 4 ? 4 : 1) * 20}%`,
-                      }}
-                    />
-                  </div>
-                  <span className='text-muted-foreground w-8 text-right text-sm'>
-                    {stars === 5 ? '18' : stars === 4 ? '4' : '1'}
-                  </span>
-                </div>
-              ))}
-            </div> */}
-
             {/* Review List */}
             <div className='space-y-6'>
               {filteredRatings.map((r: ratingsView) => (
@@ -286,8 +265,8 @@ export default function PackageDetails() {
         </Card>
 
         {/* Review Form */}
-        {
-          isLoggedIn && (<Card className='mt-6'>
+        {isLoggedIn && (
+          <Card className='mt-6'>
             <CardHeader>
               <CardTitle>Share Your Experience</CardTitle>
             </CardHeader>
@@ -300,7 +279,10 @@ export default function PackageDetails() {
                 >
                   {[1, 2, 3, 4, 5].map((value) => (
                     <div key={value} className='flex items-center space-x-2'>
-                      <RadioGroupItem value={value.toString()} id={`r${value}`} />
+                      <RadioGroupItem
+                        value={value.toString()}
+                        id={`r${value}`}
+                      />
                       <Label
                         htmlFor={`r${value}`}
                         className='flex items-center gap-1'
@@ -322,8 +304,8 @@ export default function PackageDetails() {
                 </Button>
               </form>
             </CardContent>
-          </Card>)
-        }
+          </Card>
+        )}
       </div>
     </section>
   )
