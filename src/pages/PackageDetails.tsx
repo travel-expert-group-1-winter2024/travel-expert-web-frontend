@@ -13,6 +13,14 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/hooks/useAuth'
@@ -36,6 +44,9 @@ export default function PackageDetails() {
     parsedPackageId ?? undefined,
   )
   const [ratingList, setRatingList] = useState<ratingsView[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+  const totalPages = Math.ceil(ratingList.length / itemsPerPage)
 
   useEffect(() => {
     if (ratingData) {
@@ -257,17 +268,62 @@ export default function PackageDetails() {
           <CardContent>
             {/* Review List */}
             <div className='space-y-6'>
-              {ratingList.map((r: ratingsView) => (
-                <ReviewCard
-                  name={r.custfirstname + ' ' + r.custlastname}
-                  rating={r.rating}
-                  comment={r.comments}
-                  date={''}
-                />
-              ))}
+              {ratingList
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage,
+                )
+                .map((r: ratingsView) => (
+                  <ReviewCard
+                    name={r.custfirstname + ' ' + r.custlastname}
+                    rating={r.rating}
+                    comment={r.comments}
+                    date={''}
+                  />
+                ))}
             </div>
           </CardContent>
         </Card>
+
+        {/* Pagination */}
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href='#'
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (currentPage > 1) setCurrentPage(currentPage - 1)
+                }}
+              />
+            </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, i) => (
+              <PaginationItem key={i}>
+                <PaginationLink
+                  href='#'
+                  isActive={currentPage === i + 1}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setCurrentPage(i + 1)
+                  }}
+                >
+                  {i + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                href='#'
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (currentPage < totalPages) setCurrentPage(currentPage + 1)
+                }}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
 
         {/* Review Form */}
         {isLoggedIn && (
