@@ -46,7 +46,7 @@ const accountLinks = [
 function Navbar() {
   const { isLoggedIn, user, logOut } = useAuth()
   return (
-    <header className='border-b p-4'>
+    <header className='border-b px-6 py-4'>
       <div className='container mx-auto flex items-center justify-between'>
         <NavLink
           to='/'
@@ -61,8 +61,8 @@ function Navbar() {
               <NavigationMenuItem key={to}>
                 <NavLink to={to}>
                   {({ isActive }) => (
-                    <Button variant={isActive ? 'secondary' : 'ghost'}>
-                      {label}
+                    <Button variant={isActive ? 'secondary' : 'ghost'} asChild>
+                      <span>{label}</span>
                     </Button>
                   )}
                 </NavLink>
