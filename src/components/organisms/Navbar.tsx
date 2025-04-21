@@ -83,7 +83,7 @@ function Navbar() {
               />
             </div>
           ) : (
-            <NavLink to={'/login'}>
+            <NavLink to='/login'>
               <Button>Sign In</Button>
             </NavLink>
           )}
