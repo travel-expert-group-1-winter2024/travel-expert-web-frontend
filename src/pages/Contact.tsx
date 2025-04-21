@@ -1,6 +1,7 @@
 import { useAgencies } from '@/hooks/useAgencies.ts'
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api'
 import { Mail, MapPin, Phone, Search } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Agency = {
   id: number
@@ -13,18 +14,14 @@ type Agency = {
   agencyFax: string
 }
 
-declare global {
-  interface Window {
-    initMap: () => void
-  }
-}
-
 const Contact = () => {
   const [agencies, setAgencies] = useState<Agency[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const mapRef = useRef<HTMLDivElement | null>(null)
   const { data: agenciesData, isError } = useAgencies()
-
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+  })
   useEffect(() => {
     if (isError) {
       console.error('Error fetching agencies data')
@@ -41,54 +38,29 @@ const Contact = () => {
       })
     : []
 
-  useEffect(() => {
-    if (!Array.isArray(agencies) || agencies.length === 0) return
+  const center = { lat: 51.0447, lng: -114.0719 }
 
-    const loadMapScript = () => {
-      if (document.getElementById('google-maps-script')) {
-        window.initMap = initMap
-        return
-      }
+  const handleMapLoad = (agencies: Agency[]) => (map: google.maps.Map) => {
+    const bounds = new window.google.maps.LatLngBounds(center)
+    const geocoder = new window.google.maps.Geocoder()
 
-      const script = document.createElement('script')
-      script.id = 'google-maps-script'
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${
-        import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-      }&callback=initMap`
-      script.async = true
-      script.defer = true
-      window.initMap = initMap
-      document.body.appendChild(script)
-    }
-
-    const initMap = () => {
-      if (!mapRef.current) return
-
-      const map = new google.maps.Map(mapRef.current, {
-        zoom: 4,
-        center: { lat: 53.7267, lng: -127.6476 },
+    agencies.forEach((agency) => {
+      const address = `${agency.agencyAddress}, ${agency.agencyCity}, ${agency.agencyProvince}, ${agency.agencyPostal}`
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          new window.google.maps.Marker({
+            map,
+            position: results[0].geometry.location,
+            title: `${agency.agencyCity} Office`,
+          })
+          bounds.extend(results[0].geometry.location)
+          map.fitBounds(bounds)
+        } else {
+          console.error(`Geocode failed for: ${address}`, status)
+        }
       })
-
-      const geocoder = new google.maps.Geocoder()
-
-      agencies.forEach((agency) => {
-        const fullAddress = `${agency.agencyAddress}, ${agency.agencyCity}, ${agency.agencyProvince}, ${agency.agencyPostal}`
-        geocoder.geocode({ address: fullAddress }, (results, status) => {
-          if (status === 'OK' && results && results[0]) {
-            new google.maps.Marker({
-              map,
-              position: results[0].geometry.location,
-              title: `${agency.agencyCity} Office`,
-            })
-          } else {
-            console.error(`Geocode failed for: ${fullAddress}`, status)
-          }
-        })
-      })
-    }
-
-    loadMapScript()
-  }, [agencies])
+    })
+  }
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-[#FAF5FF] to-white px-4 py-16 sm:px-6 lg:px-8'>
@@ -149,14 +121,17 @@ const Contact = () => {
           </div>
         )}
       </div>
-
       <div className='mx-auto max-w-6xl'>
         <div className='overflow-hidden rounded-2xl border border-purple-200 shadow-lg'>
-          <div
-            ref={mapRef}
-            style={{ width: '100%', height: '500px' }}
-            className='w-full'
-          />
+          {isLoaded && (
+            <GoogleMap
+              mapContainerStyle={{ width: '100%', height: '500px' }}
+              center={center}
+              zoom={7}
+              onLoad={handleMapLoad(filteredAgencies)}
+              onUnmount={() => {}}
+            />
+          )}
         </div>
       </div>
     </div>
