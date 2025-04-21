@@ -75,13 +75,11 @@ function Navbar() {
           </NavigationMenu>
 
           {isLoggedIn ? (
-            <div className='flex items-center gap-2'>
-              <AvatarWithDropDownMenu
-                name={user?.name ?? 'User'}
-                image={user?.photoUrl}
-                signOut={logOut}
-              />
-            </div>
+            <AvatarWithDropDownMenu
+              name={user?.name ?? 'User'}
+              image={user?.photoUrl}
+              signOut={logOut}
+            />
           ) : (
             <NavLink to='/login'>
               <Button>Sign In</Button>
