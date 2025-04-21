@@ -229,7 +229,7 @@ const Profile = () => {
   return (
     <div className='relative flex flex-col items-center'>
       <div className='w-full bg-white'>
-        <div className='flex flex-col items-center bg-gradient-to-r from-[#e0f7f4] to-[#c7f0eb] py-4'>
+        <div className='flex flex-col items-center py-4'>
           <div className='relative'>
             <Avatar
               className={`h-32 w-32 ${editMode ? 'cursor-pointer' : ''}`}
