@@ -59,10 +59,7 @@ function Navbar() {
           <NavigationMenuList>
             {navLinks.map(({ label, to }) => (
               <NavigationMenuItem key={to}>
-                <NavLink
-                  to={to}
-                  className={({ isActive }) => (isActive ? 'bg-muted' : '')}
-                >
+                <NavLink to={to}>
                   {({ isActive }) => (
                     <Button variant={isActive ? 'secondary' : 'ghost'}>
                       {label}
