@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { useAgencies } from '@/hooks/useAgencies.ts'
 import { Mail, MapPin, Phone, Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -23,27 +23,16 @@ const Contact = () => {
   const [agencies, setAgencies] = useState<Agency[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const mapRef = useRef<HTMLDivElement | null>(null)
+  const { data: agenciesData, isError } = useAgencies()
 
   useEffect(() => {
-    const fetchAgencies = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/agencies')
-        console.log('Fetched Agencies:', response.data)
-
-        if (Array.isArray(response.data)) {
-          setAgencies(response.data)
-        } else {
-          console.warn('Response is not an array:', response.data)
-          setAgencies([])
-        }
-      } catch (error) {
-        console.error('Failed to fetch agencies:', error)
-        setAgencies([])
-      }
+    if (isError) {
+      console.error('Error fetching agencies data')
+      return
     }
 
-    fetchAgencies()
-  }, [])
+    setAgencies(agenciesData)
+  }, [agenciesData, isError])
 
   const filteredAgencies = Array.isArray(agencies)
     ? agencies.filter((agency) => {
