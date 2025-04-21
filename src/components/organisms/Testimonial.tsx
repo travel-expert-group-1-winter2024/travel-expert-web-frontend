@@ -41,10 +41,12 @@ const testimonials: Testimonial[] = [
 
 function Testimonial() {
   return (
-    <section className='bg-gradient-to-b from-white to-slate-100 py-16'>
+    <section className='bg-gradient-to-b from-[#FAF5FF] to-white py-16'>
       <div className='mb-12 text-center'>
-        <h2 className='text-3xl font-bold'>What Our Travelers Are Saying</h2>
-        <p className='text-muted-foreground mx-auto mt-2 max-w-xl'>
+        <h2 className='text-primary text-3xl font-bold'>
+          What Our Travelers Are Saying
+        </h2>
+        <p className='text-foreground/70 mx-auto mt-2 max-w-xl'>
           Travel Experts has helped hundreds of travelers book stress-free,
           unforgettable journeys. Here’s what real customers have to say.
         </p>
@@ -53,7 +55,7 @@ function Testimonial() {
         {testimonials.map((t, idx) => (
           <Card key={idx} className='shadow-md'>
             <CardContent className='p-6 pb-4'>
-              <p className='text-muted-foreground text-sm italic'>
+              <p className='text-secondary-foreground text-sm italic'>
                 “{t.quote}”
               </p>
             </CardContent>
