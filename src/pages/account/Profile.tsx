@@ -1,4 +1,3 @@
-import defaultProfile from '@/assets/user-default-avatar.png'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Input } from '@/components/ui/input.tsx'
@@ -68,7 +67,7 @@ const Profile = () => {
   const [editedCustomer, setEditedCustomer] = useState<Customer | null>(null)
   const [errors, setErrors] = useState<Partial<Record<CustomerKey, string>>>({})
   const [userProfileImage, setUserProfileImage] = useState<string | undefined>(
-    defaultProfile,
+    '',
   )
   const {
     mutate: deleteCustomer,
@@ -210,7 +209,7 @@ const Profile = () => {
   const handleCancel = () => {
     if (!customer) return
     setEditedCustomer(customer)
-    setUserProfileImage(user?.photoUrl || defaultProfile)
+    setUserProfileImage(user?.photoUrl)
     setErrors({})
     setEditMode(false)
   }
@@ -238,13 +237,7 @@ const Profile = () => {
                 if (editMode) fileInputRef.current?.click()
               }}
             >
-              <AvatarImage
-                src={userProfileImage}
-                alt='Profile'
-                onError={(e) => {
-                  e.currentTarget.src = defaultProfile
-                }}
-              />
+              <AvatarImage src={userProfileImage} alt='Profile' />
               <AvatarFallback>
                 {customer?.custfirstname?.charAt(0) ?? 'U'}
               </AvatarFallback>
