@@ -126,9 +126,9 @@ function AvatarWithDropDownMenu({
           ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={signOut}>
           <LogOut />
-          <span onClick={signOut}>Log out</span>
+          <span> Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
