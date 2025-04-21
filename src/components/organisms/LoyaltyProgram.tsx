@@ -39,8 +39,8 @@ const tiers = [
       '24/7 dedicated agent',
       'Exclusive experiences',
     ],
-    color: 'bg-blue-50 border-blue-200',
-    textColor: 'text-blue-800',
+    color: 'bg-purple-50 border-purple-200',
+    textColor: 'text-purple-800',
     progress: 100,
   },
 ]
@@ -48,7 +48,7 @@ const tiers = [
 export function LoyaltyProgram() {
   const navigate = useNavigate()
   return (
-    <section className='bg-gradient-to-b from-white to-gray-50 py-16'>
+    <section className='bg-gradient-to-b from-[#FAF5FF] to-white py-16'>
       <div className='container mx-auto px-4'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -57,7 +57,7 @@ export function LoyaltyProgram() {
           viewport={{ once: true }}
           className='mb-16 text-center'
         >
-          <h2 className='bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl'>
+          <h2 className='bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl'>
             Your Journey, Rewarded
           </h2>
           <p className='text-muted-foreground mx-auto mt-4 max-w-2xl text-lg'>
@@ -79,7 +79,7 @@ export function LoyaltyProgram() {
               {[0, 25, 100].map((point, i) => (
                 <div
                   key={i}
-                  className={`h-5 w-5 rounded-full border-4 border-white ${i === 0 ? 'bg-gray-400' : i === 1 ? 'bg-amber-400' : 'bg-blue-500'} shadow-md`}
+                  className={`h-5 w-5 rounded-full border-4 border-white ${i === 0 ? 'bg-gray-400' : i === 1 ? 'bg-amber-400' : 'bg-purple-500'} shadow-md`}
                   style={{ left: `${point}%`, transform: 'translateX(-50%)' }}
                 />
               ))}
@@ -102,7 +102,7 @@ export function LoyaltyProgram() {
               >
                 <div className='mb-4 flex items-center gap-3'>
                   <div
-                    className={`rounded-lg p-2 ${tier.name === 'Platinum' ? 'bg-blue-100' : tier.name === 'Bronze' ? 'bg-amber-100' : 'bg-gray-200'}`}
+                    className={`rounded-lg p-2 ${tier.name === 'Platinum' ? 'bg-purple-100' : tier.name === 'Bronze' ? 'bg-amber-100' : 'bg-gray-200'}`}
                   >
                     {tier.icon}
                   </div>
@@ -144,7 +144,7 @@ export function LoyaltyProgram() {
                     </button>
                   ) : (
                     <button
-                      className={`w-full rounded-lg py-2 text-sm ${tier.name === 'Platinum' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-amber-500 text-white hover:bg-amber-600'} transition`}
+                      className={`w-full rounded-lg py-2 text-sm ${tier.name === 'Platinum' ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-amber-500 text-white hover:bg-amber-600'} transition`}
                     >
                       {tier.name === 'Platinum'
                         ? 'VIP Services'

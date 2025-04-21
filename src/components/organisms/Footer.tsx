@@ -6,11 +6,17 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} Travel Experts. All rights reserved.
         </p>
         <nav className='mt-2'>
-          <a href='#' className='text-muted-foreground hover:text-white'>
+          <a
+            href='#'
+            className='text-muted transition-colors hover:text-[#553C9A] hover:underline'
+          >
             Privacy Policy
           </a>{' '}
           |
-          <a href='#' className='text-muted-foreground ml-2 hover:text-white'>
+          <a
+            href='#'
+            className='text-muted ml-2 transition-colors hover:text-[#553C9A] hover:underline'
+          >
             Terms of Service
           </a>{' '}
         </nav>

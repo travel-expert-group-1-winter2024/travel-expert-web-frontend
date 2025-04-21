@@ -1,4 +1,3 @@
-import defaultProfile from '@/assets/user-default-avatar.png'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Input } from '@/components/ui/input.tsx'
@@ -68,7 +67,7 @@ const Profile = () => {
   const [editedCustomer, setEditedCustomer] = useState<Customer | null>(null)
   const [errors, setErrors] = useState<Partial<Record<CustomerKey, string>>>({})
   const [userProfileImage, setUserProfileImage] = useState<string | undefined>(
-    defaultProfile,
+    '',
   )
   const {
     mutate: deleteCustomer,
@@ -210,7 +209,7 @@ const Profile = () => {
   const handleCancel = () => {
     if (!customer) return
     setEditedCustomer(customer)
-    setUserProfileImage(user?.photoUrl || defaultProfile)
+    setUserProfileImage(user?.photoUrl)
     setErrors({})
     setEditMode(false)
   }
@@ -230,7 +229,7 @@ const Profile = () => {
   return (
     <div className='relative flex flex-col items-center'>
       <div className='w-full bg-white'>
-        <div className='flex flex-col items-center bg-gradient-to-r from-[#e0f7f4] to-[#c7f0eb] py-4'>
+        <div className='flex w-full flex-col items-center bg-gradient-to-b from-[#FAF5FF] via-[#E9D8FD] to-white py-4'>
           <div className='relative'>
             <Avatar
               className={`h-32 w-32 ${editMode ? 'cursor-pointer' : ''}`}
@@ -238,13 +237,7 @@ const Profile = () => {
                 if (editMode) fileInputRef.current?.click()
               }}
             >
-              <AvatarImage
-                src={userProfileImage}
-                alt='Profile'
-                onError={(e) => {
-                  e.currentTarget.src = defaultProfile
-                }}
-              />
+              <AvatarImage src={userProfileImage} alt='Profile' />
               <AvatarFallback>
                 {customer?.custfirstname?.charAt(0) ?? 'U'}
               </AvatarFallback>

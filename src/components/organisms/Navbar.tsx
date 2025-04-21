@@ -1,4 +1,4 @@
-import Logo from '@/assets/logo.png'
+import Logo from '@/assets/travel-experts-logo.png'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Button } from '@/components/ui/button'
 import {
@@ -46,44 +46,40 @@ const accountLinks = [
 function Navbar() {
   const { isLoggedIn, user, logOut } = useAuth()
   return (
-    <header className='border-b p-4'>
-      <div className='flex items-center justify-between'>
-        <NavLink to='/' className='text-lg font-semibold'>
-          <div className='flex items-center gap-1'>
-            <img src={Logo} alt='Logo' className='h-10 w-10' />
-            <span>Travel Experts</span>
-          </div>
+    <header className='border-b px-6 py-4'>
+      <div className='container mx-auto flex items-center justify-between'>
+        <NavLink
+          to='/'
+          className='flex items-center gap-2 text-lg font-semibold'
+        >
+          <img src={Logo} alt='Logo' className='h-10 w-auto object-contain' />
         </NavLink>
-        <div className='flex items-center justify-between'>
-          <NavigationMenu className='px-2'>
-            <NavigationMenuList>
-              {navLinks.map(({ label, to }) => (
-                <NavigationMenuItem key={to}>
-                  <NavLink
-                    to={to}
-                    className={({ isActive }) => (isActive ? 'bg-muted' : '')}
-                  >
-                    {({ isActive }) => (
-                      <Button variant={isActive ? 'secondary' : 'ghost'}>
-                        {label}
-                      </Button>
-                    )}
-                  </NavLink>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
 
+        <NavigationMenu className='px-2'>
+          <NavigationMenuList>
+            {navLinks.map(({ label, to }) => (
+              <NavigationMenuItem key={to}>
+                <NavLink to={to}>
+                  {({ isActive }) => (
+                    <Button variant={isActive ? 'secondary' : 'ghost'} asChild>
+                      <span>{label}</span>
+                    </Button>
+                  )}
+                </NavLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        <div>
           {isLoggedIn ? (
-            <div className='flex items-center gap-2'>
-              <AvatarWithDropDownMenu
-                name={user?.name ?? 'User'}
-                image={user?.photoUrl}
-                signOut={logOut}
-              />
-            </div>
+            <AvatarWithDropDownMenu
+              name={user?.name ?? 'User'}
+              image={user?.photoUrl}
+              signOut={logOut}
+            />
           ) : (
-            <NavLink to={'/login'}>
+            <NavLink to='/login'>
               <Button>Sign In</Button>
             </NavLink>
           )}
@@ -126,9 +122,9 @@ function AvatarWithDropDownMenu({
           ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={signOut}>
           <LogOut />
-          <span onClick={signOut}>Log out</span>
+          <span> Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
