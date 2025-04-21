@@ -102,7 +102,7 @@ const Contact = () => {
   }, [agencies])
 
   return (
-    <div className='min-h-screen bg-gradient-to-b from-blue-50 to-white px-4 py-16 sm:px-6 lg:px-8'>
+    <div className='min-h-screen bg-gradient-to-b from-[#FAF5FF] to-white px-4 py-16 sm:px-6 lg:px-8'>
       <div className='mx-auto mb-14 max-w-6xl text-center'>
         <h1 className='text-5xl font-semibold text-black'>
           Find a Travel Experts Office
@@ -119,9 +119,9 @@ const Contact = () => {
           placeholder='Search by city, province, or address...'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className='w-full rounded-full border border-blue-300 bg-white py-3 pr-4 pl-12 shadow-md transition focus:ring-2 focus:ring-blue-500 focus:outline-none'
+          className='w-full rounded-full border border-purple-300 bg-white py-3 pr-4 pl-12 shadow-md transition focus:ring-2 focus:ring-purple-500 focus:outline-none'
         />
-        <Search className='absolute top-3.5 left-4 h-5 w-5 text-blue-400' />
+        <Search className='absolute top-3.5 left-4 h-5 w-5 text-purple-400' />
       </div>
 
       <div className='mx-auto mb-20 grid max-w-6xl gap-8 md:grid-cols-2'>
@@ -129,26 +129,26 @@ const Contact = () => {
           filteredAgencies.map((agency) => (
             <div
               key={agency.id}
-              className='relative rounded-2xl border border-blue-100 bg-white p-6 shadow-lg'
+              className='relative rounded-2xl border border-purple-100 bg-white p-6 shadow-lg'
             >
-              <div className='absolute top-0 right-0 rounded-bl-lg bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800'>
+              <div className='absolute top-0 right-0 rounded-bl-lg bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-800'>
                 {agency.agencyCity}
               </div>
               <div className='space-y-4 text-sm text-gray-700'>
                 <div className='flex items-start'>
-                  <MapPin className='mt-0.5 h-5 w-5 text-blue-500' />
+                  <MapPin className='mt-0.5 h-5 w-5 text-purple-500' />
                   <span className='ml-2'>{`${agency.agencyAddress}, ${agency.agencyCity}, ${agency.agencyProvince}, ${agency.agencyPostal}`}</span>
                 </div>
                 <div className='flex items-start'>
-                  <Phone className='mt-0.5 h-5 w-5 text-blue-500' />
+                  <Phone className='mt-0.5 h-5 w-5 text-purple-500' />
                   <span className='ml-2'>Phone: {agency.agencyPhone}</span>
                 </div>
                 <div className='flex items-start'>
-                  <Phone className='mt-0.5 h-5 w-5 text-blue-500' />
+                  <Phone className='mt-0.5 h-5 w-5 text-purple-500' />
                   <span className='ml-2'>Fax: {agency.agencyFax}</span>
                 </div>
                 <div className='flex items-start'>
-                  <Mail className='mt-0.5 h-5 w-5 text-blue-500' />
+                  <Mail className='mt-0.5 h-5 w-5 text-purple-500' />
                   <span className='ml-2'>contact@travelexperts.com</span>
                 </div>
               </div>
@@ -162,7 +162,7 @@ const Contact = () => {
       </div>
 
       <div className='mx-auto max-w-6xl'>
-        <div className='overflow-hidden rounded-2xl border border-blue-200 shadow-lg'>
+        <div className='overflow-hidden rounded-2xl border border-purple-200 shadow-lg'>
           <div
             ref={mapRef}
             style={{ width: '100%', height: '500px' }}
