@@ -49,17 +49,17 @@ function PackageExample() {
   ))
 
   return (
-    <section id='packages' className='bg-secondary py-12'>
-      <div className='flex flex-col items-center justify-center gap-4 md:flex-row xl:gap-10 xl:px-5'>
-        <div className='flex flex-col xl:px-9'>
+    <section id='packages' className='bg-[#FAF5FF] py-12'>
+      <div className='container mx-auto flex flex-col items-center justify-center gap-4 2xl:gap-10'>
+        <div className='flex flex-col'>
           <div className='text-center'>
-            <p className='mb-2 text-sm tracking-widest text-gray-400 uppercase'>
+            <p className='text-secondary mb-2 text-sm tracking-widest uppercase'>
               Explore Destinations
             </p>
-            <h2 className='text-2xl font-semibold text-gray-800 md:text-3xl'>
+            <h2 className='text-foreground text-2xl font-semibold md:text-3xl'>
               Discover the Best Getaways, Adventures, and Stays
             </h2>
-            <p className='mx-auto mt-3 max-w-xl text-gray-600'>
+            <p className='text-muted-foreground mx-auto mt-3 max-w-xl'>
               Plan your perfect trip with curated packages, exciting activities,
               and top-rated hotels.
             </p>
@@ -76,7 +76,7 @@ function PackageExample() {
             ))}
           </div>
         </div>
-        <div className='w-full max-w-sm px-2 md:max-w-2xl lg:max-w-5xl xl:mr-6'>
+        <div className='w-full max-w-sm md:max-w-3xl xl:max-w-4xl 2xl:max-w-6xl'>
           <Carousel
             opts={{
               align: 'start',
