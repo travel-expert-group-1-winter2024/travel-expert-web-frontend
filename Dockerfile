@@ -2,6 +2,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+COPY .env.local .env.local
+
 # Copy package.json and lock file
 COPY package*.json ./
 
