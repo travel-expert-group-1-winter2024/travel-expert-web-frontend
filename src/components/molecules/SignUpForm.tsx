@@ -203,7 +203,7 @@ export function SignUpForm() {
                       variant='outline'
                       role='combobox'
                       aria-expanded={open}
-                      className='w-[200px] justify-between'
+                      className='w-[200px] justify-between bg-white'
                     >
                       {field.value
                         ? dropDownProvinces.find((p) => p.value === field.value)

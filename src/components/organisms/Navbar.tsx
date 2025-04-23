@@ -46,7 +46,7 @@ const accountLinks = [
 function Navbar() {
   const { isLoggedIn, user, logOut } = useAuth()
   return (
-    <header className='border-b px-6 py-4'>
+    <header className='border-b bg-white px-6 py-4'>
       <div className='container mx-auto flex items-center justify-between'>
         <NavLink
           to='/'
