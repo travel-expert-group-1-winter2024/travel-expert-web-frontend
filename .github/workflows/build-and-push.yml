@@ -27,4 +27,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: satrawo/travel-exerts-front-end:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/travel-exerts-front-end:latest
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/travel-exerts-front-end:latest

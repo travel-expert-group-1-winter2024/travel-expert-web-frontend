@@ -15,7 +15,7 @@ export const useStompClient = (customerId?: string) => {
   useEffect(() => {
     if (!customerId) return
     const client = new Client({
-      brokerURL: 'ws://localhost:8080/chat',
+      brokerURL: import.meta.env.VITE_CHAT_SOCKET_URL,
       reconnectDelay: 5000,
       onConnect: () => {
         setConnected(true)
